@@ -1,0 +1,78 @@
+<svg width="1200" height="420" viewBox="0 0 1200 420" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Image to UI Skill</title>
+  <desc id="desc">A clear project banner for the Image to UI Skill, showing a workflow from UI references to frontend code and generated image assets.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="420" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#101820"/>
+      <stop offset="0.48" stop-color="#14212A"/>
+      <stop offset="1" stop-color="#0F151C"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="160" y1="60" x2="1020" y2="360" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FF5FA2"/>
+      <stop offset="0.5" stop-color="#8BE9FD"/>
+      <stop offset="1" stop-color="#FFE66D"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0.06"/>
+    </linearGradient>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="22" stdDeviation="22" flood-color="#000000" flood-opacity="0.32"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="420" rx="34" fill="url(#bg)"/>
+  <rect x="28" y="28" width="1144" height="364" rx="28" stroke="url(#accent)" stroke-width="2"/>
+  <path d="M64 316C166 246 236 257 322 292C423 333 492 333 604 255C711 181 788 135 905 181C1005 220 1054 199 1134 124" stroke="url(#accent)" stroke-width="2" stroke-opacity="0.38"/>
+  <path d="M88 88H234M966 332H1112M86 332H174M1014 88H1112" stroke="#FFFFFF" stroke-opacity="0.22" stroke-width="2" stroke-linecap="round"/>
+
+  <g filter="url(#softShadow)">
+    <rect x="92" y="86" width="300" height="230" rx="22" fill="url(#card)" stroke="#FFFFFF" stroke-opacity="0.18"/>
+    <rect x="122" y="118" width="150" height="14" rx="7" fill="#8BE9FD"/>
+    <rect x="122" y="150" width="220" height="12" rx="6" fill="#FFFFFF" fill-opacity="0.66"/>
+    <rect x="122" y="176" width="188" height="12" rx="6" fill="#FFFFFF" fill-opacity="0.38"/>
+    <rect x="122" y="214" width="76" height="54" rx="12" fill="#FF5FA2" fill-opacity="0.78"/>
+    <rect x="214" y="214" width="76" height="54" rx="12" fill="#FFE66D" fill-opacity="0.78"/>
+    <rect x="306" y="214" width="36" height="54" rx="12" fill="#8BE9FD" fill-opacity="0.78"/>
+    <path d="M135 278H348" stroke="#FFFFFF" stroke-opacity="0.18" stroke-width="2" stroke-linecap="round"/>
+  </g>
+
+  <g>
+    <text x="454" y="142" fill="#FFFFFF" font-family="Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="70" font-weight="800" letter-spacing="0">Image to UI</text>
+    <text x="456" y="199" fill="#FFFFFF" fill-opacity="0.9" font-family="Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="33" font-weight="700" letter-spacing="0">Skill for Codex</text>
+    <text x="456" y="247" fill="#DDE7EF" font-family="Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="24" font-weight="500" letter-spacing="0">把 UI 截图、设计稿变成可运行代码与清晰图片资产</text>
+  </g>
+
+  <g font-family="Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="20" font-weight="700">
+    <rect x="456" y="286" width="138" height="44" rx="14" fill="#FFFFFF" fill-opacity="0.1" stroke="#FFFFFF" stroke-opacity="0.16"/>
+    <text x="483" y="315" fill="#FFFFFF">Analyze</text>
+    <path d="M611 308H649" stroke="#8BE9FD" stroke-width="3" stroke-linecap="round"/>
+    <path d="M641 300L650 308L641 316" stroke="#8BE9FD" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <rect x="666" y="286" width="116" height="44" rx="14" fill="#FFFFFF" fill-opacity="0.1" stroke="#FFFFFF" stroke-opacity="0.16"/>
+    <text x="695" y="315" fill="#FFFFFF">Plan</text>
+    <path d="M800 308H838" stroke="#FF5FA2" stroke-width="3" stroke-linecap="round"/>
+    <path d="M830 300L839 308L830 316" stroke="#FF5FA2" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <rect x="856" y="286" width="138" height="44" rx="14" fill="#FFFFFF" fill-opacity="0.1" stroke="#FFFFFF" stroke-opacity="0.16"/>
+    <text x="887" y="315" fill="#FFFFFF">Build</text>
+  </g>
+
+  <g filter="url(#softShadow)">
+    <rect x="1008" y="96" width="90" height="150" rx="20" fill="#0E141B" stroke="#FFFFFF" stroke-opacity="0.28" stroke-width="2"/>
+    <rect x="1020" y="116" width="66" height="98" rx="10" fill="#FFFFFF" fill-opacity="0.1"/>
+    <rect x="1032" y="128" width="42" height="8" rx="4" fill="#8BE9FD"/>
+    <rect x="1032" y="148" width="32" height="8" rx="4" fill="#FFFFFF" fill-opacity="0.42"/>
+    <rect x="1032" y="170" width="42" height="28" rx="8" fill="#FF5FA2" fill-opacity="0.78"/>
+    <circle cx="1053" cy="228" r="5" fill="#FFFFFF" fill-opacity="0.45"/>
+  </g>
+
+  <g font-family="Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="18" font-weight="700">
+    <rect x="92" y="342" width="142" height="38" rx="12" fill="#FF5FA2" fill-opacity="0.16" stroke="#FF5FA2" stroke-opacity="0.42"/>
+    <text x="124" y="367" fill="#FFD6E6">UI Audit</text>
+    <rect x="250" y="342" width="170" height="38" rx="12" fill="#8BE9FD" fill-opacity="0.14" stroke="#8BE9FD" stroke-opacity="0.42"/>
+    <text x="282" y="367" fill="#D8F8FF">Image Assets</text>
+    <rect x="436" y="342" width="160" height="38" rx="12" fill="#FFE66D" fill-opacity="0.14" stroke="#FFE66D" stroke-opacity="0.42"/>
+    <text x="468" y="367" fill="#FFF2A8">Prototype</text>
+  </g>
+</svg>
