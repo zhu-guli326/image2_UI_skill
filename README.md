@@ -30,6 +30,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-pink.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 [![Cursor](https://img.shields.io/badge/For-Cursor-ff69b4?style=for-the-badge)](https://cursor.sh)
+![Codex Skill](https://img.shields.io/badge/For-Codex-111111?style=for-the-badge)
 
 </div>
 
@@ -135,7 +136,7 @@ AI 分析:
 ## 🚀 快速开始
 
 ```markdown
-1️⃣  安装 Skill 到你的 Cursor 项目
+1️⃣  安装 Skill 到 Codex skills 目录或 Cursor 项目
 2️⃣  上传 UI 参考图
 3️⃣  发送指令：
 ```
@@ -145,6 +146,87 @@ AI 分析:
 > 💬 **"把这个 UI 转成代码"**
 >
 > 💬 **"提取页面中的图片资产"**
+
+---
+
+## 🧭 Codex 使用流程
+
+### Step 1: 安装到 Codex
+
+将本仓库放到 Codex 的 skills 目录，并保持文件夹名和 `SKILL.md` 里的 `name` 一致：
+
+```powershell
+git clone https://github.com/zhu-guli326/image2_UI_skill.git "$env:USERPROFILE\.codex\skills\image-to-ui-skill"
+```
+
+macOS / Linux 可使用：
+
+```bash
+git clone https://github.com/zhu-guli326/image2_UI_skill.git "${CODEX_HOME:-$HOME/.codex}/skills/image-to-ui-skill"
+```
+
+安装后重新打开 Codex 会话，或在新会话中使用这个 skill。
+
+### Step 2: 触发 Skill
+
+在 Codex 对话里上传 UI 截图、设计稿或 App 页面参考图，然后明确点名 skill：
+
+```text
+Use $image-to-ui-skill 分析这张 UI 参考图，先给前期审查，不要立刻生成图片。
+```
+
+也可以直接要求进入实现：
+
+```text
+Use $image-to-ui-skill 把这组 App 截图做成可点击 React 原型。先列出图片资产清单，需要生成的资产确认后再继续。
+```
+
+如果 skill 已安装且请求语义足够明确，Codex 也会根据 `SKILL.md` 的 description 自动触发。
+
+### Step 3: Codex 执行节奏
+
+```text
+上传参考图
+  ↓
+Codex 读取 image-to-ui-skill
+  ↓
+前期审查：布局、字体、图片资产、版权/品牌风险
+  ↓
+输出资产清单：槽位尺寸、导出尺寸、提示词、后处理、目标路径
+  ↓
+确认关键问题，或按用户要求直接继续
+  ↓
+生成/处理图片资产，并把文字、按钮、表单、导航继续用代码实现
+  ↓
+集成到前端项目，补齐主要点击路径
+  ↓
+桌面端/移动端截图验证，并与原图对比修正
+```
+
+### Step 4: 推荐 Prompt
+
+```text
+Use $image-to-ui-skill 分析这个首页截图，告诉我哪些地方用代码做，哪些地方需要生成图片资产。
+```
+
+```text
+Use $image-to-ui-skill 根据这张移动端 UI 截图实现一个可点击原型，保留真实文本，不要把按钮文字生成进图片。
+```
+
+```text
+Use $image-to-ui-skill 提取这个页面里的首屏图、产品抠图和卡片插画需求，生成资产清单和 Image2 提示词。
+```
+
+### Step 5: 交付物
+
+Codex 最终应交付：
+
+- 前期审查文档
+- 图片资产清单和 Image2 提示词
+- 生成或后处理后的图片资产路径
+- 前端代码改动和可运行页面
+- 桌面端/移动端渲染检查结果
+- 与原始参考图的主要差异、已修正项和剩余取舍
 
 ---
 

@@ -1,4 +1,4 @@
 interface:
   display_name: "UI Image2 资产规划"
   short_description: "分析 UI 图，规划并回填生图资产"
-  default_prompt: "Use $ui-image2-asset-planner 分析这些 UI 参考图，规划需要生成的图片资产，并集成回界面。"
+  default_prompt: "Use $image-to-ui-skill 分析这些 UI 参考图，规划需要生成的图片资产，并集成回界面。"
