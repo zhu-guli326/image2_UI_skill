@@ -53,10 +53,8 @@ git clone https://github.com/zhu-guli326/image2_UI_skill.git "${CODEX_HOME:-$HOM
 最通用的说法：
 
 ```text
-使用 image-to-ui-skill，参考我上传的图，完成[任务类型]。
-目标是[高保真复刻 / 风格参考]。
-必须真实调用 image2 生图的区域：[区域A]、[区域B]、[区域C]。
-保留[文字 / 按钮 / 导航 / 表单]为代码实现。
+使用 image-to-ui-skill，参考我上传的图，按参考图高度匹配还原，完成[任务类型]。
+需要真实调用 image2 生图，并自动判断哪些区域应该生成位图、哪些区域应该保留为代码实现。
 输出[HTML/CSS/JS / React / Vue / 其他技术栈]。
 直接开始，不用先问我。
 ```
