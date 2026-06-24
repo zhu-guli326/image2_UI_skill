@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dream Home UI Replica</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="scene" aria-label="Dream home app UI replica">
+      <section class="phone phone-home" aria-label="Home screen">
+        <header class="profile-row">
+          <img class="avatar" src="./assets/avatar-gen.png" alt="Andrew Williams avatar" />
+          <div>
+            <strong>Andrew Williams</strong>
+            <span>California, USA</span>
+          </div>
+          <button class="icon-button menu-button" type="button" aria-label="Open menu">
+            <span></span><span></span><span></span>
+          </button>
+        </header>
+
+        <h1>Find Your<br />Dream Home</h1>
+
+        <div class="search-pill" role="search">
+          <span class="magnifier"></span>
+          <span>Search...</span>
+          <button type="button" aria-label="Clear search">x</button>
+        </div>
+
+        <div class="section-row">
+          <h2>Recommended</h2>
+          <button type="button">See All</button>
+        </div>
+
+        <div class="property-strip">
+          <article class="mini-card selected" tabindex="0">
+            <img src="./assets/house-card-gen.png" alt="Modern exterior of Alameda Avenue" />
+            <button class="rating" type="button">4.9</button>
+            <div class="mini-card-body">
+              <strong>Alameda Avenue</strong>
+              <span>2035 Berkeley, CA 94710</span>
+              <div class="price-line">
+                <b>$1,932</b>
+                <button type="button">AR View</button>
+              </div>
+              <small>Per Month</small>
+            </div>
+          </article>
+
+          <article class="mini-card side-card" tabindex="0">
+            <img src="./assets/house-wide-gen.png" alt="Modern residence side view" />
+            <div class="mini-card-body">
+              <strong>Rua House</strong>
+              <span>Glass Residence</span>
+              <b>$1,571</b>
+            </div>
+          </article>
+        </div>
+
+        <nav class="bottom-nav" aria-label="Primary navigation">
+          <button class="active" type="button" aria-label="Home">
+            <span class="home-icon"></span>
+          </button>
+          <button type="button" aria-label="Saved"><span class="bookmark-icon"></span></button>
+          <button type="button" aria-label="Messages"><span class="chat-icon"></span></button>
+          <button type="button" aria-label="Profile"><span class="person-icon"></span></button>
+        </nav>
+      </section>
+
+      <section class="phone phone-detail" aria-label="Property detail screen">
+        <button class="icon-button back left" type="button" aria-label="Back">←</button>
+        <button class="ar-chip" type="button">AR View</button>
+        <div class="detail-image">
+          <img src="./assets/house-wide-gen.png" alt="Alameda Avenue exterior" />
+          <button class="rating" type="button">4.9</button>
+        </div>
+        <h2>Alameda Avenue</h2>
+        <p class="muted">2035 Berkeley, CA 94710</p>
+        <div class="agent-card">
+          <img class="avatar" src="./assets/avatar-gen.png" alt="Joseph Robinson avatar" />
+          <div>
+            <strong>Joseph Robinson</strong>
+            <span>Landlord</span>
+          </div>
+          <button class="call-button" type="button" aria-label="Call Joseph Robinson">⌕</button>
+        </div>
+        <div class="specs">
+          <span>04 Bedrooms</span>
+          <span>02 Bathrooms</span>
+          <span>01 Garage</span>
+        </div>
+        <p class="description">
+          Classic garden complex in prime Berkeley. Well maintained 5 unit building with
+          copper plumbing.
+        </p>
+        <footer class="booking-row">
+          <div><strong>$1,932</strong><span>Per Month</span></div>
+          <button type="button">Book Now</button>
+        </footer>
+      </section>
+
+      <section class="phone phone-tour" aria-label="Interior AR tour screen">
+        <img class="tour-photo" src="./assets/interior-stairs-temp.png" alt="Interior staircase" />
+        <button class="icon-button back tour-back" type="button" aria-label="Back">←</button>
+        <button class="annotation top-note" type="button">Abstract Figurative<br />Painting</button>
+        <button class="annotation step-note" type="button">White Marble<br />Stairs</button>
+        <button class="scan-dot" type="button" aria-label="Scan point"></button>
+        <div class="room-tabs" aria-label="Room selector">
+          <button type="button">
+            <img src="./assets/room-thumbnails-gen.png" alt="" />
+            <span>Kitchen</span>
+          </button>
+          <button class="active" type="button">
+            <img src="./assets/room-thumbnails-gen.png" alt="" />
+            <span>Living Room</span>
+          </button>
+          <button type="button">
+            <img src="./assets/room-thumbnails-gen.png" alt="" />
+            <span>Bedroom</span>
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <script src="./script.js"></script>
+  </body>
+</html>

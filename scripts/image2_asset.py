@@ -1,101 +1,36 @@
 #!/usr/bin/env python3
-"""Generate UI bitmap assets with image2-first, OpenRouter ICU fallback.
+"""Fallback API wrapper for image2 UI bitmap assets.
 
-This wrapper gives the image-to-ui skill a concrete, repeatable command:
+The skill's default image2 path is the local `imagegen` skill. Use this script
+only after local imagegen is unavailable or fails and an API fallback is allowed.
 
-1. Try a project/native image2 command when available.
-2. If native image2 is unavailable or fails, call the installed
-   openrouter-icu-image skill with model gpt-image-2.
+This wrapper delegates to the local imagegen CLI fallback:
 
-The fallback is intentional for this user's Codex setup; it is not treated as
-an unrelated substitute.
+    $CODEX_HOME/skills/.system/imagegen/scripts/image_gen.py
+
+It keeps the image-to-ui skill on a repeatable local API path without inventing
+one-off SDK calls.
 """
 
 from __future__ import annotations
 
 import argparse
 import os
-import shlex
-import shutil
 import subprocess
 import sys
 from pathlib import Path
 
 
-def _bool(value: str | bool | None) -> str | None:
-    if value is None:
-        return None
-    if isinstance(value, bool):
-        return "true" if value else "false"
-    lowered = value.strip().lower()
-    if lowered in {"1", "true", "yes", "on"}:
-        return "true"
-    if lowered in {"0", "false", "no", "off"}:
-        return "false"
-    raise argparse.ArgumentTypeError("expected true/false")
-
-
-def _skill_root() -> Path:
-    return Path(__file__).resolve().parents[1]
-
-
-def _fallback_cli() -> Path:
-    configured = os.environ.get("OPENROUTER_ICU_IMAGE_CLI")
+def _imagegen_cli() -> Path:
+    configured = os.environ.get("IMAGEGEN_CLI")
     if configured:
         return Path(configured)
-    return _skill_root().parent / "openrouter-icu-image" / "scripts" / "openrouter_icu_image.py"
+    codex_home = Path(os.environ.get("CODEX_HOME", Path.home() / ".codex"))
+    return codex_home / "skills" / ".system" / "imagegen" / "scripts" / "image_gen.py"
 
 
-def _image2_base_command() -> list[str] | None:
-    configured = os.environ.get("IMAGE2_COMMAND")
-    if configured:
-        return shlex.split(configured)
-    executable = shutil.which("image2")
-    if executable:
-        return [executable]
-    return None
-
-
-def _native_command(args: argparse.Namespace) -> list[str] | None:
-    base = _image2_base_command()
-    if not base:
-        return None
-
-    # If IMAGE2_COMMAND contains placeholders, treat it as a full template.
-    template = os.environ.get("IMAGE2_COMMAND")
-    if template and any(token in template for token in ("{prompt}", "{output}", "{size}")):
-        values = {
-            "prompt": args.prompt,
-            "output": str(args.output),
-            "size": args.size,
-            "quality": args.quality,
-            "output_format": args.output_format,
-        }
-        return shlex.split(template.format(**values))
-
-    command = [*base, args.action]
-    if args.action == "edit":
-        for image in args.image:
-            command.extend(["--image", str(image)])
-    command.extend(
-        [
-            "--prompt",
-            args.prompt,
-            "--output",
-            str(args.output),
-            "--size",
-            args.size,
-            "--quality",
-            args.quality,
-            "--output-format",
-            args.output_format,
-        ]
-    )
-    return command
-
-
-def _fallback_command(args: argparse.Namespace) -> list[str]:
-    cli = _fallback_cli()
+def _api_command(args: argparse.Namespace) -> list[str]:
+    cli = _imagegen_cli()
     command = [
         sys.executable,
         str(cli),
@@ -108,7 +43,7 @@ def _fallback_command(args: argparse.Namespace) -> list[str]:
         [
             "--prompt",
             args.prompt,
-            "--output",
+            "--out",
             str(args.output),
             "--model",
             args.model,
@@ -118,16 +53,10 @@ def _fallback_command(args: argparse.Namespace) -> list[str]:
             args.quality,
             "--output-format",
             args.output_format,
-            "--stream",
-            args.stream,
-            "--partial-images",
-            str(args.partial_images),
         ]
     )
-    if args.events_output:
-        command.extend(["--events-output", str(args.events_output)])
-    if args.save_partials:
-        command.append("--save-partials")
+    if args.force:
+        command.append("--force")
     return command
 
 
@@ -140,18 +69,18 @@ def _run(command: list[str], dry_run: bool) -> int:
     return completed.returncode
 
 
-def _fallback_ready() -> tuple[bool, str]:
-    cli = _fallback_cli()
+def _api_ready() -> tuple[bool, str]:
+    cli = _imagegen_cli()
     if not cli.exists():
-        return False, f"OpenRouter ICU fallback CLI not found: {cli}"
-    if not (os.environ.get("OPENROUTER_ICU_API_KEY") or os.environ.get("OPENAI_API_KEY")):
-        return False, "OPENROUTER_ICU_API_KEY or OPENAI_API_KEY is required for fallback"
+        return False, f"local imagegen API CLI not found: {cli}"
+    if not os.environ.get("OPENAI_API_KEY"):
+        return False, "OPENAI_API_KEY is required for local API fallback"
     return True, "ok"
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Generate UI image assets with image2 first and OpenRouter ICU gpt-image-2 fallback."
+        description="Fallback local API wrapper for image2 UI assets after local imagegen fails."
     )
     subparsers = parser.add_subparsers(dest="action", required=True)
 
@@ -162,11 +91,7 @@ def parse_args() -> argparse.Namespace:
         sub.add_argument("--quality", default="medium", choices=["low", "medium", "high", "auto"])
         sub.add_argument("--output-format", "--output_format", dest="output_format", default="png", choices=["png", "jpeg", "webp"])
         sub.add_argument("--model", default="gpt-image-2")
-        sub.add_argument("--stream", nargs="?", const="true", default="true", type=_bool)
-        sub.add_argument("--partial-images", "--partial_images", dest="partial_images", default=2, type=int)
-        sub.add_argument("--events-output", "--events_output", dest="events_output", type=Path)
-        sub.add_argument("--save-partials", "--save_partials", dest="save_partials", action="store_true")
-        sub.add_argument("--prefer", choices=["auto", "image2", "fallback"], default="auto")
+        sub.add_argument("--force", action="store_true")
         sub.add_argument("--dry-run", action="store_true")
 
     generate = subparsers.add_parser("generate", help="Generate an image from a text prompt.")
@@ -183,29 +108,14 @@ def main() -> int:
     args = parse_args()
     args.output.parent.mkdir(parents=True, exist_ok=True)
 
-    if args.prefer != "fallback":
-        native = _native_command(args)
-        if native:
-            print("[image2-asset] trying native image2")
-            native_code = _run(native, args.dry_run)
-            if native_code == 0:
-                print("[image2-asset] channel=native-image2")
-                return 0
-            print(f"[image2-asset] native image2 failed with exit code {native_code}; falling back")
-        elif args.prefer == "image2":
-            print("[image2-asset] native image2 requested but no image2 command is available")
-            return 2
-        else:
-            print("[image2-asset] native image2 unavailable; using fallback")
-
-    ready, reason = _fallback_ready()
+    ready, reason = _api_ready()
     if not ready and not args.dry_run:
-        print(f"[image2-asset] fallback unavailable: {reason}", file=sys.stderr)
+        print(f"[image2-asset] local API fallback unavailable: {reason}", file=sys.stderr)
         return 3
 
-    fallback = _fallback_command(args)
-    print("[image2-asset] channel=openrouter-icu-gpt-image-2")
-    return _run(fallback, args.dry_run)
+    command = _api_command(args)
+    print("[image2-asset] channel=local-api-imagegen-cli")
+    return _run(command, args.dry_run)
 
 
 if __name__ == "__main__":

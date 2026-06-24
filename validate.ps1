@@ -61,10 +61,10 @@ Assert-True ($skill.Contains("name: image-to-ui-skill")) "SKILL.md frontmatter m
 Assert-True ($skill.Contains("description:")) "SKILL.md frontmatter must contain description"
 Assert-True ($skill.Contains("references/image2-entrypoint.md")) "SKILL.md should reference image2-entrypoint.md"
 Assert-True ($skill.Contains("references/asset-manifest-and-prompts.md")) "SKILL.md should reference asset-manifest-and-prompts.md"
-Assert-True ($skill.Contains("imagegen")) "SKILL.md should explicitly mention imagegen boundaries"
-Assert-True ($skill.Contains("scripts/image2_asset.py")) "SKILL.md should document the image2 fallback wrapper"
-Assert-True ($skill.Contains("openrouter-icu-gpt-image-2")) "SKILL.md should require reporting the OpenRouter ICU fallback channel"
-Assert-True ($skill.Contains("OPENAI_API_KEY")) "SKILL.md should document fallback credential boundaries"
+Assert-True ($skill.Contains("本地 imagegen")) "SKILL.md should require local imagegen as the default image2 path"
+Assert-True ($skill.Contains("scripts/image2_asset.py")) "SKILL.md should document the local API fallback wrapper"
+Assert-True ($skill.Contains("local-api-imagegen-cli")) "SKILL.md should require reporting the local API fallback channel"
+Assert-True ($skill.Contains("OPENAI_API_KEY")) "SKILL.md should document local API fallback credential boundaries"
 Assert-True ($skill.Contains("Dynamic Island")) "SKILL.md should keep iOS app preview requirements"
 Assert-File "scripts\image2_asset.py" | Out-Null
 
