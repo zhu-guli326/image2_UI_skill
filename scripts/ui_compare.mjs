@@ -3,6 +3,7 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import crypto from "node:crypto";
 import { pathToFileURL } from "node:url";
 import { spawnSync } from "node:child_process";
 
@@ -95,6 +96,7 @@ function readImageInfo(file) {
     width: size?.width ?? null,
     height: size?.height ?? null,
     bytes: buffer.length,
+    hash: crypto.createHash("sha256").update(buffer).digest("hex").slice(0, 12),
     mime: mimeType(ext),
     dataUri: `data:${mimeType(ext)};base64,${buffer.toString("base64")}`,
   };
@@ -132,7 +134,7 @@ function mimeType(ext) {
 
 function buildHtml({ title, referencePath, actualPath, referenceInfo, actualInfo }) {
   const ratioDelta = aspectRatioDelta(referenceInfo, actualInfo);
-  const generatedAt = new Date().toISOString();
+  const compareId = `${referenceInfo.hash}-${actualInfo.hash}`;
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -172,7 +174,7 @@ function buildHtml({ title, referencePath, actualPath, referenceInfo, actualInfo
     <header>
       <div>
         <h1>${escapeHtml(title)}</h1>
-        <div class="stamp">Generated ${escapeHtml(generatedAt)}</div>
+        <div class="stamp">Input hash ${escapeHtml(compareId)}</div>
       </div>
       <div class="stamp">Aspect ratio delta: ${ratioDelta == null ? "unknown" : `${ratioDelta.toFixed(2)}%`}</div>
     </header>
