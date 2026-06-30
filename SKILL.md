@@ -189,6 +189,7 @@ Youtoken/OpenRouter ICU fallback 需要 `YOUTOKEN_IMAGE_API_KEY`、`OPENROUTER_I
 - 不要手搓复杂 SVG 路径当作图标库替代品；只有库内没有、但必须复刻的极简单系统几何符号，才允许放进同一个 `IconRegistry` / SVG sprite 作为本地补位，不能散落在业务组件中。
 - 自定义品牌符号、复杂插画式徽章、主题贴纸、地图标记、手绘装饰或无法用图标库稳定表达的图形，才进入 image2 资产候选；这些资产也不能承担返回、设置、导航、播放等交互图标职责。
 - 区分 **设备产品图 / 物体缩略图** 和 **UI glyph**：设备卡片里较大的台灯、摄像头、音箱、电视、空调外机等真实物体展示，应作为 `device-product-image` 或 `object-cutout` 图片资产处理，可以用 image2 生成；不要用图标库大图标冒充产品图。只有导航、状态、按钮、开关、tab、quick action 和小尺寸语义标识才属于 code icon。
+- 判断图片是不是 icon 时按角色而不是名称：先看它是否在状态栏、导航、按钮、tab、播放器、quick action、开关或小尺寸状态符号中承担交互/语义 glyph；再看它是否是卡片主图、设备外观、商品/人物/物体抠图、照片缩略图或场景图。`camera`、`lamp`、`speaker` 这类词在小按钮里是 code icon，在设备卡片主视觉里是 image2 图片资产。
 - 图标要做视觉居中而非机械居中：播放三角、箭头、Wi-Fi、电池、信号等小图要放大检查，避免看起来像字母、乱码或伪文字。
 
 #### 图标系统落地
@@ -209,7 +210,7 @@ image2 很容易把小图标画成错位、伪字母或乱码。复刻 App、仪
 - **禁止用 image2 生成**：iOS/Android 状态栏、电量、Wi-Fi、信号、返回箭头、关闭、设置齿轮、三点菜单、加号/减号、电源、播放/暂停/快进、底部导航图标、分段控件图标、quick action 图标、设备类型小图标、开关、状态点、进度条端点和 icon-only button。
 - **必须用代码渲染**：上述所有 glyph、icon button、状态栏和导航 chrome。优先用项目图标库；没有合适图标时，用同一套线宽的内联 SVG 几何形或 CSS 几何形，并放大检查视觉居中。
 - **必须统一调用**：状态栏、返回箭头、菜单、播放器、底部 tab、quick action、开关、设备小图标等 UI glyph 必须从同一个 `UiIcon` / `IconRegistry` / SVG sprite 出来，背后只允许使用一套图标库。
-- **智能家居参考图拆分**：客厅照片、设备产品图、材质背景、真实物体缩略图可以是 image2 候选；温度/电量/功耗文字、状态栏、返回/更多/加号、播放器控制、quick action、底部导航、卡片标签、小型状态符号和开关状态必须是代码。设备卡片里用于展示真实设备外观的大图不是 icon，不能用 glyph 替代。
+- **智能家居参考图拆分**：客厅照片、设备产品图、材质背景、真实物体缩略图、产品/物体抠图可以是 image2 候选；温度/电量/功耗文字、状态栏、返回/更多/加号、播放器控制、quick action、底部导航、卡片标签、小型状态符号和开关状态必须是代码。设备卡片里用于展示真实设备外观的大图不是 icon，不能用 glyph 替代，也不能被 validator 当作 raster icon 误报。
 - image2 提示词必须显式排除 UI glyph：`no icons, no UI symbols, no system status bar, no battery/Wi-Fi/signal glyphs, no arrows, no gear, no menu dots, no plus/minus, no playback controls, no buttons, no labels, no text, no logo, no watermark`。
 - 最终截图必须放大检查状态栏、底部导航、工具栏、卡片内小图标和 icon-only buttons；如果任何 glyph 像错位字母、乱码、伪文字或模型生成残影，先改成代码渲染再交付。
 
@@ -256,7 +257,7 @@ image2-ui validate ./demo/my-output --reference ./reference.png
    - **代码渲染 UI**：布局、文字、按钮、卡片、简单渐变、边框、阴影、开关、表单、图表和重复组件。
    - **代码图标与 UI chrome**：状态栏、导航、返回/关闭/菜单、播放器、底部 tab、quick action、设备小图标和普通功能图标，优先使用项目已有图标库或统一矢量库。只有当图标是自定义插画式标记，且设计系统无法表达时，才进入图片资产候选。
    - **image-to-ui 图片资产**：照片、插画、产品渲染图、角色、复杂纹理、复杂首屏背景、真实物体、App 展示图、装饰性位图，以及用代码复刻会脆弱或低质的视觉内容。
-   - **抠图资产**：需要透明 PNG/WebP、遮罩或去背景的前景人物、产品、物体。
+   - **抠图资产**：需要透明 PNG/WebP、遮罩或去背景的前景人物、产品、物体；设备卡片主图、商品图和物体缩略图优先标成 `device-product-image`、`product-cutout`、`object-cutout` 或 `object-thumbnail`，不要归入 code icon。
    - **图标 coverage 表**：列出每个 UI glyph 的语义、来源库/SVG id、尺寸、stroke、容器、`aria-label` 和状态色，保证图标是一个系统而不是零散拼贴。
 3. 先输出前期审查文档，说明哪些元素好还原、哪些元素不好还原、哪些需要生成图片、哪些需要用户确认；如果用户已经明确要求“直接做”或“直接复刻”，可以跳过等待，但仍要先在内部完成这一步拆解。
 4. 等用户确认关键问题后，再进入生图；如果用户明确要求“直接继续”，可以用合理假设继续，但要记录假设。

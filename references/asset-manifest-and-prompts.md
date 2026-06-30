@@ -30,6 +30,7 @@
 | 首屏主视觉 | image2 | 困难 | 依赖摄影/插画质感 | 是 |
 | logo | 原素材 | 不建议直接生成 | 需要品牌一致性 | 是 |
 | 状态栏 / 返回 / 菜单 / 底部导航图标 | 代码图标 | 容易 | 小 glyph 用生图容易错位或变伪文字，必须由代码层渲染 | 否 |
+| 设备卡片产品图 / 物体抠图 | image2 图片资产 | 中等 | 是展示真实物体外观的图片槽位，不是 UI glyph | 否 |
 
 ### 图片资产候选
 
@@ -69,6 +70,9 @@
 - `background-plate`
 - `photo-slot`
 - `object-cutout`
+- `product-cutout`
+- `foreground-cutout`
+- `object-thumbnail`
 - `device-product-image`
 - `background-visual`
 - `code-icon`
@@ -77,10 +81,11 @@
 
 类型判定：
 
-- `photo-slot`、`object-cutout`、`device-product-image`、`background-visual` 通常可以进入 image2。
+- `photo-slot`、`object-cutout`、`product-cutout`、`foreground-cutout`、`object-thumbnail`、`device-product-image`、`background-visual` 通常可以进入 image2。
 - `code-icon` 和 `code-ui-chrome` 必须用代码、图标库、内联 SVG 几何形或 CSS 实现。
 - App / 智能家居 / 设备控制参考图中，状态栏、电量/Wi-Fi/信号、返回、关闭、菜单、加减号、电源、播放器、bottom tab、quick action、设备小 glyph、开关和状态点都归类为 `code-icon` 或 `code-ui-chrome`。
 - 设备卡片里较大的台灯、摄像头、音箱、电视、空调等真实设备外观，不属于 `code-icon`；它们应归类为 `device-product-image` 或 `object-cutout`，可以进入 image2 资产清单。
+- `camera`、`lamp`、`speaker`、`tv` 等名称本身不决定类型：在按钮、tab、状态栏、quick action 里是 `code-icon`；在设备卡片主视觉、商品格、场景缩略图里是 `device-product-image`、`product-cutout` 或 `object-thumbnail`。
 
 图标 coverage 表建议：
 
@@ -185,8 +190,9 @@ image2-ui validate <demo-dir> --reference <reference-image>
 - `single-family-palette`：CSS 色彩集中在紫蓝、灰蓝、奶油、沙色等单一 AI 常见色系。
 - `nested-panel`：卡片/面板套卡片，导致层级臃肿。
 - `low-contrast`：关键文本和背景对比不足。
-- `generated-ui-glyph-asset`：图片文件名像状态栏、导航、菜单、按钮、播放器或普通 UI 图标，通常说明把 code-icon 误交给了 image2。
-- `image-icon-in-control`：按钮、导航、工具栏或 tab 中使用位图 `<img>` 做小图标，优先改成图标库或 SVG/CSS 几何。
+- `generated-ui-glyph-asset`：图片文件名和上下文像状态栏、导航、菜单、按钮、播放器或普通 UI 图标，通常说明把 code-icon 误交给了 image2；不适用于 `device-product-image`、`product-cutout`、`object-cutout`、`object-thumbnail` 这类展示图片。
+- `image-icon-in-control`：按钮、导航、工具栏或 tab 中使用位图 `<img>` 做小图标，优先改成图标库或 SVG/CSS 几何；如果 `<img>` 是商品/设备/人物抠图的展示内容，不按这个规则处理。
+- `cutout-asset-missing-alt`：产品图、物体抠图或设备外观图缺少 alt。若图片有信息意义，补有用 alt；若纯装饰，显式写 `alt=""`。
 - `icon-tile-stack`：圆角方块 icon 堆在标题上，是常见 AI feature-card 模板；除非参考图明确如此，否则改成侧向图标、真实图片或无图标信息层级。
 - `mixed-icon-tech`：同一页面混用多套图标技术，通常会导致线宽、对齐和语义不一致。
 - `text-overflow`：文本超出按钮、卡片、导航或窄屏容器。

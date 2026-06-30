@@ -11,6 +11,12 @@ const APPROVED_ICON_PACKAGES = new Set([
   "@tabler/icons-react",
 ]);
 
+const UI_GLYPH_ROLE_RE = /(?:^|[-_\s.])(?:icon|glyph|status|statusbar|navbar|nav|tabbar|toolbar|battery|wifi|signal|back|close|settings|gear|menu|dots|kebab|tab|button|btn|quick-action|quick|action|plus|minus|power|play|pause|next|prev|previous|volume|toggle|switch|control|chevron|arrow)(?:[-_\s.]|$)/i;
+const UI_CONTROL_CONTEXT_RE = /(?:^|[-_\s.])(?:status|statusbar|navbar|nav|tabbar|toolbar|button|btn|tab|quick-action|quick|action|control|toggle|switch|menu|player|playback)(?:[-_\s.]|$)/i;
+const VISUAL_ASSET_ROLE_RE = /(?:^|[-_\s.])(?:photo|cutout|hero|visual|background|texture|thumb|thumbnail|screenshot|reference|preview|demo|mockup|foreground|portrait|avatar|scene|render|rendering|product-image|product-cutout|object-cutout|foreground-cutout|object-thumbnail|device-product)(?:[-_\s.]|$)/i;
+const VISUAL_CONTEXT_RE = /(?:^|[-_\s.])(?:product|object|room|living|device|appliance)(?:[-_\s.]|$)/i;
+const PHYSICAL_OBJECT_NAME_RE = /(?:^|[-_\s.])(?:lamp|camera|speaker|tv|television|air-conditioner|aircon|conditioner|thermostat|router|plug|lock|sensor|chair|sofa|table|phone|watch|shoe|bag|bottle|plant)(?:[-_\s.]|$)/i;
+
 const args = process.argv.slice(2);
 const targetArg = args.find((arg) => !arg.startsWith("-"));
 const jsonMode = args.includes("--json");
@@ -161,6 +167,14 @@ function runStaticHtmlDesignChecks(html, file, rootDir) {
 
   runIconSystemStaticChecks(html, file, rootDir);
 
+  const imagePattern = /<img\b([^>]*)>/gi;
+  for (const match of html.matchAll(imagePattern)) {
+    const attrs = match[1] || "";
+    if (isCutoutOrProductAssetName(attrs) && !/\balt\s*=/i.test(attrs)) {
+      add("warn", "cutout-asset-missing-alt", `Product/cutout image appears to lack alt text in ${path.relative(rootDir, file)}. Use useful alt text for meaningful product imagery, or alt="" when decorative.`, file);
+    }
+  }
+
   const interactivePattern = /<(button|a)\b([^>]*)>([\s\S]*?)<\/\1>/gi;
   for (const match of html.matchAll(interactivePattern)) {
     const tag = match[1];
@@ -190,7 +204,9 @@ function runIconSystemStaticChecks(html, file, rootDir) {
   const iconTechs = [];
   if (/<svg\b/i.test(html)) iconTechs.push("inline-svg");
   if (/<i\b[^>]*class=["'][^"']*(?:icon|fa-|material-icons|tabler|phosphor|lucide)/i.test(html)) iconTechs.push("icon-font-or-class");
-  if (/<img\b[^>]*(?:icon|glyph|battery|wifi|signal|settings|menu|play|pause|tab|button)/i.test(html)) iconTechs.push("raster-icon");
+  const rasterIconImages = [...html.matchAll(/<img\b([^>]*)>/gi)]
+    .filter((match) => classifyRasterAssetRole(match[1] || "") === "ui-glyph");
+  if (rasterIconImages.length > 0) iconTechs.push("raster-icon");
   if (/data-icon=|class=["'][^"']*(?:lucide|phosphor|tabler|radix|iconify)/i.test(html)) iconTechs.push("icon-library");
   const uniqueTechs = [...new Set(iconTechs)];
   if (uniqueTechs.length >= 3) {
@@ -280,28 +296,54 @@ function runImageAssetNameChecks(imageFiles, rootDir) {
   for (const file of imageFiles) {
     if (/\.svg$/i.test(file)) continue;
     const name = path.basename(file).toLowerCase();
-    if (!isUiGlyphName(name) || isVisualAssetName(name)) continue;
+    if (classifyRasterAssetRole(name) !== "ui-glyph") continue;
     add(
       "warn",
       "generated-ui-glyph-asset",
-      `Raster asset filename looks like a generated UI glyph: ${path.relative(rootDir, file)}. Status bars, nav icons, playback controls, buttons, toggles, and tiny device glyphs should be code-rendered.`,
+      `Raster asset filename looks like a generated UI glyph: ${path.relative(rootDir, file)}. Status bars, nav icons, playback controls, buttons, toggles, and tiny device glyphs should be code-rendered. Product/object/cutout imagery such as device-product-image or object-cutout is allowed as a visual asset.`,
       file,
     );
   }
 }
 
 function isUiGlyphName(name) {
-  return /(?:^|[-_])(?:icon|glyph|status|statusbar|navbar|nav|battery|wifi|signal|back|close|settings|gear|menu|dots|kebab|tab|button|btn|plus|minus|power|play|pause|next|prev|volume|toggle|switch|control)(?:[-_.]|$)/i.test(name);
+  return UI_GLYPH_ROLE_RE.test(normalizeAssetRoleText(name));
 }
 
-function isVisualAssetName(name) {
-  return /(?:photo|product|object|cutout|hero|visual|background|texture|thumb|thumbnail|screenshot|reference|preview|demo|room|living|device|mockup)/i.test(name);
+function isCutoutOrProductAssetName(name) {
+  const normalized = normalizeAssetRoleText(name);
+  return VISUAL_ASSET_ROLE_RE.test(normalized) || VISUAL_CONTEXT_RE.test(normalized) || PHYSICAL_OBJECT_NAME_RE.test(normalized);
+}
+
+function classifyRasterAssetRole(text) {
+  const normalized = normalizeAssetRoleText(text);
+  const hasVisualSlot = VISUAL_ASSET_ROLE_RE.test(normalized);
+  const hasVisualContext = VISUAL_CONTEXT_RE.test(normalized);
+  const hasPhysicalObject = PHYSICAL_OBJECT_NAME_RE.test(normalized);
+  const isUiGlyph = isUiGlyphName(normalized);
+  const hasControlContext = UI_CONTROL_CONTEXT_RE.test(normalized);
+
+  if (hasVisualSlot && (!isUiGlyph || !hasControlContext)) return "visual-asset";
+  if (isUiGlyph) return "ui-glyph";
+  if (hasVisualSlot || hasVisualContext || hasPhysicalObject) return "visual-asset";
+  return "unknown";
+}
+
+function normalizeAssetRoleText(text) {
+  return String(text || "")
+    .replace(/([a-z])([A-Z])/g, "$1-$2")
+    .replace(/[/"'=<>:()]+/g, " ")
+    .toLowerCase();
 }
 
 function likelyImageIconInControl(imgAttrs, body) {
   const combined = `${imgAttrs || ""} ${body || ""}`.toLowerCase();
-  if (/(?:logo|brand|avatar|photo|product|object|thumb|thumbnail|preview|hero)/i.test(combined)) return false;
-  return /(?:icon|glyph|status|battery|wifi|signal|back|close|settings|gear|menu|dots|kebab|tab|button|btn|plus|minus|power|play|pause|next|prev|volume|toggle|switch|control|\.png|\.jpe?g|\.webp|\.gif|\.avif)/i.test(combined);
+  const role = classifyRasterAssetRole(combined);
+  if (role === "visual-asset") return false;
+  if (role === "ui-glyph") return true;
+  const visibleText = stripTags(body).trim();
+  const onlyImageControl = /<img\b/i.test(body) && !visibleText && !/<(?:svg|i)\b/i.test(body);
+  return onlyImageControl && !isCutoutOrProductAssetName(combined);
 }
 
 function stripTags(html) {

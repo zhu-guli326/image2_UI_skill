@@ -2,7 +2,13 @@
 
 用于 App、产品 UI、智能家居、播放器、设备控制、Dashboard 的 code icon / UI glyph 规划。目标是让状态栏、返回箭头、菜单、播放器、底部 tab、quick action、开关、小型语义状态符号都来自一套统一代码图标系统，而不是 image2 小图或零散 SVG。
 
-重要边界：设备卡片里的较大台灯、摄像头、音箱、电视、空调等 **设备产品图 / 物体缩略图** 不是 UI glyph，应作为 `device-product-image` 或 `object-cutout` 图片资产处理，可以用 image2 生成。不要用图标库的大 glyph 冒充真实设备图。
+重要边界：设备卡片里的较大台灯、摄像头、音箱、电视、空调等 **设备产品图 / 物体缩略图 / 产品抠图** 不是 UI glyph，应作为 `device-product-image`、`product-cutout`、`object-cutout` 或 `object-thumbnail` 图片资产处理，可以用 image2 生成。不要用图标库的大 glyph 冒充真实设备图。
+
+判断顺序：
+
+1. 如果元素位于状态栏、导航栏、工具栏、按钮、tab、播放器、quick action、开关或小尺寸状态标识中，并承担交互或语义提示职责，它是 code icon / UI glyph。
+2. 如果元素是卡片主图、商品/设备外观、人物/物体前景、照片缩略图、场景图或需要透明背景的展示图，它是 image asset / cutout，即使文件名或语义里有 `lamp`、`camera`、`speaker`、`tv`。
+3. 如果元素是品牌标记、插画徽章或地图标记，先判断是否为品牌/装饰资产；只有在它承担返回、设置、播放、导航等控件职责时，才按 UI glyph 处理。
 
 ## 1. 允许的统一外部图标库
 
@@ -94,7 +100,7 @@ export function UiIcon({ name, size = 20, weight = "regular", ...props }) {
 - 控制：plus、minus、power、play、pause、previous、next、volume、progress handle。
 - 底部 tab：home、rooms/devices、analytics/energy、profile/settings。
 - quick action：heat、cold/snowflake、fan/air、humid/droplet、schedule/timer。
-- 小型设备语义标识：lamp、camera、speaker、tv、air-conditioner、thermostat、router、plug、lock。若它们在卡片中承担真实产品外观展示，则改用图片资产而不是图标库 glyph。
+- 小型设备语义标识：lamp、camera、speaker、tv、air-conditioner、thermostat、router、plug、lock。若它们在卡片中承担真实产品外观展示、产品抠图或物体缩略图职责，则改用图片资产而不是图标库 glyph。
 - 状态：on/off dot、selected ring、disabled state、toggle knob。
 
 ## 4. Coverage 表模板
