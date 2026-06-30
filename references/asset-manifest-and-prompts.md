@@ -153,6 +153,7 @@
 生成并接回页面后，至少检查这些内容：
 
 - 页面真实文字没有乱码、截断或被遮挡
+- 小设备卡片、播放器、quick action 和 tile 内没有 8px 以下可见文本；如果必须保留位置、房间名、说明等元信息，优先放入 `aria-label`、title、详情页或 hover/focus 文案，不在卡片正面堆多行小字
 - 生成图片内部没有伪文字、logo、水印、额外 UI、状态栏、图标、按钮、tab、播放器、开关或状态点
 - 状态栏、电量/Wi-Fi/信号、返回、菜单、加减号、电源、播放器、bottom tab、quick action、小型设备语义标识都由代码层真实渲染，并在截图中视觉居中；设备产品图/物体缩略图使用真实图片资产，不用 glyph 冒充
 - 图片没有被拉伸、压扁、模糊或错误裁切
@@ -190,6 +191,7 @@ image2-ui validate <demo-dir> --reference <reference-image>
 - `single-family-palette`：CSS 色彩集中在紫蓝、灰蓝、奶油、沙色等单一 AI 常见色系。
 - `nested-panel`：卡片/面板套卡片，导致层级臃肿。
 - `low-contrast`：关键文本和背景对比不足。
+- `dense-micro-text`：卡片、设备 tile、播放器或 quick action 内有过小可见文本，容易在截图里变成乱码/伪字。优先删减可见元信息、提高字号、扩大卡片，或把位置/说明移动到辅助语义和详情层。
 - `generated-ui-glyph-asset`：图片文件名和上下文像状态栏、导航、菜单、按钮、播放器或普通 UI 图标，通常说明把 code-icon 误交给了 image2；不适用于 `device-product-image`、`product-cutout`、`object-cutout`、`object-thumbnail` 这类展示图片。
 - `image-icon-in-control`：按钮、导航、工具栏或 tab 中使用位图 `<img>` 做小图标，优先改成图标库或 SVG/CSS 几何；如果 `<img>` 是商品/设备/人物抠图的展示内容，不按这个规则处理。
 - `cutout-asset-missing-alt`：产品图、物体抠图或设备外观图缺少 alt。若图片有信息意义，补有用 alt；若纯装饰，显式写 `alt=""`。

@@ -1,194 +1,233 @@
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import { createRoot } from "react-dom/client";
 import { UiIcon } from "./UiIcon.jsx";
 import "./styles.css";
 
-const tabs = [
-  { id: "home", label: "Home", icon: "home" },
-  { id: "climate", label: "Climate", icon: "air" },
-  { id: "room", label: "Rooms", icon: "tv" },
+const roomFilters = ["Living Room", "Master Bedroom", "Kitchen"];
+
+const quickActions = [
+  { id: "heat", label: "Heat", icon: "thermometer" },
+  { id: "cold", label: "Cold", icon: "cold" },
+  { id: "air", label: "Air", icon: "air" },
+  { id: "humid", label: "Humid", icon: "droplet" },
 ];
 
-const devices = [
-  { name: "Speaker", area: "Living room", icon: "speaker", on: false, meta: "2 devices" },
-  { name: "Google Nest", area: "Hallway", icon: "thermometer", on: true, meta: "3 devices" },
-  { name: "Camera", area: "Entry", icon: "camera", on: true, meta: "2 devices" },
-  { name: "A/C", area: "Bedroom", icon: "air", on: false, meta: "3 devices" },
-  { name: "Smart TV", area: "Studio", icon: "tv", on: false, meta: "1 device" },
-  { name: "Pendant", area: "Dining", icon: "lamp", on: true, meta: "2 devices" },
+const deviceCards = [
+  { name: "Speaker", count: "2 devices", detail: "Living Room", product: "speaker", sheet: true, on: false },
+  { name: "Google Nest", count: "3 devices", detail: "Hallway", product: "nest", sheet: true, on: true },
+  { name: "Camera", count: "2 devices", detail: "Entry", product: "camera", image: "/generated/device-camera-cutout.png", on: true },
+  { name: "A/C", count: "3 devices", detail: "Bedroom", product: "ac", sheet: true, on: false },
+  { name: "Smart TV", count: "1 device", detail: "Studio", product: "tv", sheet: true, on: false },
+  { name: "Lamp", count: "2 devices", detail: "Dining", product: "lamp", image: "/generated/device-lamp-cutout.png", on: true },
 ];
 
 function App() {
-  const [activeTab, setActiveTab] = useState("home");
-  const [powerOn, setPowerOn] = useState(true);
-  const [temperature, setTemperature] = useState(17);
+  const [temperature, setTemperature] = useState(16);
+  const [homeRoom, setHomeRoom] = useState("Living Room");
+  const [climateRoom, setClimateRoom] = useState("Living Room");
   const [activeAction, setActiveAction] = useState("air");
-  const activeScreen = useMemo(() => tabs.find((tab) => tab.id === activeTab), [activeTab]);
+  const [cameraOn, setCameraOn] = useState(true);
+  const [roomDevices, setRoomDevices] = useState(() => Object.fromEntries(deviceCards.map((device) => [device.name, device.on])));
+
+  function toggleRoomDevice(name) {
+    setRoomDevices((current) => ({ ...current, [name]: !current[name] }));
+  }
 
   return (
     <main className="stage">
-      <section className="phone" aria-label="Smart home app preview">
-        <div className="screen">
-          <StatusBar />
-          {activeTab === "home" && (
-            <HomeScreen
-              onOpenClimate={() => setActiveTab("climate")}
-              onOpenRoom={() => setActiveTab("room")}
-              powerOn={powerOn}
-              setPowerOn={setPowerOn}
-            />
-          )}
-          {activeTab === "climate" && (
-            <ClimateScreen
-              activeAction={activeAction}
-              setActiveAction={setActiveAction}
-              powerOn={powerOn}
-              setPowerOn={setPowerOn}
-              setTemperature={setTemperature}
-              temperature={temperature}
-            />
-          )}
-          {activeTab === "room" && <RoomScreen onBack={() => setActiveTab("home")} />}
-          <BottomTabs activeTab={activeTab} activeScreen={activeScreen} setActiveTab={setActiveTab} />
-        </div>
+      <section className="phone-row" aria-label="Smart home three screen recreation">
+        <PhoneFrame className="phone-side phone-left" label="Good Evening home screen">
+          <HomeScreen
+            activeRoom={homeRoom}
+            cameraOn={cameraOn}
+            setActiveRoom={setHomeRoom}
+            setCameraOn={setCameraOn}
+            temperature={temperature}
+          />
+        </PhoneFrame>
+
+        <PhoneFrame className="phone-center" label="Air conditioner control screen">
+          <ClimateScreen
+            activeAction={activeAction}
+            activeRoom={climateRoom}
+            setActiveAction={setActiveAction}
+            setActiveRoom={setClimateRoom}
+            setTemperature={setTemperature}
+            temperature={temperature}
+          />
+        </PhoneFrame>
+
+        <PhoneFrame className="phone-side phone-right" label="Living room device screen">
+          <RoomScreen deviceStates={roomDevices} onToggleDevice={toggleRoomDevice} temperature={temperature} />
+        </PhoneFrame>
       </section>
     </main>
+  );
+}
+
+function PhoneFrame({ children, className = "", label }) {
+  return (
+    <article className={`phone ${className}`} aria-label={label}>
+      <div className="screen">
+        <StatusBar />
+        {children}
+        <div className="home-indicator" aria-hidden="true" />
+      </div>
+    </article>
   );
 }
 
 function StatusBar() {
   return (
     <div className="status-bar" aria-label="Device status bar">
-      <span className="time">9:41</span>
+      <span>9:41</span>
       <div className="status-icons" aria-hidden="true">
-        <UiIcon name="signal" size={14} weight="fill" />
-        <UiIcon name="wifi" size={14} weight="bold" />
-        <UiIcon name="battery" size={18} weight="regular" />
+        <UiIcon name="signal" size={12} weight="fill" />
+        <UiIcon name="wifi" size={12} weight="bold" />
+        <UiIcon name="battery" size={16} weight="regular" />
       </div>
     </div>
   );
 }
 
-function IconButton({ label, icon, variant = "ghost", onClick, children }) {
+function IconButton({ label, icon, onClick, variant = "ghost", size = 18 }) {
   return (
     <button className={`icon-button ${variant}`} type="button" aria-label={label} onClick={onClick}>
-      {icon ? <UiIcon name={icon} size={20} weight="bold" /> : children}
+      <UiIcon name={icon} size={size} weight="bold" />
     </button>
   );
 }
 
-function HomeScreen({ onOpenClimate, onOpenRoom, powerOn, setPowerOn }) {
+function HomeScreen({ activeRoom, cameraOn, setActiveRoom, setCameraOn, temperature }) {
   return (
     <div className="view home-view">
-      <header className="app-header split">
+      <header className="home-header">
         <div>
           <p className="eyebrow">Hello, Henry</p>
           <h1>Good Evening</h1>
         </div>
-        <button className="temp-pill" type="button" onClick={onOpenClimate}>
-          <UiIcon name="thermometer" size={18} weight="bold" />
-          <span>16°C</span>
+        <button className="humidity-pill" type="button" aria-label="Humidity">
+          <UiIcon name="fan" size={16} weight="bold" />
+          <span>{temperature}°C</span>
+          <small>Humid</small>
         </button>
       </header>
 
       <section className="energy-card">
-        <div className="energy-icon">
-          <UiIcon name="lightning" size={22} weight="fill" />
+        <div className="energy-mark">
+          <UiIcon name="lightning" size={21} weight="fill" />
         </div>
-        <div>
+        <div className="energy-copy">
           <strong>85</strong>
           <span>kw/h</span>
           <p>Last updated 27 minutes ago</p>
         </div>
-        <svg className="energy-wave" viewBox="0 0 110 42" aria-hidden="true">
-          <path d="M4 27 C18 7, 32 7, 46 27 S75 47, 106 15" />
+        <svg className="energy-wave" viewBox="0 0 112 48" aria-hidden="true">
+          <path d="M6 31 C20 9, 35 9, 49 31 S76 51, 106 18" />
         </svg>
       </section>
 
-      <div className="room-row" aria-label="Room filters">
-        <IconButton label="Add room" icon="plus" variant="solid" />
-        <button className="room-chip active" type="button">Living Room</button>
-        <button className="room-chip" type="button">Bedroom</button>
+      <div className="chip-row home-chips" aria-label="Room filters">
+        <IconButton label="Add room" icon="plus" variant="dark" size={17} />
+        {roomFilters.map((room) => (
+          <button
+            className={activeRoom === room ? "chip active" : "chip"}
+            key={room}
+            type="button"
+            onClick={() => setActiveRoom(room)}
+          >
+            {room}
+          </button>
+        ))}
       </div>
 
-      <section className="hero-card">
-        <img src="/generated/living-room-hero.png" alt="Minimal living room with sofa and plant" />
-        <div className="hero-overlay">
-          <span className="humidity">80%</span>
-          <IconButton label="Open living room" icon="next" variant="glass" onClick={onOpenRoom} />
-          <div>
-            <strong>16.7°</strong>
-            <p>Living Room · Cooling Mode</p>
+      <section className="living-card">
+        <img src="/generated/living-room-hero.png" alt="Bright living room interior" />
+        <div className="living-shade" />
+        <div className="living-meta">
+          <strong>80%</strong>
+          <IconButton label="Open living room details" icon="next" variant="translucent" size={16} />
+          <div className="living-temp">
+            <b>16.7°</b>
+            <span>Living Room</span>
+            <small>Cooling Mode</small>
           </div>
         </div>
       </section>
 
-      <section className="player-card" aria-label="Speaker player">
-        <div>
+      <section className="player-card" aria-label="Living room speaker player">
+        <div className="player-title">
           <h2>Speaker</h2>
           <p>Living Room</p>
         </div>
         <div className="progress-row">
           <span>2:40</span>
-          <div className="track"><span /></div>
+          <div className="track"><i /></div>
           <span>8:20</span>
         </div>
         <div className="player-controls">
-          <IconButton label="Previous track" icon="previous" />
-          <IconButton label="Play" icon="play" variant="solid" />
-          <IconButton label="Next track" icon="next" />
+          <IconButton label="Previous track" icon="previous" size={15} />
+          <IconButton label="Play" icon="play" variant="dark" size={15} />
+          <IconButton label="Next track" icon="next" size={15} />
         </div>
       </section>
 
       <div className="mini-grid">
-        <DeviceMini title="Lamp" value="80%" image="/generated/device-lamp.png" active />
-        <DeviceMini title="Camera" value="Live view" image="/generated/device-camera.png" active={powerOn} onToggle={() => setPowerOn(!powerOn)} />
+        <MiniDevice title="Lamp" subtitle="4 hr use" value="80%" image="/generated/device-lamp-cutout.png" product="lamp" active />
+        <MiniDevice
+          title="Camera"
+          subtitle="10 hr use"
+          value="Live view"
+          image="/generated/device-camera-cutout.png"
+          product="camera"
+          active={cameraOn}
+          onToggle={() => setCameraOn((value) => !value)}
+        />
       </div>
     </div>
   );
 }
 
-function ClimateScreen({ temperature, setTemperature, powerOn, setPowerOn, activeAction, setActiveAction }) {
-  const quickActions = [
-    { id: "heat", label: "Heat", icon: "flame" },
-    { id: "cold", label: "Cold", icon: "cold" },
-    { id: "air", label: "Air", icon: "air" },
-    { id: "humid", label: "Humid", icon: "droplet" },
-  ];
-
+function ClimateScreen({ activeAction, activeRoom, setActiveAction, setActiveRoom, setTemperature, temperature }) {
   return (
     <div className="view climate-view">
-      <header className="app-header nav-header">
-        <IconButton label="Back to home" icon="back" onClick={() => setTemperature(17)} />
+      <header className="nav-header">
+        <IconButton label="Back" icon="back" size={17} />
         <h1>Air Conditioner</h1>
-        <IconButton label="Settings" icon="settings" />
+        <IconButton label="Settings" icon="settings" size={17} />
       </header>
 
-      <div className="segmented">
-        <button type="button">Living Room</button>
-        <button className="selected" type="button">Bedroom</button>
+      <div className="segmented" aria-label="Air conditioner room selection">
+        {["Living Room", "Bedroom"].map((room) => (
+          <button
+            className={activeRoom === room ? "selected" : ""}
+            key={room}
+            type="button"
+            onClick={() => setActiveRoom(room)}
+          >
+            {room}
+          </button>
+        ))}
       </div>
 
-      <section className="dial-card" aria-label="Air conditioner temperature">
-        <div className="dial">
+      <section className="dial-zone" aria-label="Temperature control">
+        <div className="dial-scale">
+          <span className="tick tick-left">10°</span>
+          <span className="tick tick-top">20°</span>
+          <span className="tick tick-right">25°</span>
+          <span className="tick tick-low">10°</span>
+          <span className="tick tick-high">30°</span>
           <div className="dial-arc" />
-          <div className="dial-knob" />
-          <span className="dial-label top">20°</span>
-          <span className="dial-label left">10°</span>
-          <span className="dial-label right">30°</span>
+          <div className="dial-dot" />
           <div className="dial-center">
-            <p>Now</p>
             <strong>{temperature}°</strong>
+            <span>Now</span>
           </div>
         </div>
+
         <div className="temperature-controls">
           <IconButton label="Decrease temperature" icon="minus" onClick={() => setTemperature((value) => Math.max(10, value - 1))} />
-          <IconButton
-            label={powerOn ? "Turn air conditioner off" : "Turn air conditioner on"}
-            icon="power"
-            variant={powerOn ? "accent" : "solid"}
-            onClick={() => setPowerOn(!powerOn)}
-          />
+          <IconButton label="Toggle air conditioner" icon="power" variant="accent" size={20} />
           <IconButton label="Increase temperature" icon="plus" onClick={() => setTemperature((value) => Math.min(30, value + 1))} />
         </div>
       </section>
@@ -203,7 +242,7 @@ function ClimateScreen({ temperature, setTemperature, powerOn, setPowerOn, activ
               type="button"
               onClick={() => setActiveAction(action.id)}
             >
-              <UiIcon name={action.icon} size={23} weight="bold" />
+              <UiIcon name={action.icon} size={21} weight="bold" />
               <span>{action.label}</span>
             </button>
           ))}
@@ -211,96 +250,124 @@ function ClimateScreen({ temperature, setTemperature, powerOn, setPowerOn, activ
       </section>
 
       <section className="schedule-card">
-        <UiIcon name="fan" size={22} weight="bold" />
+        <span className="schedule-dot"><UiIcon name="fan" size={15} weight="bold" /></span>
         <div>
           <h2>Set Automatic Schedule</h2>
           <p>Start the device automatically</p>
         </div>
-        <IconButton label="Add schedule" icon="plus" variant="solid" />
+        <IconButton label="Add schedule" icon="plus" variant="dark" size={16} />
       </section>
     </div>
   );
 }
 
-function RoomScreen({ onBack }) {
+function RoomScreen({ deviceStates, onToggleDevice, temperature }) {
   return (
     <div className="view room-view">
-      <section className="room-hero">
-        <img src="/generated/living-room-hero.png" alt="Living room interior overview" />
-        <div className="room-hero-top">
-          <IconButton label="Back to home" icon="back" onClick={onBack} />
+      <section className="room-photo">
+        <img src="/generated/living-room-hero.png" alt="Living room with seating and coffee table" />
+        <div className="room-photo-top">
+          <IconButton label="Back" icon="back" size={17} />
           <h1>Living Room</h1>
-          <IconButton label="More room options" icon="more" />
+          <IconButton label="More options" icon="more" size={17} />
         </div>
       </section>
 
-      <div className="stats-pair">
-        <button type="button"><UiIcon name="thermometer" size={18} />16°C</button>
-        <button type="button"><UiIcon name="lightning" size={18} weight="fill" />47 kw/h</button>
+      <div className="room-stats">
+        <button type="button"><UiIcon name="speaker" size={16} weight="bold" />{temperature}°C</button>
+        <button type="button"><UiIcon name="lightning" size={16} weight="fill" />47 kw/h</button>
       </div>
 
       <section className="device-grid" aria-label="Living room devices">
-        {devices.map((device) => (
-          <DeviceCard key={device.name} device={device} />
+        {deviceCards.map((device) => (
+          <DeviceCard
+            device={device}
+            key={device.name}
+            on={deviceStates[device.name]}
+            onToggle={() => onToggleDevice(device.name)}
+          />
         ))}
       </section>
     </div>
   );
 }
 
-function DeviceCard({ device }) {
-  const [on, setOn] = useState(device.on);
-
-  return (
-    <article className={on ? "device-card active" : "device-card"}>
-      <p>{device.meta}</p>
-      <div className="device-main">
-        <div>
-          <h2>{device.name}</h2>
-          <span>{device.area}</span>
-        </div>
-        <div className="device-icon">
-          <UiIcon name={device.icon} size={30} weight={on ? "fill" : "bold"} />
-        </div>
-      </div>
-      <button className="toggle-row" type="button" aria-pressed={on} onClick={() => setOn(!on)}>
-        <span>{on ? "On" : "Off"}</span>
-        <span className="switch"><span /></span>
-      </button>
-    </article>
-  );
-}
-
-function DeviceMini({ title, value, image, active, onToggle }) {
+function MiniDevice({ active, image, onToggle, product, subtitle, title, value }) {
   return (
     <article className="mini-device">
       <h2>{title}</h2>
-      <p>{value}</p>
-      <img className="device-product" src={image} alt={`${title} product`} />
-      <button className="mini-toggle" type="button" aria-label={`Toggle ${title}`} aria-pressed={active} onClick={onToggle}>
+      <p>{subtitle}</p>
+      <ProductThumb image={image} name={title} type={product} />
+      <button className="tiny-toggle" type="button" aria-label={`Toggle ${title}`} aria-pressed={active} onClick={onToggle}>
         <span />
+      </button>
+      <small>{value}</small>
+    </article>
+  );
+}
+
+function DeviceCard({ device, on, onToggle }) {
+  const status = on ? "On" : "Off";
+  const summary = `${device.name}, ${device.count}, ${device.detail}, ${status}`;
+
+  return (
+    <article
+      aria-label={summary}
+      className={on ? `device-card active product-${device.product}` : `device-card product-${device.product}`}
+      title={summary}
+    >
+      <div className="device-copy">
+        <h2>{device.name}</h2>
+        <p className="device-count">{device.count}</p>
+        <span className="sr-only">{device.detail}</span>
+      </div>
+      <div className="device-art" data-asset-role="device-product-slot">
+        <ProductThumb image={device.image} name={device.name} sheet={device.sheet} type={device.product} />
+      </div>
+      <button
+        aria-label={`${status}. Toggle ${device.name}`}
+        className="device-toggle"
+        type="button"
+        aria-pressed={on}
+        onClick={onToggle}
+      >
+        <span>{status}</span>
+        <i><b /></i>
       </button>
     </article>
   );
 }
 
-function BottomTabs({ activeTab, activeScreen, setActiveTab }) {
+function ProductThumb({ image, name, sheet, type }) {
+  if (image) {
+    return (
+      <img
+        alt={`${name} product`}
+        className={`product-thumb image-thumb ${type}`}
+        data-asset-role="device-product-image"
+        src={image}
+      />
+    );
+  }
+
+  if (sheet) {
+    return (
+      <span
+        aria-label={`${name} product`}
+        className={`product-thumb sheet-thumb ${type}`}
+        data-asset-role="device-product-image"
+        role="img"
+        style={{ backgroundImage: "url('/generated/device-sheet.png')" }}
+      />
+    );
+  }
+
   return (
-    <nav className="bottom-tabs" aria-label="Primary">
-      {tabs.map((tab) => (
-        <button
-          className={activeTab === tab.id ? "tab active" : "tab"}
-          key={tab.id}
-          type="button"
-          aria-label={`Open ${tab.label}`}
-          aria-current={activeScreen?.id === tab.id ? "page" : undefined}
-          onClick={() => setActiveTab(tab.id)}
-        >
-          <UiIcon name={tab.icon} size={22} weight={activeTab === tab.id ? "fill" : "bold"} />
-          <span>{tab.label}</span>
-        </button>
-      ))}
-    </nav>
+    <span className={`product-thumb css-product ${type}`} aria-label={`${name} product`} role="img">
+      <span />
+      <i />
+      <b />
+    </span>
   );
 }
 

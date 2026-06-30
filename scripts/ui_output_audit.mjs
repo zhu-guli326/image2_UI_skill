@@ -556,6 +556,23 @@ async function runBrowserChecks(rootDir, entryFile) {
           })
           .map((el) => `${labelFor(el)} ${Math.round(el.getBoundingClientRect().width)}x${Math.round(el.getBoundingClientRect().height)}px`)
           .slice(0, 10);
+        const denseMicroText = [...document.querySelectorAll('[class*="card" i], [class*="tile" i], [class*="device" i], [data-asset-role*="device" i]')]
+          .flatMap((container) => [...container.querySelectorAll('p,span,small,h1,h2,h3,h4,h5,h6,button,a,label')].map((el) => ({ container, el })))
+          .filter(({ el }) => {
+            const text = String(el.innerText || el.textContent || "").trim();
+            if (!text || text.length > 42) return false;
+            const rect = el.getBoundingClientRect();
+            const style = getComputedStyle(el);
+            if (rect.width < 3 || rect.height < 3 || style.visibility === "hidden" || style.display === "none") return false;
+            if (el.closest(".sr-only,[aria-hidden='true']")) return false;
+            const size = Number.parseFloat(style.fontSize) || 16;
+            return size < 8 || rect.height < 8;
+          })
+          .map(({ container, el }) => {
+            const size = Number.parseFloat(getComputedStyle(el).fontSize) || 0;
+            return `${labelFor(container)} contains ${labelFor(el)} at ${size.toFixed(1)}px`;
+          })
+          .slice(0, 10);
         const unlabeledIconButtons = [...document.querySelectorAll('button,a,[role="button"]')]
           .filter((el) => {
             const text = String(el.innerText || "").trim();
@@ -571,7 +588,7 @@ async function runBrowserChecks(rootDir, entryFile) {
           .slice(0, 10);
         const horizontalOverflow = root.scrollWidth > window.innerWidth + 2;
         const blankish = document.body.innerText.trim().length < 20 && document.images.length === 0;
-        return { brokenImages, overflowText, lowContrast, smallTouchTargets, unlabeledIconButtons, nestedPanels, horizontalOverflow, blankish };
+        return { brokenImages, overflowText, lowContrast, smallTouchTargets, denseMicroText, unlabeledIconButtons, nestedPanels, horizontalOverflow, blankish };
 
         function labelFor(el) {
           const text = String(el.innerText || el.getAttribute("aria-label") || el.getAttribute("alt") || el.className || el.tagName).trim().replace(/\s+/g, " ");
@@ -649,6 +666,7 @@ async function runBrowserChecks(rootDir, entryFile) {
       for (const item of audit.overflowText) add("fail", "text-overflow", `${viewport.name}: ${item}`, rootDir);
       for (const item of audit.lowContrast) add("warn", "low-contrast", `${viewport.name}: ${item}`, rootDir);
       for (const item of audit.smallTouchTargets) add("warn", "small-touch-target", `${viewport.name}: ${item}`, rootDir);
+      for (const item of audit.denseMicroText) add("warn", "dense-micro-text", `${viewport.name}: ${item}. Card/device UI text this small can render like pseudo text or garbled marks; hide nonessential metadata or enlarge it.`, rootDir);
       for (const item of audit.unlabeledIconButtons) add("warn", "unlabeled-icon-button", `${viewport.name}: icon-only control lacks accessible name around ${item}`, rootDir);
       for (const item of audit.nestedPanels) add("warn", "nested-panel", `${viewport.name}: nested card/panel structure around ${item}`, rootDir);
 

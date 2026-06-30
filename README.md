@@ -22,7 +22,7 @@ Turn UI screenshots and design references into clickable Codex demos with code-r
 - 不是让 `image2` 生成状态栏、返回箭头、底部导航或播放器小图标；这些细碎 UI glyph 必须由代码层图标库/SVG/CSS 渲染，避免错位、伪文字和乱码。设备卡片里较大的台灯、摄像头等设备外观、产品抠图、物体缩略图不是 icon，应作为 `device-product-image` / `product-cutout` / `object-cutout` 图片资产处理。
 - 不是临时拼一堆图标；会先做 icon inventory，复用项目已有图标库或从 `@phosphor-icons/react`、`hugeicons-react`、`@radix-ui/react-icons`、`@tabler/icons-react` 中统一选一套，并用 coverage 表约束尺寸、线宽、状态和 aria-label。
 - 最终目标不是一张截图，而是可打开、可点击、可继续改的 demo。
-- 交付前加入页面输出巡检，检查破图、文字溢出、低对比度、模板化渐变文字、单一 AI 配色、嵌套卡片、icon tile 模板、图标可访问性、触摸目标、位图小图标误用和交互死区等问题。
+- 交付前加入页面输出巡检，检查破图、文字溢出、低对比度、设备卡片微型伪字、模板化渐变文字、单一 AI 配色、嵌套卡片、icon tile 模板、图标可访问性、触摸目标、位图小图标误用和交互死区等问题。
 - 融入 Impeccable 风格的设计规范：产品 UI 保持可信和一致，品牌页要有明确视觉立场；限制模板化图标卡片、重复卡片网格、粗侧边条、禁用缩放和低质量排版。
 - 如果检索不到 `image2`，先用 `image2-ui doctor` 区分 native-image2 来源（系统 imagegen 或项目 image2 命令）和 Youtoken/OpenRouter ICU `gpt-image-2` 备案通道，再按实际通道落地资产。
 
@@ -47,7 +47,7 @@ Turn UI screenshots and design references into clickable Codex demos with code-r
 
 ### 智能家居 App v2
 
-新版 App 复刻 demo：客厅照片用 image2/system imagegen 生成，状态栏、返回、菜单、播放器、底部 tab、quick action、开关和设备小图标全部通过 `@phosphor-icons/react` 的统一 `UiIcon` 注册表渲染。设备卡片中的台灯、摄像头是 `device-product-image` 图片资产，不是 UI glyph。
+新版 App 复刻 demo：客厅照片用 image2/system imagegen 生成，状态栏、返回、菜单、播放器、底部 tab、quick action、开关和设备小图标全部通过 `@phosphor-icons/react` 的统一 `UiIcon` 注册表渲染。设备卡片中的台灯、摄像头是 `device-product-image` 图片资产，不是 UI glyph；设备 tile 只保留设备名、数量/状态和开关，房间位置进入辅助语义，避免小字变成乱码。
 
 <table>
   <tr>
@@ -183,7 +183,9 @@ image2-ui doctor
 image2-ui validate ./demo/my-output --reference ./reference.png
 ```
 
-它会调用 skill 内置的 `scripts/ui_output_audit.mjs`，先做静态资产检查；如果环境有 Playwright，会继续做浏览器渲染检查，用于发现破图、横向滚动、文字溢出、低对比度、嵌套卡片、图标可访问性、触摸目标过小和常见 AI 味视觉问题。
+它会调用 skill 内置的 `scripts/ui_output_audit.mjs`，先做静态资产检查；如果环境有 Playwright，会继续做浏览器渲染检查，用于发现破图、横向滚动、文字溢出、低对比度、设备卡片微型伪字、嵌套卡片、图标可访问性、触摸目标过小和常见 AI 味视觉问题。
+
+`dense-micro-text` 会提示设备卡片、tile、播放器或 quick action 内小到像伪字的可见文本。修法通常不是继续缩小字号，而是删掉非必要元信息、放到 `aria-label`/title/详情页，或扩大卡片后让设备名、数量/状态和开关各自有稳定区域。
 
 对 App / 智能家居 / 设备控制类参考图，`validate` 还会提示疑似把状态栏、导航、菜单、按钮、播放器或普通 UI icon 做成 raster image 的情况。正确做法是按角色判断：客厅照片、设备产品图、产品/物体抠图、背景质感交给 `image2`；状态栏、按钮、底部 tab、开关、小型语义 glyph 和文字全部用代码渲染。`device-camera.png` 这类产品图不应误报为 icon，但 `tab-camera-icon.png` 这类控件小图仍应改成代码图标。
 
