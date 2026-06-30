@@ -22,6 +22,15 @@ if (command === "validate") {
   process.exit(result.status ?? 1);
 }
 
+if (command === "compare") {
+  const compareScript = path.join(__dirname, "ui_compare.mjs");
+  const result = spawnSync(process.execPath, [compareScript, ...args.slice(1)], {
+    stdio: "inherit",
+    cwd: process.cwd(),
+  });
+  process.exit(result.status ?? 1);
+}
+
 if (command === "doctor") {
   const image2Script = path.join(__dirname, "image2_asset.py");
   const python = process.env.PYTHON || "python3";
@@ -39,8 +48,11 @@ process.exit(1);
 function printHelp() {
   console.log(`Usage:
   image2-ui validate <demo-dir-or-html> [--reference reference.png] [--json] [--no-browser]
+  image2-ui compare --reference reference.png --actual output.png [--out comparison.png]
+  image2-ui doctor
 
 Commands:
   validate   Audit a generated image-to-UI demo for broken assets, render issues, text overflow, contrast, and common visual anti-patterns.
+  compare    Build a side-by-side reference/output board, with an overlay and manual review checklist.
   doctor     Show system imagegen, native image2, and API fallback channel availability.`);
 }

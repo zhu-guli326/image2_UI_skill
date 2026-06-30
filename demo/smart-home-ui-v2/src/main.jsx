@@ -120,7 +120,7 @@ function HomeScreen({ activeRoom, cameraOn, setActiveRoom, setCameraOn, temperat
         <div className="energy-copy">
           <strong>85</strong>
           <span>kw/h</span>
-          <p>Last updated 27 minutes ago</p>
+          <p className="sr-only">Last updated 27 minutes ago</p>
         </div>
         <svg className="energy-wave" viewBox="0 0 112 48" aria-hidden="true">
           <path d="M6 31 C20 9, 35 9, 49 31 S76 51, 106 18" />
@@ -150,7 +150,7 @@ function HomeScreen({ activeRoom, cameraOn, setActiveRoom, setCameraOn, temperat
           <div className="living-temp">
             <b>16.7°</b>
             <span>Living Room</span>
-            <small>Cooling Mode</small>
+            <small className="sr-only">Cooling Mode</small>
           </div>
         </div>
       </section>
@@ -158,7 +158,7 @@ function HomeScreen({ activeRoom, cameraOn, setActiveRoom, setCameraOn, temperat
       <section className="player-card" aria-label="Living room speaker player">
         <div className="player-title">
           <h2>Speaker</h2>
-          <p>Living Room</p>
+          <p className="sr-only">Living Room</p>
         </div>
         <div className="progress-row">
           <span>2:40</span>
@@ -253,7 +253,7 @@ function ClimateScreen({ activeAction, activeRoom, setActiveAction, setActiveRoo
         <span className="schedule-dot"><UiIcon name="fan" size={15} weight="bold" /></span>
         <div>
           <h2>Set Automatic Schedule</h2>
-          <p>Start the device automatically</p>
+          <p className="sr-only">Start the device automatically</p>
         </div>
         <IconButton label="Add schedule" icon="plus" variant="dark" size={16} />
       </section>
@@ -294,9 +294,9 @@ function RoomScreen({ deviceStates, onToggleDevice, temperature }) {
 
 function MiniDevice({ active, image, onToggle, product, subtitle, title, value }) {
   return (
-    <article className="mini-device">
+    <article className="mini-device" aria-label={`${title}, ${subtitle}, ${value}`}>
       <h2>{title}</h2>
-      <p>{subtitle}</p>
+      <p className="sr-only">{subtitle}</p>
       <ProductThumb image={image} name={title} type={product} />
       <button className="tiny-toggle" type="button" aria-label={`Toggle ${title}`} aria-pressed={active} onClick={onToggle}>
         <span />

@@ -173,6 +173,14 @@
 image2-ui validate <demo-dir> --reference <reference-image>
 ```
 
+如果已经有当前页面截图，再生成参考图/输出图对照板：
+
+```bash
+image2-ui compare --reference <reference-image> --actual <output-screenshot> --out <compare-output.png>
+```
+
+`compare` 输出左右对照和半透明 overlay，用于快速确认整体比例、手机位置、按钮/图标、开关、产品图槽位和微型文字是否接近原图。它用于复刻差距核对，不代替 `validate` 的破图、对比度、溢出和 icon 系统检测。
+
 巡检项按三类处理：
 
 | 等级 | 含义 | 处理 |
@@ -195,6 +203,7 @@ image2-ui validate <demo-dir> --reference <reference-image>
 - `generated-ui-glyph-asset`：图片文件名和上下文像状态栏、导航、菜单、按钮、播放器或普通 UI 图标，通常说明把 code-icon 误交给了 image2；不适用于 `device-product-image`、`product-cutout`、`object-cutout`、`object-thumbnail` 这类展示图片。
 - `image-icon-in-control`：按钮、导航、工具栏或 tab 中使用位图 `<img>` 做小图标，优先改成图标库或 SVG/CSS 几何；如果 `<img>` 是商品/设备/人物抠图的展示内容，不按这个规则处理。
 - `cutout-asset-missing-alt`：产品图、物体抠图或设备外观图缺少 alt。若图片有信息意义，补有用 alt；若纯装饰，显式写 `alt=""`。
+- `off-center-icon`：真实浏览器中按钮、状态栏、播放器、quick action、开关等容器里的 SVG 偏离视觉中心，常见于只按几何盒居中、图标 baseline 参与布局、播放三角/箭头没有光学校正。优先统一 `.ui-icon { display:block; line-height:0; }`，让 icon button 用 `display:grid; place-items:center; padding:0; line-height:0;`，再对 play/arrow/Wi-Fi/battery 这类非对称 glyph 做 0.3-1px 的局部 transform。
 - `icon-tile-stack`：圆角方块 icon 堆在标题上，是常见 AI feature-card 模板；除非参考图明确如此，否则改成侧向图标、真实图片或无图标信息层级。
 - `mixed-icon-tech`：同一页面混用多套图标技术，通常会导致线宽、对齐和语义不一致。
 - `text-overflow`：文本超出按钮、卡片、导航或窄屏容器。

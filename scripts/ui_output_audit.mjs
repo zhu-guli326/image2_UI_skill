@@ -3,6 +3,9 @@
 import fs from "node:fs";
 import path from "node:path";
 import http from "node:http";
+import os from "node:os";
+import { createRequire } from "node:module";
+import { pathToFileURL } from "node:url";
 
 const APPROVED_ICON_PACKAGES = new Set([
   "@phosphor-icons/react",
@@ -491,18 +494,23 @@ function rgbToHsl(r, g, b) {
 }
 
 async function runBrowserChecks(rootDir, entryFile) {
-  let chromium;
-  try {
-    chromium = (await import("playwright")).chromium;
-  } catch {
+  const playwright = await loadPlaywright(rootDir);
+  if (!playwright?.chromium) {
     add("info", "browser-skip", "Playwright is not available; browser render checks skipped.", rootDir);
     return;
   }
+  if (playwright.source !== "project") {
+    add("info", "browser-playwright-source", `Using Playwright from ${playwright.source}.`, rootDir);
+  }
 
-  const server = await startServer(rootDir);
-  const entryPath = path.relative(rootDir, entryFile).split(path.sep).map(encodeURIComponent).join("/");
+  const browserTarget = resolveBrowserTarget(rootDir, entryFile);
+  if (browserTarget.rootDir !== rootDir || browserTarget.entryFile !== entryFile) {
+    add("info", "browser-entry", `Using built browser entry: ${path.relative(rootDir, browserTarget.entryFile)}`, rootDir);
+  }
+  const server = await startServer(browserTarget.rootDir);
+  const entryPath = path.relative(browserTarget.rootDir, browserTarget.entryFile).split(path.sep).map(encodeURIComponent).join("/");
   const url = `${server.url}/${entryPath}`;
-  const browser = await chromium.launch({ headless: true });
+  const browser = await playwright.chromium.launch({ headless: true });
 
   try {
     const viewports = [
@@ -539,7 +547,9 @@ async function runBrowserChecks(rootDir, entryFile) {
             const rect = el.getBoundingClientRect();
             if (rect.width < 4 || rect.height < 4 || style.visibility === "hidden" || style.display === "none") return false;
             if (!String(el.textContent || el.value || "").trim()) return false;
-            return el.scrollWidth > el.clientWidth + 2 || el.scrollHeight > el.clientHeight + 2;
+            if (Number.parseFloat(style.fontSize) < 13 && !/(hidden|clip|auto|scroll)/.test(`${style.overflow} ${style.overflowX} ${style.overflowY}`)) return false;
+            if (Number.parseFloat(style.fontSize) < 10 && rect.width < 80 && rect.height < 20) return false;
+            return hasTextOverflow(el, style);
           })
           .map(labelFor)
           .slice(0, 10);
@@ -582,17 +592,101 @@ async function runBrowserChecks(rootDir, entryFile) {
           })
           .map(labelFor)
           .slice(0, 10);
+        const offCenterIcons = findOffCenterIcons().slice(0, 12);
         const nestedPanels = [...document.querySelectorAll(panelSelector)]
           .filter((el) => el.querySelector(panelSelector))
           .map(labelFor)
           .slice(0, 10);
         const horizontalOverflow = root.scrollWidth > window.innerWidth + 2;
         const blankish = document.body.innerText.trim().length < 20 && document.images.length === 0;
-        return { brokenImages, overflowText, lowContrast, smallTouchTargets, denseMicroText, unlabeledIconButtons, nestedPanels, horizontalOverflow, blankish };
+        return { brokenImages, overflowText, lowContrast, smallTouchTargets, denseMicroText, unlabeledIconButtons, offCenterIcons, nestedPanels, horizontalOverflow, blankish };
 
         function labelFor(el) {
           const text = String(el.innerText || el.getAttribute("aria-label") || el.getAttribute("alt") || el.className || el.tagName).trim().replace(/\s+/g, " ");
           return `${el.tagName.toLowerCase()} ${text.slice(0, 80)}`;
+        }
+
+        function findOffCenterIcons() {
+          const iconContextSelector = [
+            "button",
+            "a",
+            "[role='button']",
+            "[class*='icon-button' i]",
+            "[class*='status' i]",
+            "[class*='nav' i]",
+            "[class*='toolbar' i]",
+            "[class*='tab' i]",
+            "[class*='player' i]",
+            "[class*='quick' i]",
+            "[class*='action' i]",
+            "[class*='toggle' i]",
+            "[class*='switch' i]",
+          ].join(",");
+          const contexts = [...document.querySelectorAll(iconContextSelector)];
+          const findings = [];
+          for (const context of contexts) {
+            if (context.closest("[data-asset-role*='device-product' i], [data-asset-role*='product' i], [data-asset-role*='cutout' i]")) continue;
+            const contextRect = context.getBoundingClientRect();
+            const contextStyle = getComputedStyle(context);
+            if (contextRect.width < 12 || contextRect.height < 12 || contextStyle.visibility === "hidden" || contextStyle.display === "none") continue;
+            const svgs = [...context.querySelectorAll("svg")].filter((svg) => {
+              const rect = svg.getBoundingClientRect();
+              const style = getComputedStyle(svg);
+              if (rect.width < 5 || rect.height < 5 || style.visibility === "hidden" || style.display === "none") return false;
+              if (svg.closest("[data-asset-role*='device-product' i], [data-asset-role*='product' i], [data-asset-role*='cutout' i]")) return false;
+              return true;
+            });
+            if (svgs.length !== 1) continue;
+            const svg = svgs[0];
+            const svgRect = svg.getBoundingClientRect();
+            const text = String(context.innerText || "").trim();
+            const iconOnly = !text || context.matches("[class*='icon-button' i], [class*='status-icons' i], [class*='toggle' i], [class*='switch' i]");
+            if (!iconOnly) continue;
+            const contextCenterX = contextRect.left + contextRect.width / 2;
+            const contextCenterY = contextRect.top + contextRect.height / 2;
+            const svgCenterX = svgRect.left + svgRect.width / 2;
+            const svgCenterY = svgRect.top + svgRect.height / 2;
+            const dx = svgCenterX - contextCenterX;
+            const dy = svgCenterY - contextCenterY;
+            const offset = iconOnly ? Math.hypot(dx, dy) : Math.abs(dx);
+            const expectedMax = Math.max(1.75, Math.min(contextRect.width, contextRect.height) * 0.065);
+            const tooSmall = iconOnly && Math.min(svgRect.width, svgRect.height) < Math.min(contextRect.width, contextRect.height) * 0.34;
+            const tooLarge = iconOnly && Math.max(svgRect.width, svgRect.height) > Math.min(contextRect.width, contextRect.height) * 0.82;
+            if (offset > expectedMax || tooSmall || tooLarge) {
+              const sizeNote = tooSmall ? ", icon too small for container" : tooLarge ? ", icon too large for container" : "";
+              const axisNote = iconOnly ? `dx=${dx.toFixed(1)}px dy=${dy.toFixed(1)}px` : `horizontal dx=${dx.toFixed(1)}px`;
+              findings.push(`${labelFor(context)} icon center offset ${axisNote} in ${Math.round(contextRect.width)}x${Math.round(contextRect.height)}px container${sizeNote}`);
+            }
+          }
+          return findings;
+        }
+
+        function hasTextOverflow(el, style) {
+          const horizontal = el.scrollWidth > el.clientWidth + 3;
+          const vertical = el.scrollHeight > el.clientHeight + 3;
+          const allowsEllipsis = style.textOverflow === "ellipsis" && /(hidden|clip)/.test(style.overflowX || style.overflow);
+          if (horizontal && !allowsEllipsis) {
+            const clipsHorizontal = /(hidden|clip|auto|scroll)/.test(style.overflowX || style.overflow);
+            if (clipsHorizontal) return true;
+            const textRect = textBounds(el);
+            const guardRect = (el.closest("button,a,[class*='card' i],[class*='tile' i],[class*='device' i],[class*='chip' i],[class*='pill' i],[class*='panel' i]") || el).getBoundingClientRect();
+            if (textRect && (textRect.left < guardRect.left - 2 || textRect.right > guardRect.right + 2)) return true;
+          }
+          if (!vertical) return false;
+          const clipsVertical = /(hidden|clip|auto|scroll)/.test(style.overflowY || style.overflow);
+          return clipsVertical;
+        }
+
+        function textBounds(el) {
+          try {
+            const range = document.createRange();
+            range.selectNodeContents(el);
+            const rect = range.getBoundingClientRect();
+            range.detach();
+            return rect.width || rect.height ? rect : null;
+          } catch {
+            return null;
+          }
         }
 
         function contrastFinding(el) {
@@ -668,6 +762,7 @@ async function runBrowserChecks(rootDir, entryFile) {
       for (const item of audit.smallTouchTargets) add("warn", "small-touch-target", `${viewport.name}: ${item}`, rootDir);
       for (const item of audit.denseMicroText) add("warn", "dense-micro-text", `${viewport.name}: ${item}. Card/device UI text this small can render like pseudo text or garbled marks; hide nonessential metadata or enlarge it.`, rootDir);
       for (const item of audit.unlabeledIconButtons) add("warn", "unlabeled-icon-button", `${viewport.name}: icon-only control lacks accessible name around ${item}`, rootDir);
+      for (const item of audit.offCenterIcons) add("warn", "off-center-icon", `${viewport.name}: ${item}. Check optical centering with a zoomed screenshot; UI glyphs should be code-rendered and visually centered in their hit area.`, rootDir);
       for (const item of audit.nestedPanels) add("warn", "nested-panel", `${viewport.name}: nested card/panel structure around ${item}`, rootDir);
 
       await page.close();
@@ -676,6 +771,65 @@ async function runBrowserChecks(rootDir, entryFile) {
     await browser.close();
     await new Promise((resolve) => server.instance.close(resolve));
   }
+}
+
+async function loadPlaywright(rootDir) {
+  try {
+    const mod = await import("playwright");
+    const chromium = mod.chromium || mod.default?.chromium;
+    if (chromium) return { chromium, source: "project" };
+  } catch {
+    // Fall through to explicit module search paths.
+  }
+
+  const require = createRequire(import.meta.url);
+  const nodePathDirs = String(process.env.NODE_PATH || "")
+    .split(path.delimiter)
+    .map((item) => item.trim())
+    .filter(Boolean);
+  const candidates = [
+    process.env.PLAYWRIGHT_NODE_MODULES,
+    ...nodePathDirs,
+    path.join(rootDir, "node_modules"),
+    path.join(process.cwd(), "node_modules"),
+    path.join(os.homedir(), ".cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules"),
+  ].filter(Boolean);
+
+  for (const candidate of candidates) {
+    try {
+      const resolved = require.resolve("playwright", { paths: [candidate] });
+      const mod = await import(pathToFileURL(resolved).href);
+      const chromium = mod.chromium || mod.default?.chromium;
+      if (chromium) return { chromium, source: resolved };
+    } catch {
+      // Try the next candidate.
+    }
+  }
+
+  return null;
+}
+
+function resolveBrowserTarget(rootDir, entryFile) {
+  const distEntry = path.join(rootDir, "dist", "index.html");
+  if (!fs.existsSync(distEntry)) return { rootDir, entryFile };
+
+  let html = "";
+  try {
+    html = fs.readFileSync(entryFile, "utf8");
+  } catch {
+    return { rootDir, entryFile };
+  }
+
+  const packagePath = path.join(rootDir, "package.json");
+  const isViteLike = fs.existsSync(packagePath) && /"vite"\s*:/.test(fs.readFileSync(packagePath, "utf8"));
+  const importsUnbuiltSource = /<script\b[^>]*\btype=["']module["'][^>]*\bsrc=["'][^"']*\.(?:jsx|tsx)["']/i.test(html) ||
+    /<script\b[^>]*\btype=["']module["'][^>]*\bsrc=["']\/?src\//i.test(html);
+
+  if (isViteLike || importsUnbuiltSource) {
+    return { rootDir: path.dirname(distEntry), entryFile: distEntry };
+  }
+
+  return { rootDir, entryFile };
 }
 
 async function startServer(rootDir) {

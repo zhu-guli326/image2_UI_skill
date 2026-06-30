@@ -64,7 +64,7 @@ export function UiIcon({ name, size = 20, weight = "regular", className = "", ..
   return (
     <Icon
       aria-hidden="true"
-      className={`ui-icon ${className}`}
+      className={`ui-icon ui-icon-${name} ${className}`}
       size={size}
       weight={weight}
       {...props}

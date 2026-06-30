@@ -1,6 +1,6 @@
 ---
 name: image-to-ui-skill
-description: Use when the user asks for image2 生图, 调用 image2, image2 生成图片, gpt-image-2, AI 生图, 出图, 生成 UI 位图资产, 参考图生图, or image-to-UI. 将 UI 截图、设计稿、图片转换为可实现的前端代码和图片资产；also use for UI screenshot to code, clickable app demo, mobile prototype, iOS preview, high-fidelity UI recreation from reference images, automated UI output validation, design-spec enforcement, icon rules, and layout/typography quality checks. 分析哪些部分应该用代码实现，哪些部分应该生成位图资产。识别图片依赖区域、图标、按钮、字体、背景、首屏视觉、产品渲染图、抠图、透明 PNG 资产，生成提示词并回填到前端 UI 中。涉及生图时必须把系统内置 imagegen/image_gen 和项目 image2 命令都视为 native-image2 来源；如果 native-image2 不可用或失败，再走 Youtoken/OpenRouter ICU gpt-image-2 API 备案通道。普通系统生图和项目原生 image2 最终都可标记为 native-image2，但要记录来源 source=system-imagegen 或 source=project-image2；项目可复跑资产优先用 `scripts/image2_asset.py`，它会先尝试 native-image2，失败再备案到 youtoken-gpt-image-2 或 openrouter-icu-gpt-image-2，确保真实生成位图文件。当用户说“找不到 image2”“检索不到 image2 生图”“没有真的生图”时，先运行 `image2-ui doctor` 诊断系统 imagegen、项目 image2 命令和 API 备案入口，再落地真实图片。当用户要求做成 App 形式、手机 App、iOS 预览、可点击 App demo 或移动端原型时，必须生成带 iOS 手机外边框的可点击预览，并提供渲染截图。交付前应进行页面输出巡检，检查破图、文字溢出、低对比度、嵌套卡片、模板化渐变文字、单一 AI 配色、icon tile 模板化、无障碍标签、触摸目标、交互死区和响应式问题。
+description: Use when the user asks for image2 生图, 调用 image2, image2 生成图片, gpt-image-2, AI 生图, 出图, 生成 UI 位图资产, 参考图生图, or image-to-UI. 将 UI 截图、设计稿、图片转换为可实现的前端代码和图片资产；also use for UI screenshot to code, clickable app demo, mobile prototype, iOS preview, high-fidelity UI recreation from reference images, automated UI output validation, design-spec enforcement, icon rules, and layout/typography quality checks. 分析哪些部分应该用代码实现，哪些部分应该生成位图资产。识别图片依赖区域、图标、按钮、字体、背景、首屏视觉、产品渲染图、抠图、透明 PNG 资产，生成提示词并回填到前端 UI 中。涉及生图时必须把系统内置 imagegen/image_gen 和项目 image2 命令都视为 native-image2 来源；如果 native-image2 不可用或失败，再走 Youtoken/OpenRouter ICU gpt-image-2 API 备案通道。普通系统生图和项目原生 image2 最终都可标记为 native-image2，但要记录来源 source=system-imagegen 或 source=project-image2；项目可复跑资产优先用 `scripts/image2_asset.py`，它会先尝试 native-image2，失败再备案到 youtoken-gpt-image-2 或 openrouter-icu-gpt-image-2，确保真实生成位图文件。当用户说“找不到 image2”“检索不到 image2 生图”“没有真的生图”时，先运行 `image2-ui doctor` 诊断系统 imagegen、项目 image2 命令和 API 备案入口，再落地真实图片。当用户要求做成 App 形式、手机 App、iOS 预览、可点击 App demo 或移动端原型时，必须生成带 iOS 手机外边框的可点击预览，并提供渲染截图。交付前应进行页面输出巡检和参考图对照，检查破图、文字溢出、低对比度、嵌套卡片、模板化渐变文字、单一 AI 配色、icon tile 模板化、无障碍标签、触摸目标、图标视觉错位、交互死区和响应式问题。
 ---
 
 # Image to UI Skill
@@ -239,6 +239,14 @@ image2-ui validate ./demo/my-output --reference ./reference.png
 
 也可以对任意本地 demo 目录运行。`image2-ui validate` 会调用本 skill 的 `scripts/ui_output_audit.mjs`：先做静态检查；如果当前环境能加载 Playwright，会自动打开浏览器补充渲染检查。如果命令尚未安装到 PATH，可从 skill 目录运行 `node scripts/image2-ui validate ...` 或用 `npm link` 暴露 `package.json` 里的 bin。不要把这个命令、规则或输出描述成来自其它项目。
 
+如果已经有参考图和当前渲染截图，继续生成对照板：
+
+```bash
+image2-ui compare --reference ./reference.png --actual ./screenshots/output.png --out ./screenshots/reference-output-compare.png
+```
+
+`image2-ui compare` 会生成左右对照、半透明 overlay 和人工核对清单。它不替代 `validate`，而是用来快速看出手机比例、垂直位置、页面间距、状态栏、返回/菜单、播放器、quick action、开关、设备产品图和微型文字与原图的差距。PNG 输出会尝试调用本机 Chrome；没有 Chrome 时保留 HTML 对照板。
+
 巡检至少覆盖：
 
 - **结构与资产**：入口 HTML、CSS/JS、本地图片引用、远程资源依赖、空文件、破图和未落地的 image2 资产。
@@ -247,9 +255,9 @@ image2-ui validate ./demo/my-output --reference ./reference.png
 - **微型伪字风险**：设备卡片、tile、播放器和 quick action 内是否有 8px 以下可见文本、过多短标签或多行元信息挤在一起；这类内容在截图里容易变成乱码/伪字，应改成更少、更大的真实文本。
 - **审美反模式**：明显模板化渐变文字、过度紫蓝/奶油/沙色/灰蓝单一配色、卡片套卡片、重复 icon-card 网格、过重阴影、无意义大圆角、粗侧边色条和背景装饰滥用。
 - **图标与控件**：SVG/icon button 是否有可访问名称，触摸目标是否过小，导航/工具栏图标是否风格一致，普通 icon 是否被误做成生图资产。
-- **图标系统**：是否完成 icon inventory、是否混用了多套 icon 技术、是否出现圆角 icon tile 堆在标题上、是否用位图 `<img>` 当按钮/nav 小图标、是否缺少 44x44px hit area。
+- **图标系统**：是否完成 icon inventory、是否混用了多套 icon 技术、是否出现圆角 icon tile 堆在标题上、是否用位图 `<img>` 当按钮/nav 小图标、是否缺少 44x44px hit area、真实渲染中的 SVG 是否在按钮/导航/状态栏/播放器/quick action/开关容器里视觉居中。
 - **交互验收**：主要 CTA、返回/关闭、导航、卡片、标签页和末级按钮要有点击反馈、路由变化、选中态变化或内容变化。
-- **参考图差距**：如果提供 `--reference`，记录参考图路径，并在截图复核时把当前实现与参考图逐区对照。
+- **参考图差距**：如果提供 `--reference`，记录参考图路径，并在截图复核时把当前实现与参考图逐区对照；如果已有输出截图，运行 `image2-ui compare` 生成可分享的对照 PNG/HTML。
 
 巡检输出要转化为修正动作：`fail` 先修，`warn` 视影响修，`info` 记录取舍。最终汇报里写清楚巡检是否通过、剩余问题和验证命令；不要只说“看起来没问题”。
 

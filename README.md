@@ -22,7 +22,8 @@ Turn UI screenshots and design references into clickable Codex demos with code-r
 - 不是让 `image2` 生成状态栏、返回箭头、底部导航或播放器小图标；这些细碎 UI glyph 必须由代码层图标库/SVG/CSS 渲染，避免错位、伪文字和乱码。设备卡片里较大的台灯、摄像头等设备外观、产品抠图、物体缩略图不是 icon，应作为 `device-product-image` / `product-cutout` / `object-cutout` 图片资产处理。
 - 不是临时拼一堆图标；会先做 icon inventory，复用项目已有图标库或从 `@phosphor-icons/react`、`hugeicons-react`、`@radix-ui/react-icons`、`@tabler/icons-react` 中统一选一套，并用 coverage 表约束尺寸、线宽、状态和 aria-label。
 - 最终目标不是一张截图，而是可打开、可点击、可继续改的 demo。
-- 交付前加入页面输出巡检，检查破图、文字溢出、低对比度、设备卡片微型伪字、模板化渐变文字、单一 AI 配色、嵌套卡片、icon tile 模板、图标可访问性、触摸目标、位图小图标误用和交互死区等问题。
+- 交付前加入页面输出巡检，检查破图、文字溢出、低对比度、设备卡片微型伪字、模板化渐变文字、单一 AI 配色、嵌套卡片、icon tile 模板、图标可访问性、触摸目标、图标视觉错位、位图小图标误用和交互死区等问题。
+- 可生成“参考图 vs 当前输出”的对照板，把比例、间距、手机位置、图标/开关/产品图差距放到同一张 PNG/HTML 里看，避免只凭记忆复刻。
 - 融入 Impeccable 风格的设计规范：产品 UI 保持可信和一致，品牌页要有明确视觉立场；限制模板化图标卡片、重复卡片网格、粗侧边条、禁用缩放和低质量排版。
 - 如果检索不到 `image2`，先用 `image2-ui doctor` 区分 native-image2 来源（系统 imagegen 或项目 image2 命令）和 Youtoken/OpenRouter ICU `gpt-image-2` 备案通道，再按实际通道落地资产。
 
@@ -185,16 +186,27 @@ image2-ui validate ./demo/my-output --reference ./reference.png
 
 它会调用 skill 内置的 `scripts/ui_output_audit.mjs`，先做静态资产检查；如果环境有 Playwright，会继续做浏览器渲染检查，用于发现破图、横向滚动、文字溢出、低对比度、设备卡片微型伪字、嵌套卡片、图标可访问性、触摸目标过小和常见 AI 味视觉问题。
 
+如果已经有渲染截图，可以生成参考图/输出图对照板：
+
+```bash
+image2-ui compare --reference ./reference.png --actual ./screenshots/output.png --out ./screenshots/reference-output-compare.png
+```
+
+`compare` 会输出左右对照和半透明 overlay，重点检查手机比例、垂直位置、卡片间距、状态栏、返回/菜单、播放器、quick action、开关、设备产品图和小字密度。PNG 输出会自动调用本机 Chrome；如果没有 Chrome，则保留 HTML 对照板。
+
 `dense-micro-text` 会提示设备卡片、tile、播放器或 quick action 内小到像伪字的可见文本。修法通常不是继续缩小字号，而是删掉非必要元信息、放到 `aria-label`/title/详情页，或扩大卡片后让设备名、数量/状态和开关各自有稳定区域。
 
 对 App / 智能家居 / 设备控制类参考图，`validate` 还会提示疑似把状态栏、导航、菜单、按钮、播放器或普通 UI icon 做成 raster image 的情况。正确做法是按角色判断：客厅照片、设备产品图、产品/物体抠图、背景质感交给 `image2`；状态栏、按钮、底部 tab、开关、小型语义 glyph 和文字全部用代码渲染。`device-camera.png` 这类产品图不应误报为 icon，但 `tab-camera-icon.png` 这类控件小图仍应改成代码图标。
 
 React/Next demo 的图标系统默认只能选一套：`@phosphor-icons/react`、`hugeicons-react`、`@radix-ui/react-icons` 或 `@tabler/icons-react`；纯 HTML demo 用统一 SVG sprite/helper。`validate` 会提示多套 approved icon 包、未批准 icon 包、混合 icon 技术和按钮/导航里误用位图 icon 的情况。
 
+`off-center-icon` 会提示真实浏览器截图里 icon-only button、状态栏、播放器、quick action 或开关内的 SVG 视觉中心偏离容器中心。修法通常是统一 `.ui-icon` 的 display/line-height、把 hit area 与 glyph 尺寸分开，并对播放三角、箭头、Wi-Fi、电池等做 0.3-1px 的光学偏移。
+
 如果 `image2-ui` 还没加入 PATH，可以在 skill 目录运行：
 
 ```bash
 node scripts/image2-ui validate ./demo/my-output --reference ./reference.png
+node scripts/image2-ui compare --reference ./reference.png --actual ./screenshots/output.png --out ./screenshots/reference-output-compare.png
 ```
 
 Keywords: Codex skill, image2, image2 生图, system imagegen, image_gen, gpt-image-2, Youtoken image, OpenRouter ICU, image-to-ui, UI screenshot to code, design to code, clickable prototype, app demo, frontend demo, AI assets.
