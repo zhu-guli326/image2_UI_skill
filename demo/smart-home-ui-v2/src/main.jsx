@@ -141,8 +141,8 @@ function HomeScreen({ onOpenClimate, onOpenRoom, powerOn, setPowerOn }) {
       </section>
 
       <div className="mini-grid">
-        <DeviceMini title="Lamp" value="80%" icon="lamp" active />
-        <DeviceMini title="Camera" value="Live view" icon="camera" active={powerOn} onToggle={() => setPowerOn(!powerOn)} />
+        <DeviceMini title="Lamp" value="80%" image="/generated/device-lamp.png" active />
+        <DeviceMini title="Camera" value="Live view" image="/generated/device-camera.png" active={powerOn} onToggle={() => setPowerOn(!powerOn)} />
       </div>
     </div>
   );
@@ -271,12 +271,12 @@ function DeviceCard({ device }) {
   );
 }
 
-function DeviceMini({ title, value, icon, active, onToggle }) {
+function DeviceMini({ title, value, image, active, onToggle }) {
   return (
     <article className="mini-device">
       <h2>{title}</h2>
       <p>{value}</p>
-      <UiIcon name={icon} size={42} weight={active ? "fill" : "bold"} />
+      <img className="device-product" src={image} alt={`${title} product`} />
       <button className="mini-toggle" type="button" aria-label={`Toggle ${title}`} aria-pressed={active} onClick={onToggle}>
         <span />
       </button>

@@ -19,7 +19,7 @@ Turn UI screenshots and design references into clickable Codex demos with code-r
 
 - 不是把整张 UI 烘焙成一张图片，而是保留真实可交互的文字、按钮和布局。
 - 不是只用 CSS/SVG 临摹复杂视觉，而是把主视觉、插画、纹理、产品图等区域交给 `image2`。
-- 不是让 `image2` 生成状态栏、返回箭头、底部导航或播放器小图标；这些细碎 UI glyph 必须由代码层图标库/SVG/CSS 渲染，避免错位、伪文字和乱码。
+- 不是让 `image2` 生成状态栏、返回箭头、底部导航或播放器小图标；这些细碎 UI glyph 必须由代码层图标库/SVG/CSS 渲染，避免错位、伪文字和乱码。设备卡片里较大的台灯、摄像头等设备外观不是 icon，应作为图片资产处理。
 - 不是临时拼一堆图标；会先做 icon inventory，复用项目已有图标库或从 `@phosphor-icons/react`、`hugeicons-react`、`@radix-ui/react-icons`、`@tabler/icons-react` 中统一选一套，并用 coverage 表约束尺寸、线宽、状态和 aria-label。
 - 最终目标不是一张截图，而是可打开、可点击、可继续改的 demo。
 - 交付前加入页面输出巡检，检查破图、文字溢出、低对比度、模板化渐变文字、单一 AI 配色、嵌套卡片、icon tile 模板、图标可访问性、触摸目标、位图小图标误用和交互死区等问题。
@@ -185,7 +185,7 @@ image2-ui validate ./demo/my-output --reference ./reference.png
 
 它会调用 skill 内置的 `scripts/ui_output_audit.mjs`，先做静态资产检查；如果环境有 Playwright，会继续做浏览器渲染检查，用于发现破图、横向滚动、文字溢出、低对比度、嵌套卡片、图标可访问性、触摸目标过小和常见 AI 味视觉问题。
 
-对 App / 智能家居 / 设备控制类参考图，`validate` 还会提示疑似把状态栏、导航、菜单、按钮、播放器或普通 UI icon 做成 raster image 的情况。正确做法是：客厅照片、产品图、背景质感交给 `image2`；状态栏、按钮、图标、底部 tab、开关和文字全部用代码渲染。
+对 App / 智能家居 / 设备控制类参考图，`validate` 还会提示疑似把状态栏、导航、菜单、按钮、播放器或普通 UI icon 做成 raster image 的情况。正确做法是：客厅照片、设备产品图、背景质感交给 `image2`；状态栏、按钮、底部 tab、开关、小型语义 glyph 和文字全部用代码渲染。
 
 React/Next demo 的图标系统默认只能选一套：`@phosphor-icons/react`、`hugeicons-react`、`@radix-ui/react-icons` 或 `@tabler/icons-react`；纯 HTML demo 用统一 SVG sprite/helper。`validate` 会提示多套 approved icon 包、未批准 icon 包、混合 icon 技术和按钮/导航里误用位图 icon 的情况。
 

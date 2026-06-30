@@ -80,6 +80,7 @@
 - `photo-slot`、`object-cutout`、`device-product-image`、`background-visual` 通常可以进入 image2。
 - `code-icon` 和 `code-ui-chrome` 必须用代码、图标库、内联 SVG 几何形或 CSS 实现。
 - App / 智能家居 / 设备控制参考图中，状态栏、电量/Wi-Fi/信号、返回、关闭、菜单、加减号、电源、播放器、bottom tab、quick action、设备小 glyph、开关和状态点都归类为 `code-icon` 或 `code-ui-chrome`。
+- 设备卡片里较大的台灯、摄像头、音箱、电视、空调等真实设备外观，不属于 `code-icon`；它们应归类为 `device-product-image` 或 `object-cutout`，可以进入 image2 资产清单。
 
 图标 coverage 表建议：
 
@@ -148,7 +149,7 @@
 
 - 页面真实文字没有乱码、截断或被遮挡
 - 生成图片内部没有伪文字、logo、水印、额外 UI、状态栏、图标、按钮、tab、播放器、开关或状态点
-- 状态栏、电量/Wi-Fi/信号、返回、菜单、加减号、电源、播放器、bottom tab、quick action 和设备小图标都由代码层真实渲染，并在截图中视觉居中
+- 状态栏、电量/Wi-Fi/信号、返回、菜单、加减号、电源、播放器、bottom tab、quick action、小型设备语义标识都由代码层真实渲染，并在截图中视觉居中；设备产品图/物体缩略图使用真实图片资产，不用 glyph 冒充
 - 图片没有被拉伸、压扁、模糊或错误裁切
 - 主体位置和文案留白符合参考图意图
 - 抠图边缘没有白边、硬边或脏边

@@ -386,11 +386,15 @@ h2 {
   overflow: hidden;
 }
 
-.mini-device .ui-icon {
+.device-product {
   position: absolute;
-  right: 18px;
-  bottom: 20px;
-  color: #201f1b;
+  right: 8px;
+  bottom: 8px;
+  width: 82px;
+  height: 82px;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+  pointer-events: none;
 }
 
 .mini-toggle {

@@ -1,6 +1,8 @@
 # 图标系统参考
 
-用于 App、产品 UI、智能家居、播放器、设备控制、Dashboard 的 code icon / UI glyph 规划。目标是让状态栏、返回箭头、菜单、播放器、底部 tab、quick action、开关、设备小图标都来自一套统一代码图标系统，而不是 image2 小图或零散 SVG。
+用于 App、产品 UI、智能家居、播放器、设备控制、Dashboard 的 code icon / UI glyph 规划。目标是让状态栏、返回箭头、菜单、播放器、底部 tab、quick action、开关、小型语义状态符号都来自一套统一代码图标系统，而不是 image2 小图或零散 SVG。
+
+重要边界：设备卡片里的较大台灯、摄像头、音箱、电视、空调等 **设备产品图 / 物体缩略图** 不是 UI glyph，应作为 `device-product-image` 或 `object-cutout` 图片资产处理，可以用 image2 生成。不要用图标库的大 glyph 冒充真实设备图。
 
 ## 1. 允许的统一外部图标库
 
@@ -92,7 +94,7 @@ export function UiIcon({ name, size = 20, weight = "regular", ...props }) {
 - 控制：plus、minus、power、play、pause、previous、next、volume、progress handle。
 - 底部 tab：home、rooms/devices、analytics/energy、profile/settings。
 - quick action：heat、cold/snowflake、fan/air、humid/droplet、schedule/timer。
-- 设备：lamp、camera、speaker、tv、air-conditioner、thermostat、router、plug、lock。
+- 小型设备语义标识：lamp、camera、speaker、tv、air-conditioner、thermostat、router、plug、lock。若它们在卡片中承担真实产品外观展示，则改用图片资产而不是图标库 glyph。
 - 状态：on/off dot、selected ring、disabled state、toggle knob。
 
 ## 4. Coverage 表模板
