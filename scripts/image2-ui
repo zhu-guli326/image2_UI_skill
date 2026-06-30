@@ -1,0 +1,46 @@
+#!/usr/bin/env node
+
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { spawnSync } from "node:child_process";
+
+const args = process.argv.slice(2);
+const command = args[0];
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+if (!command || command === "--help" || command === "-h") {
+  printHelp();
+  process.exit(command ? 0 : 1);
+}
+
+if (command === "validate") {
+  const auditScript = path.join(__dirname, "ui_output_audit.mjs");
+  const result = spawnSync(process.execPath, [auditScript, ...args.slice(1)], {
+    stdio: "inherit",
+    cwd: process.cwd(),
+  });
+  process.exit(result.status ?? 1);
+}
+
+if (command === "doctor") {
+  const image2Script = path.join(__dirname, "image2_asset.py");
+  const python = process.env.PYTHON || "python3";
+  const result = spawnSync(python, [image2Script, "doctor"], {
+    stdio: "inherit",
+    cwd: process.cwd(),
+  });
+  process.exit(result.status ?? 1);
+}
+
+console.error(`Unknown image2-ui command: ${command}`);
+printHelp();
+process.exit(1);
+
+function printHelp() {
+  console.log(`Usage:
+  image2-ui validate <demo-dir-or-html> [--reference reference.png] [--json] [--no-browser]
+
+Commands:
+  validate   Audit a generated image-to-UI demo for broken assets, render issues, text overflow, contrast, and common visual anti-patterns.
+  doctor     Show system imagegen, native image2, and API fallback channel availability.`);
+}

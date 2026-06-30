@@ -1,0 +1,9 @@
+{
+  "name": "image2-ui-skill",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "bin": {
+    "image2-ui": "scripts/image2-ui"
+  }
+}

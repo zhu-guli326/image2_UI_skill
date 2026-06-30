@@ -1,6 +1,6 @@
 ---
 name: image-to-ui-skill
-description: 将 UI 截图、设计稿、图片转换为可实现的前端代码和图片资产；also use for image to UI, UI screenshot to code, clickable app demo, mobile prototype, iOS preview, and high-fidelity UI recreation from reference images. 分析哪些部分应该用代码实现，哪些部分应该生成位图资产。识别图片依赖区域、图标、按钮、字体、背景、首屏视觉、产品渲染图、抠图、透明 PNG 资产，生成提示词并回填到前端 UI 中。涉及生图时必须先使用本地 imagegen 作为 image2 默认通道；如果本地 imagegen 不可用或失败，再走本仓库 scripts/image2_asset.py 本地 API fallback 路径，确保真实生成位图文件。当用户要求做成 App 形式、手机 App、iOS 预览、可点击 App demo 或移动端原型时，必须生成带 iOS 手机外边框的可点击预览，并提供渲染截图。
+description: Use when the user asks for image2 生图, 调用 image2, image2 生成图片, gpt-image-2, AI 生图, 出图, 生成 UI 位图资产, 参考图生图, or image-to-UI. 将 UI 截图、设计稿、图片转换为可实现的前端代码和图片资产；also use for UI screenshot to code, clickable app demo, mobile prototype, iOS preview, high-fidelity UI recreation from reference images, automated UI output validation, design-spec enforcement, icon rules, and layout/typography quality checks. 分析哪些部分应该用代码实现，哪些部分应该生成位图资产。识别图片依赖区域、图标、按钮、字体、背景、首屏视觉、产品渲染图、抠图、透明 PNG 资产，生成提示词并回填到前端 UI 中。涉及生图时必须把系统内置 imagegen/image_gen 和项目 image2 命令都视为 native-image2 来源；如果 native-image2 不可用或失败，再走 Youtoken/OpenRouter ICU gpt-image-2 API 备案通道。普通系统生图和项目原生 image2 最终都可标记为 native-image2，但要记录来源 source=system-imagegen 或 source=project-image2；项目可复跑资产优先用 `scripts/image2_asset.py`，它会先尝试 native-image2，失败再备案到 youtoken-gpt-image-2 或 openrouter-icu-gpt-image-2，确保真实生成位图文件。当用户说“找不到 image2”“检索不到 image2 生图”“没有真的生图”时，先运行 `image2-ui doctor` 诊断系统 imagegen、项目 image2 命令和 API 备案入口，再落地真实图片。当用户要求做成 App 形式、手机 App、iOS 预览、可点击 App demo 或移动端原型时，必须生成带 iOS 手机外边框的可点击预览，并提供渲染截图。交付前应进行页面输出巡检，检查破图、文字溢出、低对比度、嵌套卡片、模板化渐变文字、单一 AI 配色、icon tile 模板化、无障碍标签、触摸目标、交互死区和响应式问题。
 ---
 
 # Image to UI Skill
@@ -31,24 +31,35 @@ description: 将 UI 截图、设计稿、图片转换为可实现的前端代码
 
 - 标题、正文、价格、按钮文案、列表文案、标签、导航文字
 - 常规按钮、输入框、卡片、分隔线、底部导航、常规 icon 容器
+- 系统状态栏、信号/Wi-Fi/电量、返回/关闭/设置/菜单、加减号、电源、播放控制、底部 tab、quick action、开关、状态点和其它小型 UI glyph
 - 需要保持可访问、可翻译、可交互的 UI 文本
 
 ## image2 调用边界
 
-本 skill 里的 `image2` 是一个统一生图入口名，默认指向当前 Codex 环境的本地 `imagegen` skill。只有当本地 `imagegen` 不可用或执行失败时，才使用本仓库的 `scripts/image2_asset.py` 走本地 API fallback 路径，以确保任务能真实落地图片文件。
+本 skill 把生图入口分成两类、三种来源，执行和汇报时必须分清：
+
+- **native-image2 / source=system-imagegen**：当前 Codex 工具面如果暴露内置 `image_gen`，按 `.system/imagegen` skill 的 built-in 模式生成普通位图资产。它在本 skill 中算原生 image2。
+- **native-image2 / source=project-image2**：项目显式提供的 `image2` 命令、`IMAGE2_COMMAND`，或本 skill 的 `scripts/image2_asset.py` 成功走原生命令。
+- **API 备案层**：native-image2 不可用或失败时，`scripts/image2_asset.py` 自动调用本机 Youtoken/OpenRouter ICU 兼容 CLI，模型默认为 `gpt-image-2`，最终标记为 `youtoken-gpt-image-2` 或 `openrouter-icu-gpt-image-2`。
+
+`image2-ui doctor` 是 shell 诊断命令，只能检测系统 imagegen skill/CLI 文件、项目 image2 命令和 API 备案 CLI/密钥。内置 `image_gen` 是否在当前会话工具面可直接调用，必须由 agent 根据已暴露工具判断；不要把 shell 检测不到内置工具误判成系统 imagegen 不算 native-image2。
 
 执行时：
 
-- 在任何真实生图前，先按 `references/image2-entrypoint.md` 确认当前项目的 image2 调用入口和 fallback 路径。
-- 默认先使用本地 `imagegen` skill，并遵守它自己的 built-in-first、透明图、保存路径和 CLI fallback 规则。
-- 如果本地 `imagegen` 不可用、失败，或明确需要走 API/CLI 路径，再调用本 skill 的 `scripts/image2_asset.py`，不要自己重写 API 请求。
-- `scripts/image2_asset.py` 会委派到 `$CODEX_HOME/skills/.system/imagegen/scripts/image_gen.py`，模型默认 `gpt-image-2`，需要 `OPENAI_API_KEY`。
-- 最终必须说明实际走的是 `local-imagegen` 还是 `local-api-imagegen-cli`。
-- 不要把随机在线生图服务、未登记插件或手写 SDK 请求当作本 skill 的 image2/fallback 通道。
-- 如果本地 `imagegen` 和本地 API fallback 都不可用，再停止并说明缺少可用生图入口；不要声称已经生图。
+- 在任何真实生图前，先按 `references/image2-entrypoint.md` 确认当前项目的 image2 调用入口和备案通道。
+- 如果用户说“找不到 image2”“检索不到 image2 生图”“没有真的生图”，先运行 `image2-ui doctor` 或 `python scripts/image2_asset.py doctor`，再决定用 native-image2 还是备案通道。
+- 如果当前会话工具面暴露系统内置 `image_gen`，并且任务只是普通 UI 位图资产生成，可以按 `imagegen` skill 使用系统 imagegen；生成后必须把最终文件移动或复制到项目资源目录，并标记 `native-image2`，来源写 `source=system-imagegen`。
+- 对需要可复跑命令、可诊断通道或用户明确说“image2”的任务，优先调用本 skill 的 `scripts/image2_asset.py`，不要自己重写 API 请求。
+- `scripts/image2_asset.py` 会先尝试原生 `image2` 命令或 `IMAGE2_COMMAND` 环境变量；失败后自动发现 `youtoken-image` 或 OpenRouter ICU 兼容 CLI，模型固定默认为 `gpt-image-2`。
+- 可以把 Youtoken/OpenRouter ICU `gpt-image-2` 记为“image2 备案通道”或“fallback 通道”，但最终必须说明实际走的是 `native-image2`、`youtoken-gpt-image-2` 还是 `openrouter-icu-gpt-image-2`；如果是 `native-image2`，同时说明 `source=system-imagegen` 或 `source=project-image2`。
+- `.system/imagegen/scripts/image_gen.py` 只在用户明确要求 CLI/API/model path，或系统 `imagegen` skill 规则允许且用户确认时使用；如果用了它，最终仍可标记为 `native-image2`，来源写 `source=openai-imagegen-cli`。
+- 不要把其它图片生成插件、随机在线生图服务或手写 SDK 请求当作本 skill 的 image2/fallback 通道，除非用户明确要求作为替代方案。
+- 如果 native-image2 来源都不可用或不适合，且备案通道也不可用，再停止并说明缺少可用生图入口；不要声称已经生图。
 - 可以继续实现代码 UI 骨架，但必须明确标注“尚未完成真实位图资产生成”，不能把代码近似、CSS/SVG 视觉或其它来源图片写成 image2 结果。
 
 ### 生图命令
+
+需要可复跑、可诊断的项目资产时，使用本 skill wrapper：
 
 文本生图：
 
@@ -73,16 +84,37 @@ python scripts\image2_asset.py edit `
   --output-format png
 ```
 
-本地 API fallback 测试：
+强制只测试原生 image2：
 
 ```powershell
 python scripts\image2_asset.py generate `
   --prompt "test image" `
   --output output\generated\test.png `
-  --dry-run
+  --prefer image2
 ```
 
-本地 API fallback 需要 `OPENAI_API_KEY` 可用。脚本会用当前 Python 调用本地 imagegen CLI，不使用 `py -3`。
+强制走备案通道：
+
+```powershell
+python scripts\image2_asset.py generate `
+  --prompt "test image" `
+  --output output\generated\test.png `
+  --prefer fallback
+```
+
+诊断当前入口：
+
+```powershell
+python scripts\image2_asset.py doctor
+```
+
+也可以用全局命令：
+
+```bash
+image2-ui doctor
+```
+
+Youtoken/OpenRouter ICU fallback 需要 `YOUTOKEN_IMAGE_API_KEY`、`OPENROUTER_ICU_API_KEY`、`OPENAI_API_KEY` 或 `~/.codex/youtoken-image.env` 可用。脚本会用当前 Python 运行已安装的兼容 CLI，不使用 `py -3`。系统 `.system/imagegen` 的 built-in `image_gen` 由当前 Codex 工具面决定，不由这个 shell wrapper 直接调用；在本 skill 中它算 `native-image2` 的 `source=system-imagegen`。
 
 ## image2 最小闭环
 
@@ -90,7 +122,7 @@ python scripts\image2_asset.py generate `
 
 1. 从参考图中拆出必须生图的资产类别。
 2. 为每个资产或同风格资产组编写可执行提示词。
-3. 实际调用本地 `imagegen`，必要时再调用 `scripts/image2_asset.py` 本地 API fallback，产出真实位图文件。
+3. 实际调用可用生图通道：普通系统生图可用当前工具面的 `image_gen`，并按 `native-image2 / source=system-imagegen` 记录；需要可复跑项目 wrapper 时调用 `scripts/image2_asset.py`，优先原生 image2，必要时自动备案 Youtoken/OpenRouter ICU `gpt-image-2`，产出真实位图文件。
 4. 必要时做裁切、切片、透明化、尺寸修正或导出不同槽位版本。
 5. 将生成结果接回前端页面，而不是只停留在“生成了一张图”。
 6. 打开真实页面截图，验证这些资产已经被渲染，而不是停留在本地文件夹。
@@ -129,14 +161,102 @@ python scripts\image2_asset.py generate `
 - 最终回复必须给出可打开的预览 URL 或入口 HTML 文件路径，并同时给出项目根目录和 demo 目录。
 - 如果因为环境限制暂时只能完成截图或资产准备，必须明确说明“尚未完成网页交付闭环”，不能把它描述成已完成可预览 demo。
 
+## 设计规范、图标与排版
+
+本 skill 吸收 Impeccable 的设计质量思路，但不复刻它的命令体系。目标是让 image-to-UI demo 既像参考图，又不像模板化 AI 页面。执行时先判断页面属于哪种语境：
+
+- **产品 / 工具 / Dashboard / App UI**：设计服务任务。优先熟悉、可信、密度稳定、组件一致；少装饰，重状态和可用性。
+- **品牌 / 落地页 / Portfolio / 视觉传播页**：设计本身是交付。必须有明确视觉立场、图片或强主视觉、节奏变化和非模板化构图。
+
+### 基础设计约束
+
+- 正文和重要按钮文字必须有足够对比度：普通文字按 4.5:1，较大文字按 3:1 作为底线；浅灰字叠在浅色或彩色背景上通常要加深。
+- 不要使用模板化渐变文字、无意义玻璃卡片、紫蓝霓虹默认配色、奶油/沙色整页默认底色、侧边粗色条卡片、英雄区大数字指标模板、反复出现的小号大写 eyebrow 或每节 `01/02/03` 编号。
+- 卡片只用于确实独立、可点击或需要分组的内容；不要把每个区块都包成卡片，不要卡片套卡片。
+- 避免“同尺寸 icon + heading + paragraph”的重复卡片网格铺满页面。需要功能列表时，用不同密度、列表、对比布局、分组标题、真实截图或生成图打破单调。
+- 产品 UI 默认克制配色，一个主 accent 用于主操作、选中态和状态提示；品牌页可以更大胆，但必须来自参考图、品牌语气或明确的色彩策略。
+- 动效只服务状态、层级或叙事：150-250ms 的产品反馈、必要的页面过渡或品牌首屏动效。不要让内容依赖 scroll reveal 才可见；必须支持 `prefers-reduced-motion`。
+
+### 图标规则
+
+- 简单功能图标、状态栏 glyph 和 App chrome 必须统一走代码图标系统；不要为了普通关闭、返回、搜索、下载、保存、收藏、播放等图标调用 image2。
+- 允许作为统一外部图标库的包只有：`@phosphor-icons/react`、`hugeicons-react`、`@radix-ui/react-icons`、`@tabler/icons-react`。新 demo、新项目和新写 UI 必须从这四者中选一套。已有项目如果已经固定使用其它主图标库，只在低风险维护任务中作为例外沿用；不能再混入第二套，最终要记录这个例外。
+- 在写 UI 前先做 **icon inventory**：检查 `package.json`、组件库、`src/components`、`assets/icons`、SVG sprite、现有按钮/导航组件，确认项目已经使用哪套 icon。已有一套就沿用；没有时再按 `references/icon-system.md` 选择一套，不要同时引入第二套图标语言。
+- 同一界面只能使用一套图标语言和一个统一调用入口：React 项目建立 `UiIcon` / `IconRegistry`，纯 HTML demo 建立 SVG sprite 或 `icon()` helper。不要在各处散落不同来源的 SVG path。
+- 常规图标视觉尺寸通常为 16-24px；底部导航和工具栏可到 24-28px。图标按钮的点击区域必须至少 44x44px，即使图标本体更小。
+- 图标按钮必须有 `aria-label`、可见 tooltip 或旁边可读文本；不要只放一个无语义 SVG。
+- 不要把图标放进统一的大圆角彩色方块作为默认套路。只有参考图或设计系统明确需要 icon tile 时才使用；否则让图标直接服务导航、按钮或信息层级。
+- 不要手搓复杂 SVG 路径当作图标库替代品；只有库内没有、但必须复刻的极简单系统几何符号，才允许放进同一个 `IconRegistry` / SVG sprite 作为本地补位，不能散落在业务组件中。
+- 自定义品牌符号、复杂插画式徽章、主题贴纸、地图标记、手绘装饰或无法用图标库稳定表达的图形，才进入 image2 资产候选；这些资产也不能承担返回、设置、导航、播放等交互图标职责。
+- 图标要做视觉居中而非机械居中：播放三角、箭头、Wi-Fi、电池、信号等小图要放大检查，避免看起来像字母、乱码或伪文字。
+
+#### 图标系统落地
+
+对 App / 产品 UI，图标完整度来自可复用的代码图标系统，而不是一张张临时画。实现时按这个顺序：
+
+1. **复用已有**：如果项目已稳定使用四个允许库之一，优先使用它，并记录实际来源。如果项目混用了多套，选择覆盖 UI glyph 最完整的一套作为主库，逐步把新写 UI 收敛到这一套。
+2. **缺省选择一套**：没有既有图标集时，为 React/Next 项目从 `@phosphor-icons/react`、`hugeicons-react`、`@radix-ui/react-icons`、`@tabler/icons-react` 里选一套；纯 HTML/CSS/JS demo 则建立一个小型 `Icon`/`icon()` 工具或 SVG sprite，集中定义所有 glyph，不要在每个按钮里随手复制不同风格 SVG。
+3. **建立图标 token**：统一 `size`、`stroke-width`、`linecap/linejoin`、按钮 hit area、active/disabled/selected 颜色和光学偏移。播放三角通常右移 1px，箭头向指向方向微移，电池/Wi-Fi/信号用明确几何形，不用字母状边框凑。
+4. **列 coverage 表**：对智能家居、播放器、设置、设备面板等场景，先列出需要的 glyph，再映射到图标库名称或本地 SVG id。缺失的 glyph 用同一图标语言补齐，不交给 image2。
+
+智能家居 / 设备控制 App 至少覆盖这些 code icons：`back`、`more`、`settings`、`plus`、`minus`、`power`、`play`、`previous`、`next`、`volume`、`thermometer`、`zap`、`snowflake`、`flame`、`wind/fan`、`droplet`、`home`、`lamp`、`camera`、`speaker`、`tv`、`air-conditioner`、`battery`、`wifi`、`signal`。没有同名图标时使用最接近语义，但必须保持同一风格。
+
+### UI Glyph 锁定规则
+
+image2 很容易把小图标画成错位、伪字母或乱码。复刻 App、仪表盘、智能家居、音乐播放器、设备控制面板时，必须把 UI glyph 从生图职责里剥离出来。
+
+- **禁止用 image2 生成**：iOS/Android 状态栏、电量、Wi-Fi、信号、返回箭头、关闭、设置齿轮、三点菜单、加号/减号、电源、播放/暂停/快进、底部导航图标、分段控件图标、quick action 图标、设备类型小图标、开关、状态点、进度条端点和 icon-only button。
+- **必须用代码渲染**：上述所有 glyph、icon button、状态栏和导航 chrome。优先用项目图标库；没有合适图标时，用同一套线宽的内联 SVG 几何形或 CSS 几何形，并放大检查视觉居中。
+- **必须统一调用**：状态栏、返回箭头、菜单、播放器、底部 tab、quick action、开关、设备小图标等 UI glyph 必须从同一个 `UiIcon` / `IconRegistry` / SVG sprite 出来，背后只允许使用一套图标库。
+- **智能家居参考图拆分**：客厅照片、设备产品图、材质背景、真实物体缩略图可以是 image2 候选；温度/电量/功耗文字、状态栏、返回/更多/加号、播放器控制、quick action、底部导航、卡片标签和开关状态必须是代码。
+- image2 提示词必须显式排除 UI glyph：`no icons, no UI symbols, no system status bar, no battery/Wi-Fi/signal glyphs, no arrows, no gear, no menu dots, no plus/minus, no playback controls, no buttons, no labels, no text, no logo, no watermark`。
+- 最终截图必须放大检查状态栏、底部导航、工具栏、卡片内小图标和 icon-only buttons；如果任何 glyph 像错位字母、乱码、伪文字或模型生成残影，先改成代码渲染再交付。
+
+### 排版与画面布局
+
+- 建立清晰的空间尺度，优先使用 4pt 系列或项目已有 spacing tokens。相关元素 8-12px 紧密分组，不同组和区块 48-96px 分隔；不要所有间距都一样。
+- Flex 用于一维排列，Grid 用于二维结构；响应式卡片网格优先 `repeat(auto-fit, minmax(280px, 1fr))` 或内容驱动断点。
+- 产品 UI 使用固定 `rem` 字号尺度，比例通常更紧；品牌/内容页可让标题用有边界的 `clamp()`，但正文保持稳定可读。
+- 正文最小 16px，长文本宽度控制在约 45-75ch；标题使用 `text-wrap: balance`，长正文可用 `text-wrap: pretty`。
+- 字体最多 2-3 个家族；产品 UI 通常一个清晰 sans 就够。品牌页选字体要服务语气，避免无理由默认 Inter/Roboto 或一切“高级”都用 display serif。
+- 按钮、卡片、标题和导航文字必须能容纳更长文本；给翻译和用户输入预留 30-40% 扩展空间。Flex/Grid 子项需要 `min-width: 0` 防止溢出。
+- 移动端不是缩小桌面：单列优先、44x44px 触摸目标、底部或简化导航、safe area、不要依赖 hover；平板通常需要单独考虑两列或主从布局。
+- 用截图做“眯眼测试”：2 秒内能否看出主行动、次级内容和分组；看不出时，先调整空间、字号、字重和位置，而不是加更多装饰。
+
+## 页面输出巡检闭环
+
+交付可点击 demo 前，要把页面当成“成品”做一次自动巡检和人工复核。这个闭环服务于 image-to-UI 还原，不是通用前端 lint；重点检查页面是否真的可看、可点、可验收。
+
+优先运行本 skill 自带脚本：
+
+```bash
+image2-ui validate ./demo/my-output --reference ./reference.png
+```
+
+也可以对任意本地 demo 目录运行。`image2-ui validate` 会调用本 skill 的 `scripts/ui_output_audit.mjs`：先做静态检查；如果当前环境能加载 Playwright，会自动打开浏览器补充渲染检查。如果命令尚未安装到 PATH，可从 skill 目录运行 `node scripts/image2-ui validate ...` 或用 `npm link` 暴露 `package.json` 里的 bin。不要把这个命令、规则或输出描述成来自其它项目。
+
+巡检至少覆盖：
+
+- **结构与资产**：入口 HTML、CSS/JS、本地图片引用、远程资源依赖、空文件、破图和未落地的 image2 资产。
+- **渲染稳定性**：桌面端和移动端是否有控制台错误、横向滚动、空白首屏、图片未加载和布局跳动。
+- **文字与可读性**：按钮/卡片内文字是否溢出，正文是否被遮挡，关键文本对比度是否过低。
+- **审美反模式**：明显模板化渐变文字、过度紫蓝/奶油/沙色/灰蓝单一配色、卡片套卡片、重复 icon-card 网格、过重阴影、无意义大圆角、粗侧边色条和背景装饰滥用。
+- **图标与控件**：SVG/icon button 是否有可访问名称，触摸目标是否过小，导航/工具栏图标是否风格一致，普通 icon 是否被误做成生图资产。
+- **图标系统**：是否完成 icon inventory、是否混用了多套 icon 技术、是否出现圆角 icon tile 堆在标题上、是否用位图 `<img>` 当按钮/nav 小图标、是否缺少 44x44px hit area。
+- **交互验收**：主要 CTA、返回/关闭、导航、卡片、标签页和末级按钮要有点击反馈、路由变化、选中态变化或内容变化。
+- **参考图差距**：如果提供 `--reference`，记录参考图路径，并在截图复核时把当前实现与参考图逐区对照。
+
+巡检输出要转化为修正动作：`fail` 先修，`warn` 视影响修，`info` 记录取舍。最终汇报里写清楚巡检是否通过、剩余问题和验证命令；不要只说“看起来没问题”。
+
 ## 核心流程
 
 1. 在编辑代码或生成图片之前，先检查用户提供的每一张 UI 参考图。
 2. 将 UI 拆分为：
    - **代码渲染 UI**：布局、文字、按钮、卡片、简单渐变、边框、阴影、开关、表单、图表和重复组件。
-   - **图标资产**：优先使用项目已有图标库或 lucide 风格矢量图标。只有当图标是自定义插画式标记，且设计系统无法表达时，才生成图标。
+   - **代码图标与 UI chrome**：状态栏、导航、返回/关闭/菜单、播放器、底部 tab、quick action、设备小图标和普通功能图标，优先使用项目已有图标库或统一矢量库。只有当图标是自定义插画式标记，且设计系统无法表达时，才进入图片资产候选。
    - **image-to-ui 图片资产**：照片、插画、产品渲染图、角色、复杂纹理、复杂首屏背景、真实物体、App 展示图、装饰性位图，以及用代码复刻会脆弱或低质的视觉内容。
    - **抠图资产**：需要透明 PNG/WebP、遮罩或去背景的前景人物、产品、物体。
+   - **图标 coverage 表**：列出每个 UI glyph 的语义、来源库/SVG id、尺寸、stroke、容器、`aria-label` 和状态色，保证图标是一个系统而不是零散拼贴。
 3. 先输出前期审查文档，说明哪些元素好还原、哪些元素不好还原、哪些需要生成图片、哪些需要用户确认；如果用户已经明确要求“直接做”或“直接复刻”，可以跳过等待，但仍要先在内部完成这一步拆解。
 4. 等用户确认关键问题后，再进入生图；如果用户明确要求“直接继续”，可以用合理假设继续，但要记录假设。
 5. 生成前输出资产清单。清单要包含资产 id、UI 位置、目标槽位尺寸、导出尺寸、宽高比、生成提示词、后处理需求、集成目标，以及“是否必须真实 image2 生图”的判断。
@@ -146,10 +266,11 @@ python scripts\image2_asset.py generate `
 9. 将生成资产集成到 UI 中，使用稳定尺寸、`object-fit`、响应式约束、alt 文本和必要的懒加载。
 10. 给页面补齐可点击行为和跳转逻辑：明显的按钮、链接、返回/关闭、卡片、标签、导航项都要有真实交互；多屏参考图要自动串成可流转原型。
 11. 对完整页面做最终审查：检查尺寸、乱码、排版、响应式、图片嵌入、代码 UI 的融合和交互跳转是否自然。
-12. 将最终页面截图与原始 UI 参考图做差距核对，列出差异，修正后再次截图对比。
-13. 如果目标是前端应用，最后用渲染截图和点击路径验证效果，并确认截图里真实出现了 image2 资产。
+12. 对可点击 demo 运行页面输出巡检，至少覆盖破图、文字溢出、低对比度、横向滚动、控制台错误、图标可访问性、触摸目标和明显审美反模式。
+13. 将最终页面截图与原始 UI 参考图做差距核对，列出差异，修正后再次截图对比。
+14. 如果目标是前端应用，最后用渲染截图和点击路径验证效果，并确认截图里真实出现了 image2 资产。
 
-确认 image2 调用入口、判断能否真实生图时，读取 `references/image2-entrypoint.md`。构建资产清单、编写 image-to-ui 提示词、计算输出尺寸或规划抠图/去背景时，读取 `references/asset-manifest-and-prompts.md`。
+确认 image2 调用入口、判断能否真实生图时，读取 `references/image2-entrypoint.md`。构建资产清单、编写 image-to-ui 提示词、计算输出尺寸、规划抠图/去背景或执行页面输出巡检时，读取 `references/asset-manifest-and-prompts.md`。规划 App 状态栏、返回箭头、菜单、播放器、底部 tab、quick action、开关、设备小图标等 UI glyph 时，读取 `references/icon-system.md`。
 
 当用户要把社媒视觉热点、INS/Pinterest 小趋势或图像创作工具做成可用网页，并关心上线验证、传播数据或技术社区案例时，可读取 `references/hicolor-case-study.md` 作为真实项目参考。
 
@@ -159,7 +280,7 @@ python scripts\image2_asset.py generate `
 
 - 实际生成了哪些资产
 - 每个资产的落地路径
-- 每个资产实际使用的通道：`local-imagegen` 或 `local-api-imagegen-cli`
+- 每个资产实际使用的通道：`native-image2`、`youtoken-gpt-image-2` 或 `openrouter-icu-gpt-image-2`；如果通道是 `native-image2`，同时记录来源 `source=system-imagegen`、`source=project-image2` 或 `source=openai-imagegen-cli`
 - 哪些页面区域已经替换为真实位图
 - 哪些区域仍然是代码近似
 - 用什么截图或页面验证方式确认这些资产已经显示
@@ -209,7 +330,7 @@ python scripts\image2_asset.py generate `
 以下内容优先用代码实现：
 
 - 按钮、标签页、分段控件、输入框、菜单、卡片、分割线、徽标、图表、表格和布局网格。
-- 当前图标库已经覆盖的简单几何图标。
+- 当前图标库已经覆盖的简单几何图标，以及状态栏、导航栏、底部 tab、播放器、quick action、设备控制 glyph、开关和 icon-only button。
 - CSS 能稳定表达的阴影、发光、模糊、渐变和简单图案背景。
 
 以下内容优先用 image-to-ui 生成：
@@ -287,7 +408,7 @@ python scripts\image2_asset.py generate `
 
 当页面是“代码 UI + 多张统一风格位图”的混合模式时，提示词必须补充这些约束：
 
-- 不要生成任何可读文字、按钮、价格、系统状态栏或 UI chrome
+- 不要生成任何可读文字、按钮、价格、系统状态栏、图标、UI symbols、UI chrome、箭头、齿轮、三点菜单、加减号、电源符号、播放器控制、底部导航、开关或状态点
 - 主体尽量居中或按槽位留白
 - 给文案区预留安全留白
 - 多资产之间保持同一色板、颗粒密度、光照方向和风格强度
@@ -357,6 +478,7 @@ python scripts\image2_asset.py generate `
 
 - **尺寸正确**：图片不被意外拉伸、压扁、裁掉主体；导出尺寸满足最大展示尺寸；首屏、卡片、头像、背景图都有稳定宽高比。
 - **无乱码和伪文字**：页面真实文案不乱码；生成图片内部没有无法解释的文字、伪字母、logo、水印或与 UI 文案冲突的内容。
+- **无生成式 UI glyph**：生成图片内部没有状态栏、电量/Wi-Fi/信号、返回箭头、菜单、按钮、底部 tab、播放器或设备控制小图标；这些必须是代码层真实 icon。
 - **排版正常**：文本不溢出按钮/卡片；导航、按钮、图片、标题和正文之间没有异常重叠；移动端不出现横向滚动或关键内容被裁切。
 - **融合自然**：图片的光照、透视、边缘、阴影、色彩和清晰度与代码生成的 UI 匹配；抠图没有明显白边、硬边、脏边或悬浮感不合理的问题。
 - **层级正确**：图片不会遮挡可点击控件；前景图、背景图、文字和按钮的 `z-index` 与点击区域正常。
@@ -364,7 +486,9 @@ python scripts\image2_asset.py generate `
 - **响应式可靠**：至少检查桌面端和移动端；必要时增加移动端专用裁剪图或调整 `object-position`。
 - **窄容器真实可用**：如果用户可能在侧边栏、in-app browser、手机预览或小宽度窗口中打开页面，必须额外用接近实际容器宽度的截图验证。不要只用宽桌面视口判断；重点检查标题、正文、按钮、插画、状态栏和卡片是否发生重叠、截断、异常换行或局部放大。
 - **局部细节到位**：不要只看整页缩略图。必须放大检查关键边角和小元素，包括状态栏、圆角、设备边框、底部导航、图标、手绘线条、卡片边缘、按钮内文字和生成插画局部；如果局部明显不像参考图、像乱码/伪字母、线条断裂或比例失真，先修正再交付。
+- **图标对齐到位**：状态栏、返回/关闭、菜单、加减号、播放器、底部 tab、quick action 和设备图标必须在真实按钮/导航容器中视觉居中；不能由位图中的残缺图标承担交互含义。
 - **生图确实落地**：截图里能明确看到生成资产已经出现在正确槽位；不要只验证本地生成文件存在。
+- **自动巡检完成**：运行 `image2-ui validate`、`scripts/ui_output_audit.mjs` 或项目内等价验证命令；重点处理破图、控制台错误、低对比度、文字溢出、卡片套卡片、模板化渐变文字、单一 AI 配色和交互死区。
 
 如果审查发现问题，先判断是图片问题还是代码集成问题：图片主体、风格、边缘或文字错误时重新生成/抠图；尺寸、裁剪、层级或间距错误时修改 CSS/布局。
 
@@ -403,9 +527,10 @@ python scripts\image2_asset.py generate `
 
 - 哪些区域用代码渲染。
 - 生成了哪些图片资产，以及文件路径。
-- 哪些资产是通过真实 image2 流程得到的，并标明实际通道：`local-imagegen` 或 `local-api-imagegen-cli`。
+- 哪些资产是通过 `native-image2` 或 Youtoken/OpenRouter ICU `gpt-image-2` 备案通道得到的，并标明实际通道；`native-image2` 要写明来源。
 - 使用了什么抠图/去背景方法。
 - 关于尺寸、响应式裁剪或生成风格的假设。
 - 做过哪些页面级审查和验证，尤其是浏览器截图、移动端/桌面端检查、图片尺寸检查、乱码检查、图片融合检查和主要点击路径检查。
+- 页面输出巡检结果，包括是否运行自动脚本、发现了哪些 `fail`/`warn`、已经修复哪些、剩余哪些是有意识保留。
 - 与原始参考图对比后的主要差距、已修正项、剩余可接受差异，以及迭代了几轮截图核对。
 - 如果启动了本地预览服务，必须写清楚本地预览 URL、项目根目录、demo 目录和入口 HTML 文件路径，方便用户直接定位文件。

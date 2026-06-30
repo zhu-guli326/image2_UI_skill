@@ -1,6 +1,6 @@
 ﻿# Image2 to UI Skill
 
-把 UI 截图、设计稿、App 参考图交给 Codex，生成可点击的网页或 App demo，并在需要真实视觉资产的位置调用 `image2` 生成位图。
+把 UI 截图、设计稿、App 参考图交给 Codex，生成可点击的网页或 App demo，并在需要真实视觉资产的位置调用 `image2` / `gpt-image-2` 生成位图。
 
 Turn UI screenshots and design references into clickable Codex demos with code-rendered UI and real `image2` visual assets.
 
@@ -19,7 +19,12 @@ Turn UI screenshots and design references into clickable Codex demos with code-r
 
 - 不是把整张 UI 烘焙成一张图片，而是保留真实可交互的文字、按钮和布局。
 - 不是只用 CSS/SVG 临摹复杂视觉，而是把主视觉、插画、纹理、产品图等区域交给 `image2`。
+- 不是让 `image2` 生成状态栏、返回箭头、底部导航或播放器小图标；这些细碎 UI glyph 必须由代码层图标库/SVG/CSS 渲染，避免错位、伪文字和乱码。
+- 不是临时拼一堆图标；会先做 icon inventory，复用项目已有图标库或从 `@phosphor-icons/react`、`hugeicons-react`、`@radix-ui/react-icons`、`@tabler/icons-react` 中统一选一套，并用 coverage 表约束尺寸、线宽、状态和 aria-label。
 - 最终目标不是一张截图，而是可打开、可点击、可继续改的 demo。
+- 交付前加入页面输出巡检，检查破图、文字溢出、低对比度、模板化渐变文字、单一 AI 配色、嵌套卡片、icon tile 模板、图标可访问性、触摸目标、位图小图标误用和交互死区等问题。
+- 融入 Impeccable 风格的设计规范：产品 UI 保持可信和一致，品牌页要有明确视觉立场；限制模板化图标卡片、重复卡片网格、粗侧边条、禁用缩放和低质量排版。
+- 如果检索不到 `image2`，先用 `image2-ui doctor` 区分 native-image2 来源（系统 imagegen 或项目 image2 命令）和 Youtoken/OpenRouter ICU `gpt-image-2` 备案通道，再按实际通道落地资产。
 
 ## Demo
 
@@ -39,6 +44,26 @@ Turn UI screenshots and design references into clickable Codex demos with code-r
 </table>
 
 ## 案例素材
+
+### 智能家居 App v2
+
+新版 App 复刻 demo：客厅照片用 image2/system imagegen 生成，状态栏、返回、菜单、播放器、底部 tab、quick action、开关和设备小图标全部通过 `@phosphor-icons/react` 的统一 `UiIcon` 注册表渲染。
+
+<table>
+  <tr>
+    <th>首页</th>
+    <th>空调控制</th>
+    <th>房间设备</th>
+  </tr>
+  <tr>
+    <td><a href="./demo/smart-home-ui-v2/screenshots/home.png"><img src="./demo/smart-home-ui-v2/screenshots/home.png" alt="智能家居 App 首页" width="220"></a></td>
+    <td><a href="./demo/smart-home-ui-v2/screenshots/climate.png"><img src="./demo/smart-home-ui-v2/screenshots/climate.png" alt="智能家居 App 空调控制页" width="220"></a></td>
+    <td><a href="./demo/smart-home-ui-v2/screenshots/room.png"><img src="./demo/smart-home-ui-v2/screenshots/room.png" alt="智能家居 App 房间设备页" width="220"></a></td>
+  </tr>
+  <tr>
+    <td colspan="3"><a href="./demo/smart-home-ui-v2">查看 demo 源码</a></td>
+  </tr>
+</table>
 
 ### hicolor 增长案例
 
@@ -138,4 +163,36 @@ git clone https://github.com/zhu-guli326/image2_UI_skill.git "${CODEX_HOME:-$HOM
 
 内部执行规则、资产规划细节和 image2 通道处理逻辑都在 `SKILL.md` 与 `references/` 中，Codex 触发 skill 后会自动读取。
 
-Keywords: Codex skill, image2, image-to-ui, UI screenshot to code, design to code, clickable prototype, app demo, frontend demo, AI assets.
+诊断 image2 / fallback 通道：
+
+```bash
+image2-ui doctor
+```
+
+`doctor` 会报告：
+
+- `system_imagegen`：本机是否安装 `.system/imagegen` skill/CLI；内置 `image_gen` 是否暴露要看当前 Codex 工具面。本 skill 把它当作 `native-image2 / source=system-imagegen`。
+- `native_image2`：是否能找到项目 `image2` 命令或 `IMAGE2_COMMAND`，对应 `native-image2 / source=project-image2`。
+- `fallback`：是否能找到 Youtoken/OpenRouter ICU 兼容 CLI，以及是否具备可用密钥来源。
+
+## 输出验收
+
+生成 demo 后，可以运行内置巡检脚本：
+
+```bash
+image2-ui validate ./demo/my-output --reference ./reference.png
+```
+
+它会调用 skill 内置的 `scripts/ui_output_audit.mjs`，先做静态资产检查；如果环境有 Playwright，会继续做浏览器渲染检查，用于发现破图、横向滚动、文字溢出、低对比度、嵌套卡片、图标可访问性、触摸目标过小和常见 AI 味视觉问题。
+
+对 App / 智能家居 / 设备控制类参考图，`validate` 还会提示疑似把状态栏、导航、菜单、按钮、播放器或普通 UI icon 做成 raster image 的情况。正确做法是：客厅照片、产品图、背景质感交给 `image2`；状态栏、按钮、图标、底部 tab、开关和文字全部用代码渲染。
+
+React/Next demo 的图标系统默认只能选一套：`@phosphor-icons/react`、`hugeicons-react`、`@radix-ui/react-icons` 或 `@tabler/icons-react`；纯 HTML demo 用统一 SVG sprite/helper。`validate` 会提示多套 approved icon 包、未批准 icon 包、混合 icon 技术和按钮/导航里误用位图 icon 的情况。
+
+如果 `image2-ui` 还没加入 PATH，可以在 skill 目录运行：
+
+```bash
+node scripts/image2-ui validate ./demo/my-output --reference ./reference.png
+```
+
+Keywords: Codex skill, image2, image2 生图, system imagegen, image_gen, gpt-image-2, Youtoken image, OpenRouter ICU, image-to-ui, UI screenshot to code, design to code, clickable prototype, app demo, frontend demo, AI assets.
