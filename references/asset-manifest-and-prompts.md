@@ -167,13 +167,26 @@
 
 ## 5. 页面输出巡检模板
 
-可点击 demo 交付前，优先运行：
+可点击 demo 交付前，优先运行 loop 闭环：
+
+```bash
+image2-ui loop <demo-dir> --reference <reference-image> --build "<build-command>"
+```
+
+`loop` 会自动构建、截图、巡检、生成参考图对照和修复队列。默认产物在 `<demo-dir>/.image2-ui/`：
+
+- `loop-actual.png`
+- `loop-reference-compare.png`
+- `loop-report.md`
+- `loop-report.json`
+
+只需要单独巡检时，运行：
 
 ```bash
 image2-ui validate <demo-dir> --reference <reference-image>
 ```
 
-如果已经有当前页面截图，再生成参考图/输出图对照板：
+如果已经有当前页面截图，单独生成参考图/输出图对照板：
 
 ```bash
 image2-ui compare --reference <reference-image> --actual <output-screenshot> --out <compare-output.png>

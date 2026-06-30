@@ -14,6 +14,7 @@
 ```bash
 npm install
 npm run build
+node /Users/zzhu/.codex/skills/image-to-ui-skill/scripts/image2-ui loop . --reference /Users/zzhu/Downloads/2.jpeg --build "npm run build" --capture-class capture-wide
 node /Users/zzhu/.codex/skills/image-to-ui-skill/scripts/image2-ui validate . --reference /Users/zzhu/Downloads/2.jpeg
 node /Users/zzhu/.codex/skills/image-to-ui-skill/scripts/image2-ui compare --reference /Users/zzhu/Downloads/2.jpeg --actual screenshots/recreated-three-screen-chrome.png --out screenshots/reference-output-compare.png
 ```

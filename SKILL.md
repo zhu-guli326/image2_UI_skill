@@ -1,6 +1,6 @@
 ---
 name: image-to-ui-skill
-description: Use when the user asks for image2 生图, 调用 image2, image2 生成图片, gpt-image-2, AI 生图, 出图, 生成 UI 位图资产, 参考图生图, or image-to-UI. 将 UI 截图、设计稿、图片转换为可实现的前端代码和图片资产；also use for UI screenshot to code, clickable app demo, mobile prototype, iOS preview, high-fidelity UI recreation from reference images, automated UI output validation, design-spec enforcement, icon rules, and layout/typography quality checks. 分析哪些部分应该用代码实现，哪些部分应该生成位图资产。识别图片依赖区域、图标、按钮、字体、背景、首屏视觉、产品渲染图、抠图、透明 PNG 资产，生成提示词并回填到前端 UI 中。涉及生图时必须把系统内置 imagegen/image_gen 和项目 image2 命令都视为 native-image2 来源；如果 native-image2 不可用或失败，再走 Youtoken/OpenRouter ICU gpt-image-2 API 备案通道。普通系统生图和项目原生 image2 最终都可标记为 native-image2，但要记录来源 source=system-imagegen 或 source=project-image2；项目可复跑资产优先用 `scripts/image2_asset.py`，它会先尝试 native-image2，失败再备案到 youtoken-gpt-image-2 或 openrouter-icu-gpt-image-2，确保真实生成位图文件。当用户说“找不到 image2”“检索不到 image2 生图”“没有真的生图”时，先运行 `image2-ui doctor` 诊断系统 imagegen、项目 image2 命令和 API 备案入口，再落地真实图片。当用户要求做成 App 形式、手机 App、iOS 预览、可点击 App demo 或移动端原型时，必须生成带 iOS 手机外边框的可点击预览，并提供渲染截图。交付前应进行页面输出巡检和参考图对照，检查破图、文字溢出、低对比度、嵌套卡片、模板化渐变文字、单一 AI 配色、icon tile 模板化、无障碍标签、触摸目标、图标视觉错位、交互死区和响应式问题。
+description: Use when the user asks for image2 生图, 调用 image2, image2 生成图片, gpt-image-2, AI 生图, 出图, 生成 UI 位图资产, 参考图生图, or image-to-UI. 将 UI 截图、设计稿、图片转换为可实现的前端代码和图片资产；also use for UI screenshot to code, clickable app demo, mobile prototype, iOS preview, high-fidelity UI recreation from reference images, automated UI output validation, loop 工程自优化, design-spec enforcement, icon rules, and layout/typography quality checks. 分析哪些部分应该用代码实现，哪些部分应该生成位图资产。识别图片依赖区域、图标、按钮、字体、背景、首屏视觉、产品渲染图、抠图、透明 PNG 资产，生成提示词并回填到前端 UI 中。涉及生图时必须把系统内置 imagegen/image_gen 和项目 image2 命令都视为 native-image2 来源；如果 native-image2 不可用或失败，再走 Youtoken/OpenRouter ICU gpt-image-2 API 备案通道。普通系统生图和项目原生 image2 最终都可标记为 native-image2，但要记录来源 source=system-imagegen 或 source=project-image2；项目可复跑资产优先用 `scripts/image2_asset.py`，它会先尝试 native-image2，失败再备案到 youtoken-gpt-image-2 或 openrouter-icu-gpt-image-2，确保真实生成位图文件。当用户说“找不到 image2”“检索不到 image2 生图”“没有真的生图”时，先运行 `image2-ui doctor` 诊断系统 imagegen、项目 image2 命令和 API 备案入口，再落地真实图片。当用户要求做成 App 形式、手机 App、iOS 预览、可点击 App demo 或移动端原型时，必须生成带 iOS 手机外边框的可点击预览，并提供渲染截图。交付前应进行页面输出巡检和参考图对照，检查破图、文字溢出、低对比度、嵌套卡片、模板化渐变文字、单一 AI 配色、icon tile 模板化、无障碍标签、触摸目标、图标视觉错位、交互死区和响应式问题。
 ---
 
 # Image to UI Skill
@@ -231,7 +231,15 @@ image2 很容易把小图标画成错位、伪字母或乱码。复刻 App、仪
 
 交付可点击 demo 前，要把页面当成“成品”做一次自动巡检和人工复核。这个闭环服务于 image-to-UI 还原，不是通用前端 lint；重点检查页面是否真的可看、可点、可验收。
 
-优先运行本 skill 自带脚本：
+当用户要求“继续优化”“自己迭代”“loop 工程”“复刻一般，再对比看看”时，优先运行本 skill 自带 loop 命令：
+
+```bash
+image2-ui loop ./demo/my-output --reference ./reference.png --build "npm run build"
+```
+
+`image2-ui loop` 会编排 build、真实浏览器截图、`validate`、`compare` 和修复队列报告，默认输出到目标 demo 的 `.image2-ui/`：`loop-actual.png`、`loop-reference-compare.png/html`、`loop-report.md/json`。它不直接改代码；agent 必须读取 `loop-report.md`，先修 Must Fix，再修影响还原度的 Should Fix，然后复跑同一条 loop 命令，直到没有必须修的问题。
+
+如果只需要一次页面巡检，运行：
 
 ```bash
 image2-ui validate ./demo/my-output --reference ./reference.png
@@ -239,7 +247,7 @@ image2-ui validate ./demo/my-output --reference ./reference.png
 
 也可以对任意本地 demo 目录运行。`image2-ui validate` 会调用本 skill 的 `scripts/ui_output_audit.mjs`：先做静态检查；如果当前环境能加载 Playwright，会自动打开浏览器补充渲染检查。如果命令尚未安装到 PATH，可从 skill 目录运行 `node scripts/image2-ui validate ...` 或用 `npm link` 暴露 `package.json` 里的 bin。不要把这个命令、规则或输出描述成来自其它项目。
 
-如果已经有参考图和当前渲染截图，继续生成对照板：
+如果已经有参考图和当前渲染截图，可以单独生成对照板：
 
 ```bash
 image2-ui compare --reference ./reference.png --actual ./screenshots/output.png --out ./screenshots/reference-output-compare.png
@@ -259,7 +267,7 @@ image2-ui compare --reference ./reference.png --actual ./screenshots/output.png 
 - **交互验收**：主要 CTA、返回/关闭、导航、卡片、标签页和末级按钮要有点击反馈、路由变化、选中态变化或内容变化。
 - **参考图差距**：如果提供 `--reference`，记录参考图路径，并在截图复核时把当前实现与参考图逐区对照；如果已有输出截图，运行 `image2-ui compare` 生成可分享的对照 PNG/HTML。
 
-巡检输出要转化为修正动作：`fail` 先修，`warn` 视影响修，`info` 记录取舍。最终汇报里写清楚巡检是否通过、剩余问题和验证命令；不要只说“看起来没问题”。
+巡检输出要转化为修正动作：`fail` 先修，`warn` 视影响修，`info` 记录取舍。loop 报告里的 Must Fix 表示下一轮必须先处理的问题，Should Fix 表示影响质感、还原度或稳定性的优化项，Reference Review 表示必须人工看对照图的差距。最终汇报里写清楚巡检是否通过、剩余问题和验证命令；不要只说“看起来没问题”。
 
 ## 核心流程
 
@@ -279,11 +287,11 @@ image2-ui compare --reference ./reference.png --actual ./screenshots/output.png 
 9. 将生成资产集成到 UI 中，使用稳定尺寸、`object-fit`、响应式约束、alt 文本和必要的懒加载。
 10. 给页面补齐可点击行为和跳转逻辑：明显的按钮、链接、返回/关闭、卡片、标签、导航项都要有真实交互；多屏参考图要自动串成可流转原型。
 11. 对完整页面做最终审查：检查尺寸、乱码、排版、响应式、图片嵌入、代码 UI 的融合和交互跳转是否自然。
-12. 对可点击 demo 运行页面输出巡检，至少覆盖破图、文字溢出、低对比度、横向滚动、控制台错误、图标可访问性、触摸目标和明显审美反模式。
-13. 将最终页面截图与原始 UI 参考图做差距核对，列出差异，修正后再次截图对比。
+12. 对可点击 demo 运行 `image2-ui loop` 或页面输出巡检，至少覆盖破图、文字溢出、低对比度、横向滚动、控制台错误、图标可访问性、触摸目标、图标错位、位图 UI glyph 和明显审美反模式。
+13. 将最终页面截图与原始 UI 参考图做差距核对，列出差异；如果 loop 报告还有 Must Fix，先修正后再次截图对比。
 14. 如果目标是前端应用，最后用渲染截图和点击路径验证效果，并确认截图里真实出现了 image2 资产。
 
-确认 image2 调用入口、判断能否真实生图时，读取 `references/image2-entrypoint.md`。构建资产清单、编写 image-to-ui 提示词、计算输出尺寸、规划抠图/去背景或执行页面输出巡检时，读取 `references/asset-manifest-and-prompts.md`。规划 App 状态栏、返回箭头、菜单、播放器、底部 tab、quick action、开关、设备小图标等 UI glyph 时，读取 `references/icon-system.md`。
+确认 image2 调用入口、判断能否真实生图时，读取 `references/image2-entrypoint.md`。构建资产清单、编写 image-to-ui 提示词、计算输出尺寸、规划抠图/去背景或执行页面输出巡检时，读取 `references/asset-manifest-and-prompts.md`。规划 App 状态栏、返回箭头、菜单、播放器、底部 tab、quick action、开关、设备小图标等 UI glyph 时，读取 `references/icon-system.md`。当用户要求 loop 工程、自我优化、多轮对比或持续修复时，读取 `references/loop-engineering.md`。
 
 当用户要把社媒视觉热点、INS/Pinterest 小趋势或图像创作工具做成可用网页，并关心上线验证、传播数据或技术社区案例时，可读取 `references/hicolor-case-study.md` 作为真实项目参考。
 

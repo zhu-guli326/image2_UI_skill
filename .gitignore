@@ -1,3 +1,4 @@
 demo/*/screenshots/validate-*.png
+demo/*/.image2-ui/
 demo/*/node_modules/
 demo/*/dist/

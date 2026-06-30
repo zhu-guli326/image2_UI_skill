@@ -24,6 +24,7 @@ Turn UI screenshots and design references into clickable Codex demos with code-r
 - 最终目标不是一张截图，而是可打开、可点击、可继续改的 demo。
 - 交付前加入页面输出巡检，检查破图、文字溢出、低对比度、设备卡片微型伪字、模板化渐变文字、单一 AI 配色、嵌套卡片、icon tile 模板、图标可访问性、触摸目标、图标视觉错位、位图小图标误用和交互死区等问题。
 - 可生成“参考图 vs 当前输出”的对照板，把比例、间距、手机位置、图标/开关/产品图差距放到同一张 PNG/HTML 里看，避免只凭记忆复刻。
+- 可运行 `image2-ui loop` 做工程闭环：构建、浏览器截图、自动巡检、参考图对比和修复队列一次完成，让每轮优化都有稳定证据。
 - 融入 Impeccable 风格的设计规范：产品 UI 保持可信和一致，品牌页要有明确视觉立场；限制模板化图标卡片、重复卡片网格、粗侧边条、禁用缩放和低质量排版。
 - 如果检索不到 `image2`，先用 `image2-ui doctor` 区分 native-image2 来源（系统 imagegen 或项目 image2 命令）和 Youtoken/OpenRouter ICU `gpt-image-2` 备案通道，再按实际通道落地资产。
 
@@ -178,7 +179,28 @@ image2-ui doctor
 
 ## 输出验收
 
-生成 demo 后，可以运行内置巡检脚本：
+生成 demo 后，推荐先跑一轮 loop 工程闭环：
+
+```bash
+image2-ui loop ./demo/my-output --reference ./reference.png --build "npm run build"
+```
+
+`loop` 会自动执行 build、浏览器截图、`validate`、`compare`，并把结果写到 `./demo/my-output/.image2-ui/`：
+
+- `loop-actual.png`：当前渲染截图
+- `loop-reference-compare.png` / `.html`：参考图与当前输出对照
+- `loop-report.md` / `.json`：Must Fix、Should Fix 和人工参考图核对清单
+
+如果要给截图加特定捕获状态，例如智能家居三屏 demo 的宽屏复刻模式：
+
+```bash
+image2-ui loop ./demo/smart-home-ui-v2 \
+  --reference /Users/zzhu/Downloads/2.jpeg \
+  --build "npm run build" \
+  --capture-class capture-wide
+```
+
+只做巡检时，可以运行内置验证脚本：
 
 ```bash
 image2-ui validate ./demo/my-output --reference ./reference.png
@@ -205,6 +227,7 @@ React/Next demo 的图标系统默认只能选一套：`@phosphor-icons/react`�
 如果 `image2-ui` 还没加入 PATH，可以在 skill 目录运行：
 
 ```bash
+node scripts/image2-ui loop ./demo/my-output --reference ./reference.png --build "npm run build"
 node scripts/image2-ui validate ./demo/my-output --reference ./reference.png
 node scripts/image2-ui compare --reference ./reference.png --actual ./screenshots/output.png --out ./screenshots/reference-output-compare.png
 ```
