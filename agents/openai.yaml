@@ -1,4 +1,4 @@
 interface:
-  display_name: "Image2 UI 复刻"
-  short_description: "把 UI 参考图转成可点击 demo，并接入 image2/gpt-image-2 资产、设计规范、页面巡检和 loop 对比"
-  default_prompt: "Use $image-to-ui-skill 分析这些 UI 参考图，判断代码 UI 与生图资产边界；把系统 imagegen/image_gen 和项目 image2 命令都视为 native-image2 来源，Youtoken/OpenRouter ICU gpt-image-2 作为 API 备案通道。实现时遵守设计规范、图标限制和排版规则：照片、产品图、纹理和复杂视觉可交给 image2；状态栏、电量/Wi-Fi/信号、返回/关闭/菜单、播放器、底部 tab、quick action、开关、按钮和普通 UI icon 必须用统一代码图标系统渲染。新 React/Next demo 只能从 @phosphor-icons/react、hugeicons-react、@radix-ui/react-icons、@tabler/icons-react 中选一套，或沿用项目已有主图标库；通过 UiIcon/IconRegistry/SVG sprite 统一调用，不要混用多套 icon 包、位图小图标、emoji 或散落 SVG path。避免生成式小图标错位、伪文字或乱码，也避免模板化 icon-card、嵌套卡片、渐变文字、低对比度和文字溢出。如果检索不到 image2 或 image2 不可用，先运行 image2-ui doctor，再按实际可用通道生成并落地资产，把生成资产集成回界面。交付或继续优化时优先运行 image2-ui loop，产出浏览器截图、参考图对比和修复队列，再交付可点击预览、截图验真和页面输出巡检结果。"
+  display_name: "Image2 UI"
+  short_description: "把 UI 参考图转成可点击 demo，并用 image2 生成必要位图资产。"
+  default_prompt: "Use $image-to-ui-skill 分析 UI 参考图，拆分 code-ui 和 image2-assets。复杂视觉调用 image2；文字、按钮、状态栏、导航、普通 icon 和交互控件用代码实现。生成资产要落地到项目目录并接回页面，最后交付可点击预览、资产路径和检查结果。"
