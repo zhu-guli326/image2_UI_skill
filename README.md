@@ -35,52 +35,56 @@ git clone https://github.com/zhu-guli326/image2_UI_skill.git "${CODEX_HOME:-$HOM
 
 ### hicolor
 
-<table>
-  <tr>
-    <td><a href="./assets/cases/hicolor/traffic-3-days.png"><img src="./assets/cases/hicolor/traffic-3-days.png" alt="hicolor traffic" width="360"></a></td>
-    <td><a href="./assets/cases/hicolor/threads-recommendation.png"><img src="./assets/cases/hicolor/threads-recommendation.png" alt="Threads recommendation" width="240"></a></td>
-    <td><a href="./assets/cases/hicolor/xiaohongshu-pinned.jpg"><img src="./assets/cases/hicolor/xiaohongshu-pinned.jpg" alt="Xiaohongshu pinned" width="240"></a></td>
-  </tr>
-</table>
+<p align="center">
+  <a href="./assets/cases/hicolor/traffic-3-days.png"><img src="./assets/cases/hicolor/traffic-3-days.png" alt="hicolor traffic" width="420"></a>
+  <a href="./assets/cases/hicolor/threads-recommendation.png"><img src="./assets/cases/hicolor/threads-recommendation.png" alt="Threads recommendation" width="260"></a>
+</p>
+
+<p align="center">
+  <a href="./assets/cases/hicolor/xiaohongshu-pinned.jpg"><img src="./assets/cases/hicolor/xiaohongshu-pinned.jpg" alt="Xiaohongshu pinned" width="260"></a>
+</p>
 
 ### Museum App
 
-<table>
-  <tr>
-    <td><a href="./assets/cases/museum-app/reference-overview.png"><img src="./assets/cases/museum-app/reference-overview.png" alt="Museum reference" width="300"></a></td>
-    <td><a href="./assets/cases/museum-app/museum-app-demo.mp4"><img src="./assets/cases/museum-app/museum-app-preview.gif" alt="Museum preview" width="180"></a></td>
-    <td><a href="./assets/cases/museum-app/home-screen.png"><img src="./assets/cases/museum-app/home-screen.png" alt="Museum home" width="160"></a></td>
-    <td><a href="./assets/cases/museum-app/exhibitions-screen.png"><img src="./assets/cases/museum-app/exhibitions-screen.png" alt="Museum exhibitions" width="160"></a></td>
-    <td><a href="./assets/cases/museum-app/detail-screen.png"><img src="./assets/cases/museum-app/detail-screen.png" alt="Museum detail" width="160"></a></td>
-  </tr>
-</table>
+<p align="center">
+  <a href="./assets/cases/museum-app/reference-overview.png"><img src="./assets/cases/museum-app/reference-overview.png" alt="Museum reference" width="440"></a>
+  <a href="./assets/cases/museum-app/museum-app-demo.mp4"><img src="./assets/cases/museum-app/museum-app-preview.gif" alt="Museum preview" width="220"></a>
+</p>
 
-[查看 Museum App 视频](./assets/cases/museum-app/museum-app-demo.mp4)
+<p align="center">
+  <a href="./assets/cases/museum-app/home-screen.png"><img src="./assets/cases/museum-app/home-screen.png" alt="Museum home" width="190"></a>
+  <a href="./assets/cases/museum-app/exhibitions-screen.png"><img src="./assets/cases/museum-app/exhibitions-screen.png" alt="Museum exhibitions" width="190"></a>
+  <a href="./assets/cases/museum-app/detail-screen.png"><img src="./assets/cases/museum-app/detail-screen.png" alt="Museum detail" width="190"></a>
+</p>
+
+<p align="center"><a href="./assets/cases/museum-app/museum-app-demo.mp4">查看 Museum App 视频</a></p>
 
 ### Fashion Shopping App
 
-<table>
-  <tr>
-    <td><a href="./assets/cases/fashion-shopping-app/reference-overview.png"><img src="./assets/cases/fashion-shopping-app/reference-overview.png" alt="Fashion reference" width="300"></a></td>
-    <td><a href="./assets/cases/fashion-shopping-app/fashion-app-demo.mp4"><img src="./assets/cases/fashion-shopping-app/fashion-app-preview.gif" alt="Fashion preview" width="180"></a></td>
-    <td><a href="./assets/cases/fashion-shopping-app/hero-screen.png"><img src="./assets/cases/fashion-shopping-app/hero-screen.png" alt="Fashion hero" width="160"></a></td>
-    <td><a href="./assets/cases/fashion-shopping-app/catalog-screen.png"><img src="./assets/cases/fashion-shopping-app/catalog-screen.png" alt="Fashion catalog" width="160"></a></td>
-    <td><a href="./assets/cases/fashion-shopping-app/favorites-screen.png"><img src="./assets/cases/fashion-shopping-app/favorites-screen.png" alt="Fashion favorites" width="160"></a></td>
-  </tr>
-</table>
+<p align="center">
+  <a href="./assets/cases/fashion-shopping-app/reference-overview.png"><img src="./assets/cases/fashion-shopping-app/reference-overview.png" alt="Fashion reference" width="440"></a>
+  <a href="./assets/cases/fashion-shopping-app/fashion-app-demo.mp4"><img src="./assets/cases/fashion-shopping-app/fashion-app-preview.gif" alt="Fashion preview" width="220"></a>
+</p>
 
-[查看 Fashion Shopping App 视频](./assets/cases/fashion-shopping-app/fashion-app-demo.mp4)
+<p align="center">
+  <a href="./assets/cases/fashion-shopping-app/hero-screen.png"><img src="./assets/cases/fashion-shopping-app/hero-screen.png" alt="Fashion hero" width="190"></a>
+  <a href="./assets/cases/fashion-shopping-app/catalog-screen.png"><img src="./assets/cases/fashion-shopping-app/catalog-screen.png" alt="Fashion catalog" width="190"></a>
+  <a href="./assets/cases/fashion-shopping-app/favorites-screen.png"><img src="./assets/cases/fashion-shopping-app/favorites-screen.png" alt="Fashion favorites" width="190"></a>
+</p>
+
+<p align="center"><a href="./assets/cases/fashion-shopping-app/fashion-app-demo.mp4">查看 Fashion Shopping App 视频</a></p>
 
 ### News App
 
-<table>
-  <tr>
-    <td><a href="./assets/cases/news-app/reference-overview.png"><img src="./assets/cases/news-app/reference-overview.png" alt="News reference" width="300"></a></td>
-    <td><a href="./assets/cases/news-app/news-app-demo.mp4"><img src="./assets/cases/news-app/news-app-preview.gif" alt="News preview" width="180"></a></td>
-    <td><a href="./assets/cases/news-app/headlines-screen.png"><img src="./assets/cases/news-app/headlines-screen.png" alt="News headlines" width="160"></a></td>
-    <td><a href="./assets/cases/news-app/feed-screen.png"><img src="./assets/cases/news-app/feed-screen.png" alt="News feed" width="160"></a></td>
-    <td><a href="./assets/cases/news-app/discover-screen.png"><img src="./assets/cases/news-app/discover-screen.png" alt="News discover" width="160"></a></td>
-  </tr>
-</table>
+<p align="center">
+  <a href="./assets/cases/news-app/reference-overview.png"><img src="./assets/cases/news-app/reference-overview.png" alt="News reference" width="440"></a>
+  <a href="./assets/cases/news-app/news-app-demo.mp4"><img src="./assets/cases/news-app/news-app-preview.gif" alt="News preview" width="220"></a>
+</p>
 
-[查看 News App 视频](./assets/cases/news-app/news-app-demo.mp4)
+<p align="center">
+  <a href="./assets/cases/news-app/headlines-screen.png"><img src="./assets/cases/news-app/headlines-screen.png" alt="News headlines" width="190"></a>
+  <a href="./assets/cases/news-app/feed-screen.png"><img src="./assets/cases/news-app/feed-screen.png" alt="News feed" width="190"></a>
+  <a href="./assets/cases/news-app/discover-screen.png"><img src="./assets/cases/news-app/discover-screen.png" alt="News discover" width="190"></a>
+</p>
+
+<p align="center"><a href="./assets/cases/news-app/news-app-demo.mp4">查看 News App 视频</a></p>
