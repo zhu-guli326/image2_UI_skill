@@ -35,24 +35,26 @@ git clone https://github.com/zhu-guli326/image2_UI_skill.git "${CODEX_HOME:-$HOM
 
 点击图片可查看原图；App 案例保留一张参考图和一个视频预览，不展示分屏静态图。
 
-### hicolor
-
-<p align="center">
-  <a href="./assets/cases/hicolor/traffic-3-days.png"><img src="./assets/cases/hicolor/traffic-3-days.png" alt="hicolor traffic" width="360"></a>
-  <a href="./assets/cases/hicolor/threads-recommendation.png"><img src="./assets/cases/hicolor/threads-recommendation.png" alt="Threads recommendation" width="215"></a>
-</p>
-
-<p align="center">
-  <a href="./assets/cases/hicolor/xiaohongshu-pinned.jpg"><img src="./assets/cases/hicolor/xiaohongshu-pinned.jpg" alt="Xiaohongshu pinned" width="215"></a>
-</p>
-
-### App Demos
-
 <table>
   <tr>
     <th align="left">案例</th>
     <th align="center">图片</th>
-    <th align="center">视频</th>
+    <th align="center">预览</th>
+  </tr>
+  <tr>
+    <td>
+      <strong>hicolor</strong>
+      <br>
+      内容增长与图文案例展示
+    </td>
+    <td align="center">
+      <a href="./assets/cases/hicolor/traffic-3-days.png"><img src="./assets/cases/hicolor/traffic-3-days.png" alt="hicolor traffic" width="360"></a>
+    </td>
+    <td align="center">
+      <a href="./assets/cases/hicolor/threads-recommendation.png"><img src="./assets/cases/hicolor/threads-recommendation.png" alt="Threads recommendation" width="215"></a>
+      <br>
+      <a href="./assets/cases/hicolor/xiaohongshu-pinned.jpg">查看补充图</a>
+    </td>
   </tr>
   <tr>
     <td>
