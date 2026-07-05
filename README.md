@@ -35,18 +35,16 @@ git clone https://github.com/zhu-guli326/image2_UI_skill.git "${CODEX_HOME:-$HOM
 
 点击图片可查看原图；App 案例保留一张参考图和一个视频预览，不展示分屏静态图。
 
-<table>
+### hicolor
+
+内容增长与图文案例展示
+
+<table align="center">
   <tr>
-    <th align="left">案例</th>
     <th align="center">图片</th>
     <th align="center">预览</th>
   </tr>
   <tr>
-    <td>
-      <strong>hicolor</strong>
-      <br>
-      内容增长与图文案例展示
-    </td>
     <td align="center">
       <a href="./assets/cases/hicolor/traffic-3-days.png"><img src="./assets/cases/hicolor/traffic-3-days.png" alt="hicolor traffic" width="360"></a>
     </td>
@@ -56,12 +54,18 @@ git clone https://github.com/zhu-guli326/image2_UI_skill.git "${CODEX_HOME:-$HOM
       <a href="./assets/cases/hicolor/xiaohongshu-pinned.jpg">查看补充图</a>
     </td>
   </tr>
+</table>
+
+### Museum App
+
+iOS 风格博物馆导览 demo
+
+<table align="center">
   <tr>
-    <td>
-      <strong>Museum App</strong>
-      <br>
-      iOS 风格博物馆导览 demo
-    </td>
+    <th align="center">图片</th>
+    <th align="center">预览</th>
+  </tr>
+  <tr>
     <td align="center">
       <a href="./assets/cases/museum-app/reference-overview.png"><img src="./assets/cases/museum-app/reference-overview.png" alt="Museum reference" width="420"></a>
     </td>
@@ -71,12 +75,18 @@ git clone https://github.com/zhu-guli326/image2_UI_skill.git "${CODEX_HOME:-$HOM
       <a href="./assets/cases/museum-app/museum-app-demo.mp4">查看 Museum App 视频</a>
     </td>
   </tr>
+</table>
+
+### Fashion Shopping App
+
+时尚购物 App 原型 demo
+
+<table align="center">
   <tr>
-    <td>
-      <strong>Fashion Shopping App</strong>
-      <br>
-      时尚购物 App 原型 demo
-    </td>
+    <th align="center">图片</th>
+    <th align="center">预览</th>
+  </tr>
+  <tr>
     <td align="center">
       <a href="./assets/cases/fashion-shopping-app/reference-overview.png"><img src="./assets/cases/fashion-shopping-app/reference-overview.png" alt="Fashion reference" width="420"></a>
     </td>
@@ -86,12 +96,18 @@ git clone https://github.com/zhu-guli326/image2_UI_skill.git "${CODEX_HOME:-$HOM
       <a href="./assets/cases/fashion-shopping-app/fashion-app-demo.mp4">查看 Fashion Shopping App 视频</a>
     </td>
   </tr>
+</table>
+
+### News App
+
+新闻阅读与发现页 demo
+
+<table align="center">
   <tr>
-    <td>
-      <strong>News App</strong>
-      <br>
-      新闻阅读与发现页 demo
-    </td>
+    <th align="center">图片</th>
+    <th align="center">预览</th>
+  </tr>
+  <tr>
     <td align="center">
       <a href="./assets/cases/news-app/reference-overview.png"><img src="./assets/cases/news-app/reference-overview.png" alt="News reference" width="420"></a>
     </td>
