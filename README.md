@@ -1,7 +1,7 @@
 # image2_UI_skill
 
 <p align="center">
-  <img src="./assets/readme/hero.svg" width="100%" alt="image2_UI_skill turns UI references into code-rendered interfaces, generated image assets, and clickable demos">
+  <img src="./assets/readme/hero.png" width="100%" alt="image2_UI_skill turns UI references into code-rendered interfaces, generated image assets, and clickable demos">
 </p>
 
 把 UI 截图、设计稿、App 参考图交给 Codex，让它先拆清楚哪些应该用代码实现、哪些必须真实调用 `image2` 生成图片资产，再把资产接回一个可打开、可点击、可继续修改的 demo。
