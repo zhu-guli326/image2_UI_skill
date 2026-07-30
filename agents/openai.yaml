@@ -1,4 +1,4 @@
 interface:
   display_name: "Image2 UI"
-  short_description: "把 UI 参考图转成可点击 demo，并用 image2 生成必要位图资产。"
-  default_prompt: "Use $image-to-ui-skill 分析 UI 参考图，拆分 code-ui 和 image2-assets。复杂视觉调用 image2；文字、按钮、状态栏、导航、普通 icon 和交互控件用代码实现。生成资产要落地到项目目录并接回页面，最后交付可点击预览、资产路径和检查结果。"
+  short_description: "Turn UI references into clickable demos and generate required bitmap assets with image2. / &#25226; UI &#21442;&#32771;&#22270;&#36716;&#25104;&#21487;&#28857;&#20987; demo&#65292;&#24182;&#29992; image2 &#29983;&#25104;&#24517;&#35201;&#20301;&#22270;&#36164;&#20135;&#12290;"
+  default_prompt: "Use $image-to-ui-skill to analyze the UI reference image. Split it into code-ui and image2-assets. Use image2 for complex visuals; render text, buttons, status bars, navigation, common icons, and controls with code. Approved icon libraries: @phosphor-icons/react, hugeicons-react, @radix-ui/react-icons, @tabler/icons-react. Save generated assets into the project and wire them into the page. Deliver a clickable preview, asset paths, and verification results. / &#20351;&#29992; image-to-ui-skill &#20998;&#26512; UI &#21442;&#32771;&#22270;&#65292;&#25286;&#20998; code-ui &#21644; image2-assets&#65292;&#26368;&#21518;&#20132;&#20184;&#21487;&#28857;&#20987;&#39044;&#35272;&#12289;&#36164;&#20135;&#36335;&#24452;&#21644;&#26816;&#26597;&#32467;&#26524;&#12290;"
