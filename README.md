@@ -191,6 +191,24 @@ A content-growth case for checking mixed outputs: source material, structured pa
 `-- demo/                     # Clickable demos
 ```
 
+## Multi-Agent Production Flow
+
+When the host supports subagents, the skill can orchestrate these specialist roles:
+
+```text
+Visual + Asset
+      |
+Architecture + Backend Contract + State Machine
+      |
+UI Implementation
+      |
+Accessibility + QA
+      |
+Release
+```
+
+If subagent tools are unavailable, the same roles run sequentially in one agent. See `references/multi-agent-orchestration.md` for inputs, outputs, handoff artifacts, and reusable prompts.
+
 ## &#32852;&#31995;&#20316;&#32773; / Contact
 
 - Email: [juguli326@gmail.com](mailto:juguli326@gmail.com)

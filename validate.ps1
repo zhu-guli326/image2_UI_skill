@@ -49,6 +49,7 @@ $openaiYamlPath = Assert-File "agents\openai.yaml"
 Assert-File "references\asset-manifest-and-prompts.md" | Out-Null
 Assert-File "references\image2-entrypoint.md" | Out-Null
 Assert-File "references\icon-system.md" | Out-Null
+Assert-File "references\multi-agent-orchestration.md" | Out-Null
 Assert-File "references\hicolor-case-study.md" | Out-Null
 Assert-File "assets\cases\hicolor\traffic-3-days.png" | Out-Null
 Assert-File "assets\cases\hicolor\xiaohongshu-pinned.jpg" | Out-Null
@@ -94,6 +95,16 @@ Assert-True ($skill.Contains("@tabler/icons-react")) "SKILL.md should allow the 
 Assert-True ($skill.Contains("UiIcon")) "SKILL.md should require a unified UiIcon/IconRegistry/SVG sprite entry"
 Assert-True ($skill.Contains("ui_output_audit.mjs")) "SKILL.md should reference the bundled UI output audit script"
 Assert-True ($skill.Contains("image2-ui validate")) "SKILL.md should document the image2-ui validate command"
+Assert-True ($skill.Contains("Multi-Agent Orchestration")) "SKILL.md should document multi-agent orchestration"
+Assert-True ($skill.Contains("visual-analyst")) "SKILL.md should document the visual analyst role"
+Assert-True ($skill.Contains("asset-engineer")) "SKILL.md should document the asset engineer role"
+Assert-True ($skill.Contains("ui-architect")) "SKILL.md should document the UI architect role"
+Assert-True ($skill.Contains("backend-contract")) "SKILL.md should document the backend contract role"
+Assert-True ($skill.Contains("state-machine")) "SKILL.md should document the state machine role"
+Assert-True ($skill.Contains("accessibility")) "SKILL.md should document the accessibility role"
+Assert-True ($skill.Contains("release")) "SKILL.md should document the release role"
+Assert-True ($skill.Contains("qa-auditor")) "SKILL.md should document the QA auditor role"
+Assert-True ($skill.Contains("multi-agent execution is unavailable")) "SKILL.md should document single-agent fallback"
 
 Assert-True ($readme.Contains("When To Use")) "README should include usage context"
 Assert-True ($readme.Contains("Usage")) "README should include usage"
@@ -128,12 +139,17 @@ Assert-True ($auditScript.Contains("@tabler/icons-react")) "ui_output_audit.mjs 
 Assert-True ($openaiYaml.Contains("display_name:")) "agents/openai.yaml missing display_name"
 Assert-True ($openaiYaml.Contains("short_description:")) "agents/openai.yaml missing short_description"
 Assert-True ($openaiYaml.Contains("default_prompt:")) "agents/openai.yaml missing default_prompt"
-Assert-True ($openaiYaml.Contains("Turn UI references into clickable demos")) "agents/openai.yaml should include English description"
+Assert-True ($openaiYaml.Contains("Orchestrate multi-agent UI implementation")) "agents/openai.yaml should include English description"
 Assert-True ($openaiYaml.Contains("&#")) "agents/openai.yaml should include Chinese rendered through HTML entities"
 Assert-True ($openaiYaml.Contains("@phosphor-icons/react")) "agents/openai.yaml should mention approved icon libraries"
 Assert-True ($openaiYaml.Contains("hugeicons-react")) "agents/openai.yaml should mention approved icon libraries"
 Assert-True ($openaiYaml.Contains("@radix-ui/react-icons")) "agents/openai.yaml should mention approved icon libraries"
 Assert-True ($openaiYaml.Contains("@tabler/icons-react")) "agents/openai.yaml should mention approved icon libraries"
+Assert-True ($openaiYaml.Contains("multi-agent")) "agents/openai.yaml should mention multi-agent orchestration"
+Assert-True ($openaiYaml.Contains("backend-contract")) "agents/openai.yaml should mention the backend contract role"
+Assert-True ($openaiYaml.Contains("state-machine")) "agents/openai.yaml should mention the state machine role"
+Assert-True ($openaiYaml.Contains("accessibility")) "agents/openai.yaml should mention the accessibility role"
+Assert-True ($openaiYaml.Contains("release")) "agents/openai.yaml should mention the release role"
 
 $targets = Get-RelativeMarkdownTargets $readme
 foreach ($target in $targets) {

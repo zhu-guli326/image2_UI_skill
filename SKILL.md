@@ -1,6 +1,6 @@
 ---
 name: image-to-ui-skill
-description: Use when the user asks for image2, image generation, image-to-UI, UI screenshot to code, design to code, clickable app demo, mobile prototype, iOS preview, high-fidelity UI recreation, or generating bitmap assets for a UI. Split the reference into code-rendered UI and image2-generated assets, build a clickable preview, and verify the output.
+description: Use when the user asks for image2, image generation, image-to-UI, UI screenshot to code, design to code, clickable app demo, mobile prototype, iOS preview, high-fidelity UI recreation, production-ready UI architecture, multi-agent UI implementation, or generating bitmap assets for a UI. Split the reference into code-rendered UI and image2-generated assets, orchestrate specialist agents when available, build a clickable preview, and verify the output.
 ---
 
 # Image To UI Skill
@@ -67,6 +67,28 @@ English version:
 5. For app or mobile references, include the device frame, safe area, Dynamic Island or equivalent device chrome, and clickable screen changes by default.
 6. Open the local preview and verify rendering and interactions.
 
+## Multi-Agent Orchestration
+
+When subagents or multi-agent tools are available, use the orchestration contract in `references/multi-agent-orchestration.md`.
+
+The lead agent owns the user request, repository architecture, task decomposition, merge decisions, and final report. Specialist agents must return structured artifacts and must not silently redefine the product scope.
+
+Recommended roles:
+
+- `visual-analyst`: inspect references, identify visual hierarchy, and split `code-ui` from `image2-assets`.
+- `asset-engineer`: create or verify the asset manifest, prompt records, formats, paths, alt text, and provenance.
+- `ui-architect`: define routes, feature boundaries, component APIs, design tokens, state models, and i18n structure.
+- `backend-contract`: define API contracts, request/response schemas, error envelopes, permissions, and mock data boundaries.
+- `state-machine`: define async, device, form, retry, offline, optimistic-update, and rollback states before implementation.
+- `ui-implementer`: implement the UI in the existing project conventions.
+- `accessibility`: audit keyboard flow, focus management, accessible names, ARIA, contrast, reduced motion, and screen-reader semantics.
+- `qa-auditor`: run build, typecheck, lint, browser, visual regression, and production-readiness checks.
+- `release`: run the final checks, summarize changes, confirm artifacts, record execution mode, and prepare the commit or PR handoff.
+
+Run `visual-analyst` and `asset-engineer` in parallel when their outputs are independent. Run `ui-architect`, `backend-contract`, and `state-machine` after repository discovery and before implementation. Run `accessibility` and `qa-auditor` after implementation. Run `release` last. Keep implementation and integration under the lead agent unless a specialist has an explicit, non-overlapping write scope.
+
+If multi-agent execution is unavailable, execute the same roles sequentially in one context and preserve the same artifact names and handoff format.
+
 ## Reference Files
 
 Read only the relevant reference files for the current task:
@@ -78,6 +100,7 @@ Read only the relevant reference files for the current task:
 - `references/museum-app-case-study.md`: museum/mobile multi-screen case.
 - `references/fashion-shopping-app-case-study.md`: fashion shopping visual asset case.
 - `references/hicolor-case-study.md`: content graphic case.
+- `references/multi-agent-orchestration.md`: reusable multi-agent roles, handoff contracts, and fallback behavior.
 
 ## Design, Icons, And Layout
 
