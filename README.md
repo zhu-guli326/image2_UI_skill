@@ -190,3 +190,12 @@ A content-growth case for checking mixed outputs: source material, structured pa
 |-- assets/                   # README and case media
 `-- demo/                     # Clickable demos
 ```
+
+## &#32852;&#31995;&#20316;&#32773; / Contact
+
+- Email: [juguli326@gmail.com](mailto:juguli326@gmail.com)
+- WeChat: `13434361868`
+
+&#22914;&#26524;&#20320;&#23545;&#36825;&#20010;&#39033;&#30446;&#26377;&#24314;&#35758;&#12289;&#38382;&#39064;&#25110;&#21512;&#20316;&#24819;&#27861;&#65292;&#27426;&#36814;&#36890;&#36807;&#37038;&#20214;&#25110;&#24494;&#20449;&#32852;&#31995;&#12290;
+
+For suggestions, issues, or collaboration ideas, contact the author by email or WeChat.
