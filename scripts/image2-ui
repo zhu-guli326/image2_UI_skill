@@ -42,7 +42,7 @@ if (command === "loop") {
 
 if (command === "doctor") {
   const image2Script = path.join(__dirname, "image2_asset.py");
-  const python = process.env.PYTHON || "python3";
+  const python = process.env.PYTHON || (process.platform === "win32" ? "python" : "python3");
   const result = spawnSync(python, [image2Script, "doctor"], {
     stdio: "inherit",
     cwd: process.cwd(),

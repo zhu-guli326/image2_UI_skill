@@ -78,6 +78,27 @@ def _api_ready() -> tuple[bool, str]:
     return True, "ok"
 
 
+def _doctor() -> int:
+    cli = _imagegen_cli()
+    report = {
+        "system_imagegen": {
+            "path": str(cli),
+            "available": cli.exists(),
+            "counts_as_native_image2": True,
+        },
+        "fallback": {
+            "channel": "local-api-imagegen-cli",
+            "openai_api_key_present": bool(os.environ.get("OPENAI_API_KEY")),
+            "model": "gpt-image-2",
+        },
+        "built_in_tool_detectable_from_shell": False,
+    }
+    import json
+
+    print(json.dumps(report, indent=2))
+    return 0
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Fallback local API wrapper for image2 UI assets after local imagegen fails."
@@ -101,11 +122,16 @@ def parse_args() -> argparse.Namespace:
     edit.add_argument("--image", action="append", required=True, type=Path)
     add_common(edit)
 
+    subparsers.add_parser("doctor", help="Report native imagegen and API fallback availability.")
+
     return parser.parse_args()
 
 
 def main() -> int:
     args = parse_args()
+    if args.action == "doctor":
+        return _doctor()
+
     args.output.parent.mkdir(parents=True, exist_ok=True)
 
     ready, reason = _api_ready()

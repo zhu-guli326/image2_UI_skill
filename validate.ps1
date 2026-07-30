@@ -120,6 +120,12 @@ $image2Asset = Get-Content -LiteralPath $image2AssetPath -Raw -Encoding UTF8
 Assert-True ($image2Asset.Contains("local imagegen")) "image2_asset.py should describe the local imagegen fallback"
 Assert-True ($image2Asset.Contains("OPENAI_API_KEY")) "image2_asset.py should document fallback credential requirements"
 Assert-True ($image2Asset.Contains("channel=local-api-imagegen-cli")) "image2_asset.py should report the fallback channel"
+Assert-True ($image2Asset.Contains("counts_as_native_image2")) "image2_asset.py doctor should report native image2 classification"
+Assert-True ($image2Asset.Contains("built_in_tool_detectable_from_shell")) "image2_asset.py doctor should report built-in tool detection limits"
+
+$doctorOutput = & node (Join-Path $root "scripts\image2-ui") doctor
+Assert-True ($LASTEXITCODE -eq 0) "image2-ui doctor should exit successfully"
+Assert-True (($doctorOutput -join "`n").Contains("local-api-imagegen-cli")) "image2-ui doctor should report the fallback channel"
 
 $auditPath = Join-Path $root "scripts\ui_output_audit.mjs"
 $auditScript = Get-Content -LiteralPath $auditPath -Raw -Encoding UTF8
