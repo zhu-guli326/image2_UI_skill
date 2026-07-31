@@ -3,10 +3,16 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
+import fs from "node:fs";
 
 const args = process.argv.slice(2);
 const command = args[0];
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+if (command === "--version" || command === "-v" || command === "version") {
+  printVersion();
+  process.exit(0);
+}
 
 if (!command || command === "--help" || command === "-h") {
   printHelp();
@@ -60,10 +66,17 @@ function printHelp() {
   image2-ui compare --reference reference.png --actual output.png [--out comparison.png]
   image2-ui loop <demo-dir-or-html> --reference reference.png [--build "npm run build"]
   image2-ui doctor
+  image2-ui version
 
 Commands:
   validate   Audit a generated image-to-UI demo for broken assets, render issues, text overflow, contrast, and common visual anti-patterns.
   compare    Build a side-by-side reference/output board, with an overlay and manual review checklist.
   loop       Run build, screenshot capture, validate, compare, and write a fix-queue report for iterative restoration.
   doctor     Show system imagegen, native image2, and API fallback channel availability.`);
+}
+
+function printVersion() {
+  const packagePath = path.join(__dirname, "..", "package.json");
+  const packageJson = JSON.parse(fs.readFileSync(packagePath, "utf8"));
+  console.log(packageJson.version);
 }

@@ -1,9 +1,37 @@
 {
   "name": "image2-ui-skill",
-  "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
+  "description": "Codex skill and CLI helpers for turning UI references into code-rendered demos with image2 bitmap assets.",
   "type": "module",
+  "private": false,
+  "license": "UNLICENSED",
   "bin": {
     "image2-ui": "scripts/image2-ui"
-  }
+  },
+  "files": [
+    "SKILL.md",
+    "README.md",
+    "PRODUCTION.md",
+    "references/",
+    "scripts/",
+    "assets/readme/hero.png"
+  ],
+  "scripts": {
+    "test": "node --test",
+    "validate:demo": "node scripts/ui_output_audit.mjs demo/generated-home-ui",
+    "validate:demo:static": "node scripts/ui_output_audit.mjs demo/generated-home-ui --no-browser",
+    "doctor": "python3 scripts/image2_asset.py doctor",
+    "pack:check": "npm pack --dry-run"
+  },
+  "engines": {
+    "node": ">=20",
+    "python": ">=3.10"
+  },
+  "keywords": [
+    "codex",
+    "image2",
+    "image-to-ui",
+    "ui-generation",
+    "design-to-code"
+  ]
 }

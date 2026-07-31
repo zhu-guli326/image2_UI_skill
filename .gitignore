@@ -1,4 +1,13 @@
-demo/*/screenshots/validate-*.png
+node_modules/
+dist/
+build/
+.next/
+.turbo/
+.image2-ui/
 demo/*/.image2-ui/
+demo/*/screenshots/validate-*.png
 demo/*/node_modules/
 demo/*/dist/
+*.log
+.DS_Store
+coverage/

@@ -21,7 +21,7 @@ document.querySelectorAll(".room-tabs button").forEach((button) => {
   });
 });
 
-document.querySelectorAll(".mini-card").forEach((card) => {
+document.querySelectorAll(".property-card").forEach((card) => {
   card.addEventListener("click", () => {
     document.querySelector(".phone-detail").scrollIntoView({ behavior: "smooth", block: "center" });
   });

@@ -30,11 +30,11 @@ Follow the current project or session `AGENTS.md` first. In this repo, system `i
 
 - Native image2 sources:
   - `source=system-imagegen`
-  - `source=openai-imagegen-cli`
-  - `image_gen` built-in tool surface, when available
-- Project fallback:
+  - `source=project-image2` through `IMAGE2_COMMAND` or `image2` on `PATH`
+  - `source=openai-imagegen-cli` through the bundled imagegen CLI fallback
+- Repeatable wrapper:
   - `scripts/image2_asset.py`
-  - `source=project-image2`
+  - successful non-dry runs write a provenance JSON file next to the output image
 - Other supported fallback labels:
   - `youtoken-gpt-image-2`
   - `openrouter-icu-gpt-image-2`

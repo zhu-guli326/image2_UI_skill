@@ -1,6 +1,6 @@
 # image2 入口发现与验真
 
-这份文档用于回答一个关键问题：当前项目里“image2”到底怎么调用。默认答案是先走本地 `imagegen`，只有本地 `imagegen` 不可用或失败时，才进入本仓库的本地 API fallback 路径。
+这份文档用于回答一个关键问题：当前项目里“image2”到底怎么调用。默认答案是先尝试项目显式配置的 `image2` 命令；如果项目命令不可用，再进入本地 `imagegen` CLI fallback。当前 Codex 会话如果暴露内置 `image_gen` 工具，也可以作为 native image2 来源，但它不能由 shell doctor 直接检测。
 
 ## 1. 先确认项目约束
 
@@ -23,12 +23,14 @@ rg -n "image2|IMAGE2|generate.*image|image.*generate|生图|出图|绘图|assets
 
 只有满足以下条件之一，才可以把它视为项目指定 image2：
 
-- 本地 `imagegen` skill 可用，这是本仓库默认的 image2 通道
+- 当前 Codex 工具面暴露内置 `image_gen`，并且任务适合系统生图
+- `IMAGE2_COMMAND` 指向一个可执行的项目生图命令
+- `image2` 命令存在于 `PATH`
 - 用户明确说“用这个命令/脚本/API 调 image2”
 - 项目文档明确把某个命令、脚本、MCP 工具或服务命名为 image2
 - 当前 Codex 环境的 AGENTS.md 明确规定了 image2 调用方式
 - 既有代码中存在稳定的 image2 封装，并且命名、参数、输出路径都能确认
-- 本仓库的 `scripts/image2_asset.py` 成功执行；它是本地 `imagegen` 失败后的本地 API fallback wrapper
+- 本仓库的 `scripts/image2_asset.py` 成功执行；它会优先走项目 image2，再按需走本地 imagegen CLI fallback
 
 确认后，在执行前记录：
 
@@ -49,19 +51,20 @@ rg -n "image2|IMAGE2|generate.*image|image.*generate|生图|出图|绘图|assets
 - 用 CSS、SVG、渐变、噪点或截图近似复杂视觉
 - 从网络下载图片后声称已经生图
 
-如果使用了这些替代方案，最终必须明确写成“替代方案”，不能写成“已调用 image2”。如果使用本地 `imagegen`，最终写成 `local-imagegen`；如果使用 `scripts/image2_asset.py`，最终写成 `local-api-imagegen-cli`。
+如果使用了这些替代方案，最终必须明确写成“替代方案”，不能写成“已调用 image2”。如果使用项目命令，最终写成 `native-image2 source=project-image2`；如果使用本地 imagegen CLI，最终写成 `native-image2 source=openai-imagegen-cli`；如果使用当前会话内置生图工具，最终写成 `native-image2 source=system-imagegen`。
 
 ## 4. 找不到入口时怎么办
 
 如果无法确认其它项目指定 image2 入口：
 
-1. 先走本地 `imagegen`，按它的 built-in-first 规则生成并把产物落地到项目。
-2. 如果本地 `imagegen` 不可用或失败，再调用 `scripts/image2_asset.py` 走本地 API fallback。
-3. 如果本地 API fallback 成功，继续完成生图接入和页面截图验真，并标明实际通道。
-4. 如果本地 `imagegen` 和本地 API fallback 都不可用，继续完成 UI 拆解、资产清单、提示词和代码骨架。
-5. 明确标注“尚未完成真实位图资产生成”。
-6. 不要生成或接入其它模型图片来冒充 image2。
-7. 最终列出待执行的 image2 资产和提示词，方便用户补充入口后继续。
+1. 运行 `image2-ui doctor` 或 `python3 scripts/image2_asset.py doctor`。
+2. 如果 `IMAGE2_COMMAND` 或 `image2` on PATH 可用，使用 `native-image2 source=project-image2`。
+3. 如果项目 image2 不可用，但本地 imagegen CLI 和凭据可用，使用 `native-image2 source=openai-imagegen-cli`。
+4. 如果当前会话暴露内置 `image_gen` 工具，且任务不要求可复跑 shell wrapper，也可以使用 `native-image2 source=system-imagegen`。
+5. 如果所有 image2 通道都不可用，继续完成 UI 拆解、资产清单、提示词和代码骨架。
+6. 明确标注“尚未完成真实位图资产生成”。
+7. 不要生成或接入其它模型图片来冒充 image2。
+8. 最终列出待执行的 image2 资产和提示词，方便用户补充入口后继续。
 
 可使用这段说明：
 
@@ -76,8 +79,9 @@ rg -n "image2|IMAGE2|generate.*image|image.*generate|生图|出图|绘图|assets
 | 项目 | 内容 |
 | --- | --- |
 | image2 入口 | 实际命令、脚本或工具名 |
-| 实际通道 | `local-imagegen` 或 `local-api-imagegen-cli` |
+| 实际通道 | `native-image2 source=project-image2`、`native-image2 source=openai-imagegen-cli`、`native-image2 source=system-imagegen`，或明确标注的其它已授权替代通道 |
 | 生成资产 | 文件路径和用途 |
+| 来源记录 | wrapper 生成的 provenance JSON 路径，或系统 imagegen 的会话记录 |
 | 接入位置 | 哪个页面、组件或 CSS 槽位 |
 | 截图验证 | 截图路径、视口尺寸、检查结果 |
 | 剩余代码近似 | 哪些区域仍由 CSS/SVG/代码实现 |

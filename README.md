@@ -62,6 +62,28 @@ If you already know the target platform, add:
 Build it as a mobile app frame with 3 clickable screens and verify the local preview.
 ```
 
+## Production Quality Gates
+
+This repository now includes a repeatable test and audit baseline:
+
+```bash
+npm test
+npm run validate:demo
+npm run doctor
+```
+
+Use `scripts/image2_asset.py` for repeatable image generation. It first tries a
+project `image2` command from `IMAGE2_COMMAND` or `PATH`, then falls back to the
+local imagegen CLI when credentials are available. Successful non-dry runs write
+a provenance JSON file next to the generated asset.
+
+See [PRODUCTION.md](./PRODUCTION.md) for installation, validation, channel
+policy, and release checklist details.
+
+The npm package keeps only the core skill, scripts, references, and README hero.
+Clone the GitHub repository when you need the full demo media archive and
+case-study videos.
+
 ## &#23427;&#20250;&#24590;&#20040;&#20570; / Workflow
 
 | &#38454;&#27573; / Stage | &#20135;&#20986; / Output | &#21028;&#26029;&#26631;&#20934; / Decision rule |

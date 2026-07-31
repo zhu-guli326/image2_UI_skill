@@ -425,6 +425,11 @@ function classifyRef(rawRef, ownerFile, rootDir) {
     ? path.join(rootDir, clean.slice(1))
     : path.resolve(path.dirname(ownerFile), clean);
 
+  if (!isPathInside(rootDir, candidate)) {
+    add("fail", "asset-outside-root", `Local asset escapes the demo root from ${path.relative(rootDir, ownerFile)}: ${rawRef}`, candidate);
+    return;
+  }
+
   if (!fs.existsSync(candidate)) {
     add("fail", "broken-local-asset", `Missing local asset referenced from ${path.relative(rootDir, ownerFile)}: ${rawRef}`, candidate);
   }
@@ -833,10 +838,11 @@ function resolveBrowserTarget(rootDir, entryFile) {
 }
 
 async function startServer(rootDir) {
+  const safeRoot = path.resolve(rootDir);
   const server = http.createServer((req, res) => {
     const urlPath = decodeURIComponent(new URL(req.url, "http://local").pathname);
-    let filePath = path.join(rootDir, urlPath);
-    if (!filePath.startsWith(rootDir)) {
+    let filePath = path.resolve(safeRoot, `.${urlPath}`);
+    if (!isPathInside(safeRoot, filePath)) {
       res.writeHead(403);
       res.end("Forbidden");
       return;
@@ -853,6 +859,11 @@ async function startServer(rootDir) {
   await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
   const address = server.address();
   return { instance: server, url: `http://127.0.0.1:${address.port}` };
+}
+
+function isPathInside(rootDir, candidate) {
+  const relative = path.relative(path.resolve(rootDir), path.resolve(candidate));
+  return relative === "" || (!relative.startsWith("..") && !path.isAbsolute(relative));
 }
 
 function contentType(file) {

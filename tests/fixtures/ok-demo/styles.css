@@ -1,0 +1,24 @@
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: #181818;
+  background: #f8f8f4;
+  font-family: system-ui, sans-serif;
+}
+
+main {
+  width: min(720px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 32px 0;
+}
+
+img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+button {
+  width: 44px;
+  height: 44px;
+}
