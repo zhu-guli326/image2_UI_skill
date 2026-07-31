@@ -180,4 +180,20 @@ test("npm package dry-run contains production entrypoints", () => {
   assert.ok(files.has("scripts/image2-ui"));
   assert.ok(files.has("scripts/image2_asset.py"));
   assert.ok([...files].some((file) => file.startsWith("references/")));
+  assert.ok(files.has("CONTRIBUTING.md"));
+  assert.ok(files.has("CHANGELOG.md"));
+  assert.ok(files.has("LICENSE"));
+  assert.ok(files.has("quality-baseline.json"));
+});
+
+test("repository demo validation covers every bundled demo", () => {
+  const result = execFileSync(node, ["scripts/validate_demos.mjs", "--no-browser", "--json"], {
+    cwd: repoRoot,
+    encoding: "utf8",
+  });
+  const parsed = JSON.parse(result);
+  assert.equal(parsed.status, "pass");
+  assert.ok(parsed.demos.length >= 4);
+  assert.equal(parsed.summary.fail, 0);
+  assert.ok(Object.keys(parsed.baseline).length > 0);
 });

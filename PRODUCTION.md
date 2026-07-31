@@ -47,6 +47,12 @@ npm run doctor
 records `browser-skip` when it is not. Use `npm run validate:demo:static` when
 you intentionally want the static-only gate.
 
+`validate:all:static` audits every directory under `demo/`, builds package-based
+demos when their dependencies are missing, and prints the
+documented warning baseline. Use `validate:all` for the same repository-wide
+audit with browser checks. Any failure is a release blocker; warnings remain
+visible and must be reviewed against `quality-baseline.json`.
+
 For a generated demo:
 
 ```bash
@@ -88,6 +94,7 @@ to the output image unless `--provenance` is provided.
 ## Release Checklist
 
 - `npm test` passes.
+- `npm run validate:all:static` passes for every bundled demo.
 - `npm run validate:demo` has no failures.
 - `npm run doctor` reports at least one available image channel, or the release
   notes state that image generation is intentionally unavailable in CI.
@@ -96,3 +103,5 @@ to the output image unless `--provenance` is provided.
   names and validation commands.
 - Generated loop artifacts are not committed unless they are deliberate case
   study evidence.
+- The package has an explicit license and release metadata; publishing is done
+  through the manual GitHub Actions release workflow after a dry run.

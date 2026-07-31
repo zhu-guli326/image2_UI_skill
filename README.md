@@ -69,6 +69,7 @@ This repository now includes a repeatable test and audit baseline:
 ```bash
 npm test
 npm run validate:demo
+npm run validate:all:static
 npm run doctor
 ```
 
@@ -76,6 +77,10 @@ Use `scripts/image2_asset.py` for repeatable image generation. It first tries a
 project `image2` command from `IMAGE2_COMMAND` or `PATH`, then falls back to the
 local imagegen CLI when credentials are available. Successful non-dry runs write
 a provenance JSON file next to the generated asset.
+
+`validate:all:static` checks every bundled demo under `demo/`; use `validate:all`
+when Playwright browser checks are available. Warnings are preserved in the
+report and documented in `quality-baseline.json`.
 
 See [PRODUCTION.md](./PRODUCTION.md) for installation, validation, channel
 policy, and release checklist details.

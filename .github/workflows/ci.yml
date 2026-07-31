@@ -29,6 +29,12 @@ jobs:
       - name: Validate bundled static demo
         run: npm run validate:demo
 
+      - name: Validate every demo
+        run: npm run validate:all:static
+
+      - name: Audit demo dependencies
+        run: npm run audit:demo
+
       - name: Check image2 channel diagnostics
         run: npm run doctor
 

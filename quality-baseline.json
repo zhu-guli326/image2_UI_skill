@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "purpose": "Known visual heuristics retained in legacy case-study demos. These are reported by validate:all and must not hide failures.",
+  "rules": {
+    "side-stripe-border": "artmuse-ios intentionally uses a reference-matching side accent.",
+    "over-rounded-ui": "Existing case-study visuals retain their original rounded treatment; new production demos should avoid adding more.",
+    "tiny-fonts": "Some reference-matching labels are intentionally dense; interactive text must still be manually checked at target viewport sizes.",
+    "many-fixed-small-widths": "Reference-matching mobile controls retain fixed geometry; translated labels require manual overflow review.",
+    "shadow-heavy": "smart-home-ui-v2 retains layered device surfaces from its reference treatment.",
+    "low-contrast": "Legacy reference matching retains a small number of borderline text colors; new production screens must meet WCAG contrast targets.",
+    "small-touch-target": "Several legacy case-study controls preserve reference geometry below 44px; new interactive controls must use at least 44px hit areas.",
+    "off-center-icon": "Legacy icon alignment is retained for visual matching and remains visible in browser audit output.",
+    "dense-micro-text": "Legacy media controls retain compact timeline labels; new card UI must avoid text below readable sizes."
+  }
+}

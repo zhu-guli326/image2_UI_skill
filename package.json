@@ -1,10 +1,18 @@
 {
   "name": "image2-ui-skill",
   "version": "0.1.0",
-  "description": "Codex skill and CLI helpers for turning UI references into code-rendered demos with image2 bitmap assets.",
+  "description": "Production-grade Codex skill and CLI toolkit for turning UI references into code-rendered demos with image2 bitmap assets.",
   "type": "module",
   "private": false,
-  "license": "UNLICENSED",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zhu-guli326/image2_UI_skill.git"
+  },
+  "bugs": {
+    "url": "https://github.com/zhu-guli326/image2_UI_skill/issues"
+  },
+  "homepage": "https://github.com/zhu-guli326/image2_UI_skill#readme",
   "bin": {
     "image2-ui": "scripts/image2-ui"
   },
@@ -12,6 +20,10 @@
     "SKILL.md",
     "README.md",
     "PRODUCTION.md",
+    "CONTRIBUTING.md",
+    "CHANGELOG.md",
+    "LICENSE",
+    "quality-baseline.json",
     "references/",
     "scripts/",
     "assets/readme/hero.png"
@@ -20,6 +32,9 @@
     "test": "node --test",
     "validate:demo": "node scripts/ui_output_audit.mjs demo/generated-home-ui",
     "validate:demo:static": "node scripts/ui_output_audit.mjs demo/generated-home-ui --no-browser",
+    "validate:all": "node scripts/validate_demos.mjs",
+    "validate:all:static": "node scripts/validate_demos.mjs --no-browser",
+    "audit:demo": "npm audit --prefix demo/smart-home-ui-v2 --audit-level=high",
     "doctor": "python3 scripts/image2_asset.py doctor",
     "pack:check": "npm pack --dry-run"
   },
