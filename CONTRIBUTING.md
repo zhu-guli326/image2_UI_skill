@@ -22,4 +22,4 @@ Do not commit `.image2-ui/` loop output, credentials, generated API responses, o
 
 ## Pull requests
 
-Describe the user-facing behavior, list the checks you ran, and call out any accepted warning baseline changes. Keep unrelated demo redesigns separate from CLI or skill changes.
+Describe the user-facing behavior, list the checks you ran, and call out any accepted per-demo warning baseline changes. Keep unrelated demo redesigns separate from CLI or skill changes.

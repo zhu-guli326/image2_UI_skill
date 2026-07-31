@@ -231,6 +231,76 @@ test("multi-agent orchestrator exposes the production DAG in dry-run mode", () =
   assert.match(parsed.manifest.artifactsDir, /\.image2-ui[\\/]agents/);
 });
 
+function createFakeAgent() {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "image2-ui-fake-agent-"));
+  const executable = path.join(dir, "fake-agent.mjs");
+  fs.writeFileSync(executable, `#!/usr/bin/env node
+import fs from "node:fs";
+import path from "node:path";
+
+const args = process.argv.slice(2);
+const outputIndex = args.indexOf("-o");
+const output = args[outputIndex + 1];
+const prompt = args.at(-1) || "";
+const role = prompt.match(/You are the ([a-z-]+)/)?.[1] || "unknown";
+if (process.env.FAKE_AGENT_FAIL_ROLE === role) process.exit(17);
+const requiredSection = prompt.split("Write your required role outputs under the run artifacts directory using these exact filenames:\\n")[1]?.split("\\n\\nEnd your final response")[0] || "";
+if (process.env.FAKE_AGENT_SKIP_ROLE !== role) {
+  for (const match of requiredSection.matchAll(/^- (\\/[^\\n]+)$/gm)) {
+    fs.mkdirSync(path.dirname(match[1]), { recursive: true });
+    fs.writeFileSync(match[1], "fake artifact for " + role + "\\n");
+  }
+}
+fs.mkdirSync(path.dirname(output), { recursive: true });
+fs.writeFileSync(output, "## Agent Handoff\\n- Role: " + role + "\\n- Status: complete\\n- Scope: fake integration test\\n- Files created: fake\\n- Files changed: none\\n- Decisions: none\\n- Open questions: none\\n- Validation run: fake\\n- Next agent: next\\n");
+`);
+  fs.chmodSync(executable, 0o755);
+  return executable;
+}
+
+function latestRunManifest(target) {
+  const runs = fs.readdirSync(path.join(target, ".image2-ui", "agents"));
+  const latest = runs.sort().at(-1);
+  return JSON.parse(fs.readFileSync(path.join(target, ".image2-ui", "agents", latest, "run.json"), "utf8"));
+}
+
+test("multi-agent orchestrator runs the full DAG with a fake agent adapter", () => {
+  const target = fs.mkdtempSync(path.join(os.tmpdir(), "image2-ui-agent-run-"));
+  const fakeAgent = createFakeAgent();
+  const result = spawnSync(node, [
+    "scripts/image2-ui", "orchestrate", "--task", "Build a production UI",
+    "--agent-command", fakeAgent, target, "--max-parallel", "3", "--json",
+  ], { cwd: repoRoot, encoding: "utf8" });
+
+  assert.equal(result.status, 0, result.stderr);
+  const manifest = JSON.parse(result.stdout);
+  assert.equal(manifest.status, "complete");
+  assert.equal(Object.values(manifest.roles).filter((role) => role.status === "complete").length, 10);
+  assert.ok(fs.existsSync(path.join(manifest.artifactsDir, "code-review-report.md")));
+  assert.ok(fs.existsSync(path.join(manifest.artifactsDir, "release-report.md")));
+});
+
+test("multi-agent orchestrator blocks when an agent exits or breaks its handoff contract", () => {
+  const fakeAgent = createFakeAgent();
+  for (const envKey of ["FAKE_AGENT_FAIL_ROLE", "FAKE_AGENT_SKIP_ROLE"]) {
+    const target = fs.mkdtempSync(path.join(os.tmpdir(), "image2-ui-agent-failure-"));
+    const result = spawnSync(node, [
+      "scripts/image2-ui", "orchestrate", target, "--task", "Build a production UI",
+      "--agent-command", fakeAgent, "--json",
+    ], {
+      cwd: repoRoot,
+      encoding: "utf8",
+      env: { ...process.env, [envKey]: envKey === "FAKE_AGENT_FAIL_ROLE" ? "asset-engineer" : "visual-analyst" },
+    });
+    assert.equal(result.status, 2);
+    const manifest = latestRunManifest(target);
+    const failedRole = envKey === "FAKE_AGENT_FAIL_ROLE" ? "asset-engineer" : "visual-analyst";
+    assert.equal(manifest.status, "blocked");
+    assert.equal(manifest.roles[failedRole].status, "failed");
+    if (envKey === "FAKE_AGENT_SKIP_ROLE") assert.match(manifest.roles[failedRole].error, /Handoff contract failed/);
+  }
+});
+
 test("all bundled demos expose shared motion tokens and reduced-motion rules", () => {
   for (const name of ["artmuse-ios", "generated-home-ui", "marble-note", "smart-home-ui-v2"]) {
     const stylesheet = name === "smart-home-ui-v2"

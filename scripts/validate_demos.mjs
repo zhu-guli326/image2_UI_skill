@@ -66,6 +66,21 @@ const reports = demos.map((name) => {
       findings: [{ level: "fail", rule: "audit-process", message: error.message }],
     };
   }
+  const allowedRules = new Set(Object.keys(baseline.demos?.[name]?.rules || {}));
+  const warningRules = [...new Set((report.findings || []).filter((finding) => finding.level === "warn").map((finding) => finding.rule))];
+  const unbaselined = warningRules.filter((rule) => !allowedRules.has(rule));
+  if (unbaselined.length > 0) {
+    report.findings = [
+      ...(report.findings || []),
+      ...unbaselined.map((rule) => ({
+        level: "fail",
+        rule: "unbaselined-warning",
+        message: `${name} emitted warning rule ${rule}, but it is not allowed by quality-baseline.json`,
+      })),
+    ];
+    report.counts = { ...report.counts, fail: (report.counts?.fail || 0) + unbaselined.length };
+    report.status = "fail";
+  }
   return { name, ...report, exitCode: result.status };
 });
 
@@ -74,7 +89,7 @@ const summary = reports.reduce((total, report) => {
   return total;
 }, { fail: 0, warn: 0, info: 0 });
 
-const output = { status: summary.fail === 0 ? "pass" : "fail", demos: reports, summary, baseline: baseline.rules };
+const output = { status: summary.fail === 0 ? "pass" : "fail", demos: reports, summary, baseline: baseline.demos };
 if (jsonMode) {
   console.log(JSON.stringify(output, null, 2));
 } else {
@@ -86,6 +101,6 @@ if (jsonMode) {
       if (finding.level !== "info") console.log(`  [${finding.level}] ${finding.rule}: ${finding.message}`);
     }
   }
-  console.log(`Baseline: ${Object.keys(baseline.rules).length} documented warning rule(s)`);
+  console.log(`Baseline: ${Object.keys(baseline.demos || {}).length} demo-specific exception set(s)`);
 }
 process.exit(summary.fail === 0 ? 0 : 2);

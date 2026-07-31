@@ -23,6 +23,12 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Install Playwright browser runtime
+        run: npm install --no-save --no-package-lock --ignore-scripts playwright@1.55.0
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
       - name: Run tests
         run: npm test
 
@@ -30,7 +36,7 @@ jobs:
         run: npm run validate:demo
 
       - name: Validate every demo
-        run: npm run validate:all:static
+        run: npm run validate:all
 
       - name: Audit demo dependencies
         run: npm run audit:demo

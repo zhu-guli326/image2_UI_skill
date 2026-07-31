@@ -7,7 +7,8 @@ import { fileURLToPath } from "node:url";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const args = process.argv.slice(2);
-const targetArg = args.find((arg) => !arg.startsWith("-"));
+const positionals = positionalArgs();
+const targetArg = positionals[0];
 const task = readOption("--task");
 const reference = readOption("--reference");
 const mode = readOption("--mode") || "parallel";
@@ -98,11 +99,10 @@ if (args.includes("--help") || args.includes("-h") || !targetArg) {
   process.exit(targetArg ? 0 : 1);
 }
 if (!task && !dryRun) fail("--task is required unless --dry-run is used");
-if (!ROLES[targetArg] && targetArg !== "orchestrate") {
-  // The first positional is the target directory; keep this guard for accidental role names.
-}
 const targetPath = path.resolve(process.cwd(), targetArg);
 if (!fs.existsSync(targetPath) || !fs.statSync(targetPath).isDirectory()) fail(`Target directory not found: ${targetPath}`);
+const referencePath = reference ? path.resolve(process.cwd(), reference) : null;
+if (referencePath && (!fs.existsSync(referencePath) || !fs.statSync(referencePath).isFile())) fail(`Reference file not found: ${referencePath}`);
 if (!Number.isInteger(maxParallel) || maxParallel < 1) fail("--max-parallel must be a positive integer");
 if (!["parallel", "sequential"].includes(mode)) fail("--mode must be parallel or sequential");
 
@@ -115,7 +115,7 @@ const manifest = {
   runId,
   target: targetPath,
   task: task || "dry-run",
-  reference: reference ? path.resolve(process.cwd(), reference) : null,
+  reference: referencePath,
   executionMode: mode === "parallel" ? "multi-agent" : "multi-agent-sequential",
   artifactsDir,
   agentCommand,
@@ -221,17 +221,22 @@ function runRole(role) {
     commandArgs.push(prompt);
     const child = spawn(executable, commandArgs, { cwd: targetPath, stdio: ["ignore", "pipe", "pipe"] });
     const log = fs.createWriteStream(logFile, { encoding: "utf8" });
+    let finished = false;
     child.stdout.pipe(log);
     child.stderr.pipe(log);
     child.on("error", (error) => finish(1, error.message));
     child.on("close", (code) => finish(code ?? 1, code === 0 ? null : `Agent exited with status ${code}`));
 
     function finish(code, error) {
+      if (finished) return;
+      finished = true;
       log.end();
-      const status = code === 0 ? "complete" : "failed";
-      manifest.roles[role] = { ...manifest.roles[role], status, exitCode: code, finishedAt: new Date().toISOString(), error };
+      const contract = code === 0 ? validateHandoff(spec, outputFile) : { ok: false, error: null };
+      const status = code === 0 && contract.ok ? "complete" : "failed";
+      const finalError = error || contract.error;
+      manifest.roles[role] = { ...manifest.roles[role], status, exitCode: code, finishedAt: new Date().toISOString(), error: finalError };
       writeManifest();
-      resolve({ role, status, exitCode: code, error });
+      resolve({ role, status, exitCode: code, error: finalError });
     }
   });
 }
@@ -246,7 +251,7 @@ ${task}
 </user-task>
 
 Repository target: ${targetPath}
-Reference: ${reference ? path.resolve(process.cwd(), reference) : "none provided"}
+Reference: ${referencePath || "none provided"}
 Run artifacts directory: ${artifactsDir}
 Your role instruction: ${spec.prompt}
 
@@ -281,6 +286,22 @@ function resolveExecutable(command) {
   return null;
 }
 
+function validateHandoff(spec, outputFile) {
+  const missing = spec.outputs.filter((file) => {
+    const output = path.join(artifactsDir, file);
+    return !fs.existsSync(output) || !fs.statSync(output).isFile() || fs.statSync(output).size === 0;
+  });
+  if (missing.length > 0) return { ok: false, error: `Handoff contract failed: missing or empty artifact(s): ${missing.join(", ")}` };
+  if (!fs.existsSync(outputFile) || fs.statSync(outputFile).size === 0) {
+    return { ok: false, error: "Handoff contract failed: final agent message is missing or empty" };
+  }
+  const handoff = fs.readFileSync(outputFile, "utf8");
+  if (!/^- Status:\s*complete\s*$/mi.test(handoff)) {
+    return { ok: false, error: "Handoff contract failed: final message must declare '- Status: complete'" };
+  }
+  return { ok: true };
+}
+
 function writeManifest() {
   fs.writeFileSync(path.join(runDir, "run.json"), `${JSON.stringify(manifest, null, 2)}\n`);
 }
@@ -293,6 +314,24 @@ function readOption(name) {
   const index = args.indexOf(name);
   if (index === -1) return null;
   return args[index + 1] && !args[index + 1].startsWith("-") ? args[index + 1] : null;
+}
+
+function positionalArgs() {
+  const valueOptions = new Set(["--task", "--reference", "--mode", "--agent-command", "--model", "--max-parallel"]);
+  const positionals = [];
+  for (let index = 0; index < args.length; index += 1) {
+    const argument = args[index];
+    if (valueOptions.has(argument)) {
+      index += 1;
+      continue;
+    }
+    if (argument === "--") {
+      positionals.push(...args.slice(index + 1));
+      break;
+    }
+    if (!argument.startsWith("-")) positionals.push(argument);
+  }
+  return positionals;
 }
 
 function printUsage() {

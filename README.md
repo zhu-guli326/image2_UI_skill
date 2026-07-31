@@ -80,7 +80,8 @@ a provenance JSON file next to the generated asset.
 
 `validate:all:static` checks every bundled demo under `demo/`; use `validate:all`
 when Playwright browser checks are available. Warnings are preserved in the
-report and documented in `quality-baseline.json`.
+report and documented per demo in `quality-baseline.json`; an unlisted warning
+fails the repository-wide audit.
 
 See [PRODUCTION.md](./PRODUCTION.md) for installation, validation, channel
 policy, and release checklist details.

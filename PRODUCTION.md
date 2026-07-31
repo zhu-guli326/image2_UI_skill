@@ -51,7 +51,7 @@ you intentionally want the static-only gate.
 demos when their dependencies are missing, and prints the
 documented warning baseline. Use `validate:all` for the same repository-wide
 audit with browser checks. Any failure is a release blocker; warnings remain
-visible and must be reviewed against `quality-baseline.json`.
+visible and must be explicitly allowed for that demo in `quality-baseline.json`.
 
 ## Multi-Agent Execution
 
