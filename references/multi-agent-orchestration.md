@@ -2,6 +2,12 @@
 
 This reference defines how `image-to-ui-skill` can be reused by another Codex session or agent host with multi-agent support.
 
+The repository includes an executable adapter: `image2-ui orchestrate`. It
+invokes `codex exec` by default, accepts `--agent-command` for another
+compatible non-interactive agent CLI, and stores each run under the target
+project's `.image2-ui/agents/<run-id>/` directory. Use `--dry-run --json` to
+inspect the graph without launching agents.
+
 ## Capability Detection
 
 Before delegating, the lead agent should detect:

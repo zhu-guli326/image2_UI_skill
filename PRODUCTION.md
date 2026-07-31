@@ -53,6 +53,27 @@ documented warning baseline. Use `validate:all` for the same repository-wide
 audit with browser checks. Any failure is a release blocker; warnings remain
 visible and must be reviewed against `quality-baseline.json`.
 
+## Multi-Agent Execution
+
+Use the orchestrator when the host provides `codex exec` or a compatible agent
+CLI:
+
+```bash
+image2-ui orchestrate ./demo/my-output \
+  --task "Turn the reference into a production-shaped clickable demo" \
+  --reference ./reference.png
+```
+
+The workflow runs discovery, architecture, implementation, verification, and
+release phases. Independent roles run in parallel within a phase; dependent
+roles wait for their required handoff artifacts. Run `--mode sequential` when
+agents cannot safely share a workspace. Use `--dry-run --json` to inspect the
+DAG without starting agents.
+
+Each run writes isolated logs and handoffs under
+`<project>/.image2-ui/agents/<run-id>/`. Agents never commit or push. The lead
+agent remains responsible for scope, merge decisions, and final validation.
+
 For a generated demo:
 
 ```bash

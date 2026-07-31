@@ -179,6 +179,7 @@ test("npm package dry-run contains production entrypoints", () => {
   assert.ok(files.has("PRODUCTION.md"));
   assert.ok(files.has("scripts/image2-ui"));
   assert.ok(files.has("scripts/image2_asset.py"));
+  assert.ok(files.has("scripts/image2_orchestrate.mjs"));
   assert.ok([...files].some((file) => file.startsWith("references/")));
   assert.ok(files.has("CONTRIBUTING.md"));
   assert.ok(files.has("CHANGELOG.md"));
@@ -196,4 +197,34 @@ test("repository demo validation covers every bundled demo", () => {
   assert.ok(parsed.demos.length >= 4);
   assert.equal(parsed.summary.fail, 0);
   assert.ok(Object.keys(parsed.baseline).length > 0);
+});
+
+test("multi-agent orchestrator exposes the production DAG in dry-run mode", () => {
+  const target = fs.mkdtempSync(path.join(os.tmpdir(), "image2-ui-orchestrate-"));
+  const result = execFileSync(node, [
+    "scripts/image2-ui",
+    "orchestrate",
+    target,
+    "--task",
+    "Build a production-shaped UI",
+    "--dry-run",
+    "--json",
+  ], {
+    cwd: repoRoot,
+    encoding: "utf8",
+  });
+
+  const parsed = JSON.parse(result);
+  assert.equal(parsed.manifest.executionMode, "multi-agent");
+  assert.deepEqual(parsed.plan.map((phase) => phase.name), [
+    "discovery",
+    "architecture",
+    "implementation",
+    "verification",
+    "release",
+  ]);
+  assert.deepEqual(parsed.plan[0].roles, ["visual-analyst", "asset-engineer"]);
+  assert.deepEqual(parsed.plan[3].roles, ["accessibility", "qa-auditor"]);
+  assert.deepEqual(parsed.plan[3].batches, [["accessibility"], ["qa-auditor"]]);
+  assert.match(parsed.manifest.artifactsDir, /\.image2-ui[\\/]agents/);
 });

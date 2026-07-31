@@ -46,6 +46,15 @@ if (command === "loop") {
   process.exit(result.status ?? 1);
 }
 
+if (command === "orchestrate") {
+  const orchestratorScript = path.join(__dirname, "image2_orchestrate.mjs");
+  const result = spawnSync(process.execPath, [orchestratorScript, ...args.slice(1)], {
+    stdio: "inherit",
+    cwd: process.cwd(),
+  });
+  process.exit(result.status ?? 1);
+}
+
 if (command === "doctor") {
   const image2Script = path.join(__dirname, "image2_asset.py");
   const python = process.env.PYTHON || (process.platform === "win32" ? "python" : "python3");
@@ -65,6 +74,7 @@ function printHelp() {
   image2-ui validate <demo-dir-or-html> [--reference reference.png] [--json] [--no-browser]
   image2-ui compare --reference reference.png --actual output.png [--out comparison.png]
   image2-ui loop <demo-dir-or-html> --reference reference.png [--build "npm run build"]
+  image2-ui orchestrate <project-dir> --task "..." [--reference reference.png]
   image2-ui doctor
   image2-ui version
 
@@ -72,6 +82,7 @@ Commands:
   validate   Audit a generated image-to-UI demo for broken assets, render issues, text overflow, contrast, and common visual anti-patterns.
   compare    Build a side-by-side reference/output board, with an overlay and manual review checklist.
   loop       Run build, screenshot capture, validate, compare, and write a fix-queue report for iterative restoration.
+  orchestrate Run the multi-agent image-to-UI workflow with artifact handoffs and phase-aware parallelism.
   doctor     Show system imagegen, native image2, and API fallback channel availability.`);
 }
 

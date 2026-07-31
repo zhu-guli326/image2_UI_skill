@@ -71,6 +71,10 @@ English version:
 
 When subagents or multi-agent tools are available, use the orchestration contract in `references/multi-agent-orchestration.md`.
 
+This repository also exposes `image2-ui orchestrate`, which invokes a compatible
+non-interactive agent CLI (Codex by default) and persists each role's handoff,
+logs, and run manifest under `.image2-ui/agents/<run-id>/`.
+
 The lead agent owns the user request, repository architecture, task decomposition, merge decisions, and final report. Specialist agents must return structured artifacts and must not silently redefine the product scope.
 
 Recommended roles:

@@ -85,6 +85,11 @@ report and documented in `quality-baseline.json`.
 See [PRODUCTION.md](./PRODUCTION.md) for installation, validation, channel
 policy, and release checklist details.
 
+For actual multi-agent execution, run `image2-ui orchestrate`. It uses the
+bundled role graph, runs independent specialists concurrently, and stores
+structured handoffs and JSONL logs under the target project's `.image2-ui/`
+directory. Use `--dry-run --json` to inspect the graph first.
+
 The npm package keeps only the core skill, scripts, references, and README hero.
 Clone the GitHub repository when you need the full demo media archive and
 case-study videos.
