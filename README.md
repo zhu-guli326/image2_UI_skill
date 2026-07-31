@@ -90,6 +90,10 @@ bundled role graph, runs independent specialists concurrently, and stores
 structured handoffs and JSONL logs under the target project's `.image2-ui/`
 directory. Use `--dry-run --json` to inspect the graph first.
 
+The bundled demos share a CSS-first Motion System for durations, easing,
+entrances, Toasts, hover/press feedback, and reduced-motion behavior. See
+[`references/motion-system.md`](./references/motion-system.md).
+
 The npm package keeps only the core skill, scripts, references, and README hero.
 Clone the GitHub repository when you need the full demo media archive and
 case-study videos.

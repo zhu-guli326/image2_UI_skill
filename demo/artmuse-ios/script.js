@@ -1,6 +1,7 @@
 const phones = Array.from(document.querySelectorAll(".phone"));
 const toast = document.querySelector(".toast");
 let toastTimer = null;
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
 function showToast(message) {
   toast.textContent = message;
@@ -16,7 +17,7 @@ function focusScreen(screenName) {
 
   const target = document.querySelector(`[data-screen="${screenName}"]`);
   if (target) {
-    target.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+    target.scrollIntoView({ behavior: reduceMotion.matches ? "auto" : "smooth", inline: "center", block: "nearest" });
   }
 }
 

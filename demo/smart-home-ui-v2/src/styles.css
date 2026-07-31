@@ -1170,3 +1170,60 @@ html.capture-wide .phone-right {
     animation-duration: 0.01ms !important;
   }
 }
+
+:root {
+  --motion-duration-fast: 160ms;
+  --motion-duration-base: 220ms;
+  --motion-duration-slow: 360ms;
+  --motion-ease-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --motion-ease-emphasized: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.icon-button,
+.chip,
+.action-item,
+.device-card,
+.mini-device,
+.schedule-card,
+.living-card {
+  transition:
+    transform var(--motion-duration-fast) var(--motion-ease-standard),
+    background-color var(--motion-duration-fast) var(--motion-ease-standard),
+    color var(--motion-duration-fast) var(--motion-ease-standard),
+    box-shadow var(--motion-duration-fast) var(--motion-ease-standard);
+}
+
+.icon-button:hover,
+.chip:hover,
+.action-item:hover,
+.device-card:hover,
+.mini-device:hover,
+.schedule-card:hover { transform: translateY(-2px); }
+
+.icon-button:active,
+.chip:active,
+.action-item:active,
+.device-card:active { transform: scale(0.97); }
+
+.view > * { animation: motion-fade-up var(--motion-duration-slow) var(--motion-ease-emphasized) both; }
+.view > *:nth-child(2) { animation-delay: 40ms; }
+.view > *:nth-child(3) { animation-delay: 80ms; }
+.view > *:nth-child(4) { animation-delay: 120ms; }
+
+@keyframes motion-fade-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .icon-button:hover,
+  .chip:hover,
+  .action-item:hover,
+  .device-card:hover,
+  .mini-device:hover,
+  .schedule-card:hover,
+  .icon-button:active,
+  .chip:active,
+  .action-item:active,
+  .device-card:active { transform: none; }
+}

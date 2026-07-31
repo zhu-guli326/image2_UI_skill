@@ -651,3 +651,55 @@ h1 {
     width: min(100%, 320px);
   }
 }
+
+:root {
+  --motion-duration-fast: 160ms;
+  --motion-duration-base: 220ms;
+  --motion-duration-slow: 360ms;
+  --motion-ease-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --motion-ease-emphasized: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+button,
+.property-card,
+.agent-card,
+.phone-detail,
+.phone-tour {
+  transition:
+    transform var(--motion-duration-fast) var(--motion-ease-standard),
+    background-color var(--motion-duration-fast) var(--motion-ease-standard),
+    box-shadow var(--motion-duration-fast) var(--motion-ease-standard),
+    opacity var(--motion-duration-base) var(--motion-ease-standard);
+}
+
+button:hover,
+.property-card:hover,
+.agent-card:hover { transform: translateY(-2px); }
+
+button:active,
+.is-pressed { transform: scale(0.97); }
+
+.property-card { animation: motion-fade-up var(--motion-duration-slow) var(--motion-ease-emphasized) both; }
+.secondary-property { animation-delay: 70ms; }
+
+@keyframes motion-fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  button:hover,
+  .property-card:hover,
+  .agent-card:hover,
+  button:active,
+  .is-pressed { transform: none; }
+}

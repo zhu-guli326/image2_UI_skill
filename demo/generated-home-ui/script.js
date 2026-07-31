@@ -1,4 +1,5 @@
 const buttons = document.querySelectorAll("button");
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
 buttons.forEach((button) => {
   button.addEventListener("click", () => {
@@ -23,6 +24,6 @@ document.querySelectorAll(".room-tabs button").forEach((button) => {
 
 document.querySelectorAll(".property-card").forEach((card) => {
   card.addEventListener("click", () => {
-    document.querySelector(".phone-detail").scrollIntoView({ behavior: "smooth", block: "center" });
+    document.querySelector(".phone-detail").scrollIntoView({ behavior: reduceMotion.matches ? "auto" : "smooth", block: "center" });
   });
 });

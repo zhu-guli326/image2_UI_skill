@@ -74,6 +74,14 @@ Each run writes isolated logs and handoffs under
 `<project>/.image2-ui/agents/<run-id>/`. Agents never commit or push. The lead
 agent remains responsible for scope, merge decisions, and final validation.
 
+## Motion Quality
+
+Use the shared CSS-first motion tokens in
+`references/motion-system.md`. Every demo must provide content entrance,
+control feedback, Toast or view transitions where applicable, and a final
+`prefers-reduced-motion` override. Motion must not be required to understand or
+operate the interface.
+
 For a generated demo:
 
 ```bash

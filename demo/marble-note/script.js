@@ -3,6 +3,7 @@ const appViews = Array.from(document.querySelectorAll(".app-view"));
 const dockButtons = Array.from(document.querySelectorAll(".dock [data-view-target]"));
 const toast = document.querySelector(".toast");
 let timer = null;
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
 function showToast(message) {
   toast.textContent = message;
@@ -17,7 +18,7 @@ function setActive(screen) {
   });
   const target = document.querySelector(`[data-screen="${screen}"]`);
   if (target) {
-    target.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+    target.scrollIntoView({ behavior: reduceMotion.matches ? "auto" : "smooth", block: "nearest", inline: "center" });
   }
 }
 

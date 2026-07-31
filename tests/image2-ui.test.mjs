@@ -228,3 +228,15 @@ test("multi-agent orchestrator exposes the production DAG in dry-run mode", () =
   assert.deepEqual(parsed.plan[3].batches, [["accessibility"], ["qa-auditor"]]);
   assert.match(parsed.manifest.artifactsDir, /\.image2-ui[\\/]agents/);
 });
+
+test("all bundled demos expose shared motion tokens and reduced-motion rules", () => {
+  for (const name of ["artmuse-ios", "generated-home-ui", "marble-note", "smart-home-ui-v2"]) {
+    const stylesheet = name === "smart-home-ui-v2"
+      ? fs.readFileSync(path.join(repoRoot, "demo", name, "src", "styles.css"), "utf8")
+      : fs.readFileSync(path.join(repoRoot, "demo", name, "styles.css"), "utf8");
+    assert.match(stylesheet, /--motion-duration-fast/);
+    assert.match(stylesheet, /--motion-ease-standard/);
+    assert.match(stylesheet, /prefers-reduced-motion/);
+    assert.match(stylesheet, /motion-fade-up|motion-view-enter/);
+  }
+});
