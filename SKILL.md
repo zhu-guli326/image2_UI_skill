@@ -85,11 +85,12 @@ Recommended roles:
 - `backend-contract`: define API contracts, request/response schemas, error envelopes, permissions, and mock data boundaries.
 - `state-machine`: define async, device, form, retry, offline, optimistic-update, and rollback states before implementation.
 - `ui-implementer`: implement the UI in the existing project conventions.
+- `code-reviewer`: review correctness, regressions, security, maintainability, scope, standards, and missing tests; report findings without editing source.
 - `accessibility`: audit keyboard flow, focus management, accessible names, ARIA, contrast, reduced motion, and screen-reader semantics.
 - `qa-auditor`: run build, typecheck, lint, browser, visual regression, and production-readiness checks.
 - `release`: run the final checks, summarize changes, confirm artifacts, record execution mode, and prepare the commit or PR handoff.
 
-Run `visual-analyst` and `asset-engineer` in parallel when their outputs are independent. Run `ui-architect`, `backend-contract`, and `state-machine` after repository discovery and before implementation. Run `accessibility` and `qa-auditor` after implementation. Run `release` last. Keep implementation and integration under the lead agent unless a specialist has an explicit, non-overlapping write scope.
+Run `visual-analyst` and `asset-engineer` in parallel when their outputs are independent. Run `ui-architect`, `backend-contract`, and `state-machine` after repository discovery and before implementation. Run `code-reviewer` and `accessibility` after implementation, then run `qa-auditor`, and run `release` last. Keep implementation and integration under the lead agent unless a specialist has an explicit, non-overlapping write scope.
 
 If multi-agent execution is unavailable, execute the same roles sequentially in one context and preserve the same artifact names and handoff format.
 

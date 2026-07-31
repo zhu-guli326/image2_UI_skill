@@ -145,6 +145,23 @@ Output:
 
 Do not treat visual similarity as a reason to remove semantic labels, focus indicators, zoom support, or keyboard access.
 
+### code-reviewer
+
+Input:
+
+- Implemented source.
+- Architecture, backend, state, and asset artifacts.
+- Repository standards and the originating task/specification.
+
+Output:
+
+- `artifacts/code-review-report.md`
+- Findings first, ordered by severity, with file/line references.
+- Correctness, regression, security, maintainability, scope, and missing-test findings.
+
+The reviewer is analysis-only. It must not silently edit source files or mark a
+change ready when required checks are missing.
+
 ### qa-auditor
 
 Input:
@@ -204,11 +221,12 @@ Use stable artifact paths so another agent can continue without reconstructing h
 ```text
 visual-analyst ----\
 asset-engineer -----+--> ui-architect ----\
-backend-contract ---+                     +--> ui-implementer --> accessibility --\
-state-machine ------/                     /                         qa-auditor ----+--> release
+backend-contract ---+                     +--> ui-implementer --> code-reviewer --\
+state-machine ------/                     |                    accessibility --\
+                                         +---------------------- qa-auditor ----+--> release
 ```
 
-`visual-analyst` and `asset-engineer` may run in parallel after repository discovery. `ui-architect`, `backend-contract`, and `state-machine` may run in parallel after the initial UI inventory, but the state machine should consume the backend contract when business behavior depends on APIs. `ui-implementer` starts after the contracts are available. `accessibility` and `qa-auditor` run after implementation. `release` runs last.
+`visual-analyst` and `asset-engineer` may run in parallel after repository discovery. `ui-architect`, `backend-contract`, and `state-machine` may run in parallel after the initial UI inventory, but the state machine should consume the backend contract when business behavior depends on APIs. `ui-implementer` starts after the contracts are available. `code-reviewer` and `accessibility` run after implementation; `qa-auditor` waits for both review tracks. `release` runs last.
 
 ## Single-Agent Fallback
 

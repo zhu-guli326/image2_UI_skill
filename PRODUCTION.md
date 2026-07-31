@@ -74,6 +74,11 @@ Each run writes isolated logs and handoffs under
 `<project>/.image2-ui/agents/<run-id>/`. Agents never commit or push. The lead
 agent remains responsible for scope, merge decisions, and final validation.
 
+The workflow includes a dedicated analysis-only `code-reviewer` phase between
+implementation and QA. It produces `code-review-report.md` with severity,
+file/line references, regression risks, and missing-test findings. QA waits for
+the review and accessibility reports before producing the final fix queue.
+
 ## Motion Quality
 
 Use the shared CSS-first motion tokens in

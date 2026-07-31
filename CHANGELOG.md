@@ -4,6 +4,7 @@
 
 - Added a full-repository demo validation command and documented visual warning baseline.
 - Added an executable multi-agent orchestrator with dependency-aware parallel phases, isolated handoff artifacts, JSONL logs, and sequential fallback mode.
+- Added a dedicated analysis-only code-reviewer phase before accessibility and QA.
 - Added contributor, licensing, package metadata, and release automation documentation.
 
 ## 0.1.0

@@ -220,12 +220,14 @@ test("multi-agent orchestrator exposes the production DAG in dry-run mode", () =
     "discovery",
     "architecture",
     "implementation",
+    "review",
     "verification",
     "release",
   ]);
   assert.deepEqual(parsed.plan[0].roles, ["visual-analyst", "asset-engineer"]);
-  assert.deepEqual(parsed.plan[3].roles, ["accessibility", "qa-auditor"]);
-  assert.deepEqual(parsed.plan[3].batches, [["accessibility"], ["qa-auditor"]]);
+  assert.deepEqual(parsed.plan[3].roles, ["code-reviewer"]);
+  assert.deepEqual(parsed.plan[4].roles, ["accessibility", "qa-auditor"]);
+  assert.deepEqual(parsed.plan[4].batches, [["accessibility"], ["qa-auditor"]]);
   assert.match(parsed.manifest.artifactsDir, /\.image2-ui[\\/]agents/);
 });
 

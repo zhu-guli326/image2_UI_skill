@@ -24,6 +24,7 @@ const ROLE_ORDER = [
   "backend-contract",
   "state-machine",
   "ui-implementer",
+  "code-reviewer",
   "accessibility",
   "qa-auditor",
   "release",
@@ -66,21 +67,27 @@ const ROLES = {
     outputs: ["implementation-notes.md"],
     prompt: "Implement the production-shaped UI in the existing project conventions. Respect the assigned repository scope, wire local assets, and include responsive, loading, empty, error, and disabled states where relevant. Do not commit changes.",
   },
+  "code-reviewer": {
+    phase: "review",
+    deps: ["ui-implementer"],
+    outputs: ["code-review-report.md"],
+    prompt: "Review the implementation as a senior code reviewer. Check correctness, regressions, security, maintainability, standards, scope compliance, missing tests, and unresolved production risks. Report findings first with severity and exact file/line references. Do not edit source files.",
+  },
   accessibility: {
     phase: "verification",
-    deps: ["ui-implementer", "state-machine"],
+    deps: ["ui-implementer", "state-machine", "code-reviewer"],
     outputs: ["accessibility-report.md"],
     prompt: "Audit the implementation for keyboard flow, focus, accessible names, ARIA, contrast, reduced motion, touch targets, and screen-reader semantics. Do not silently edit source files.",
   },
   "qa-auditor": {
     phase: "verification",
-    deps: ["ui-implementer", "accessibility"],
+    deps: ["ui-implementer", "accessibility", "code-reviewer"],
     outputs: ["qa-report.md"],
     prompt: "Run build, tests, browser checks, asset checks, and visual comparison. Produce a prioritized fix queue. Do not silently edit implementation files.",
   },
   release: {
     phase: "release",
-    deps: ["qa-auditor", "accessibility"],
+    deps: ["qa-auditor", "accessibility", "code-reviewer"],
     outputs: ["release-report.md"],
     prompt: "Review all artifacts, git status, tests, and known risks. Produce a release handoff with execution mode, agent list, skipped checks, and unresolved warnings. Do not commit or push.",
   },
@@ -155,7 +162,7 @@ else {
 function buildPlan() {
   const phases = [];
   const completed = new Set();
-  for (const phaseName of ["discovery", "architecture", "implementation", "verification", "release"]) {
+  for (const phaseName of ["discovery", "architecture", "implementation", "review", "verification", "release"]) {
     const roles = ROLE_ORDER.filter((role) => ROLES[role].phase === phaseName);
     const pending = new Set(roles);
     const batches = [];
