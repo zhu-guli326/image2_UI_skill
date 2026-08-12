@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0d2741" />
+    <title>Lumen Journal</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="stage">
+      <aside class="context" aria-label="Design notes">
+        <p class="eyebrow">Concept UI / 01</p>
+        <h1>Lumen<br />Journal</h1>
+        <p class="lede">A quiet field journal for the way back from somewhere memorable.</p>
+        <div class="spec-list">
+          <div><span>Mode</span><strong>Mobile explorer</strong></div>
+          <div><span>Palette</span><strong>Cobalt / coral</strong></div>
+          <div><span>Interaction</span><strong>Saved places</strong></div>
+        </div>
+      </aside>
+
+      <section class="phone" aria-label="Lumen Journal app preview">
+        <div class="device-shell">
+          <div class="island" aria-hidden="true"></div>
+          <div class="screen">
+            <header class="statusbar" aria-label="Device status">
+              <time datetime="08:41">8:41</time>
+              <div class="status-icons" aria-label="Full signal, Wi-Fi connected, battery at 92 percent">
+                <svg aria-hidden="true"><use href="#i-signal"></use></svg>
+                <svg aria-hidden="true"><use href="#i-wifi"></use></svg>
+                <svg aria-hidden="true"><use href="#i-battery"></use></svg>
+              </div>
+            </header>
+
+            <div class="app-content">
+              <section class="intro" aria-labelledby="screen-title">
+                <p class="date">Thursday, 10 August</p>
+                <div class="intro-row">
+                  <h2 id="screen-title">Where are<br />you drawn?</h2>
+                  <button class="avatar" type="button" aria-label="Open profile" title="Profile">NM</button>
+                </div>
+              </section>
+
+              <label class="search" for="search-input">
+                <svg aria-hidden="true"><use href="#i-search"></use></svg>
+                <input id="search-input" type="search" placeholder="Search a feeling or place" />
+              </label>
+
+              <section class="filter-row" aria-label="Discover categories">
+                <button class="chip is-selected" type="button" data-filter="Slow escapes">Slow escapes</button>
+                <button class="chip" type="button" data-filter="By the water">By the water</button>
+                <button class="chip" type="button" data-filter="After dark">After dark</button>
+              </section>
+
+              <article class="feature" aria-label="Featured journal entry">
+                <img src="assets/hero-kayak.png" alt="A red kayak beside sunlit limestone cliffs and cobalt water" />
+                <div class="feature-scrim"></div>
+                <div class="location-tag"><span></span><strong>LEFKADA, GREECE</strong></div>
+                <div class="feature-footer">
+                  <div>
+                    <p class="kicker">Field note 14</p>
+                    <h3>Follow the<br />blue edge.</h3>
+                  </div>
+                  <button class="save-button" type="button" aria-label="Save Lefkada journal entry" title="Save entry" aria-pressed="false">
+                    <svg aria-hidden="true"><use href="#i-bookmark"></use></svg>
+                  </button>
+                </div>
+              </article>
+
+              <section class="nearby" aria-labelledby="nearby-title">
+                <div class="section-head">
+                  <div>
+                    <p class="kicker">Keep close</p>
+                    <h3 id="nearby-title">Small discoveries</h3>
+                  </div>
+                  <button class="link-button" type="button" aria-label="View all discoveries">See all</button>
+                </div>
+                <div class="discovery-list">
+                  <button class="discovery" type="button" data-place="Saltwater swimming">
+                    <span class="number">01</span><span>Saltwater swimming</span><svg aria-hidden="true"><use href="#i-arrow"></use></svg>
+                  </button>
+                  <button class="discovery" type="button" data-place="A table in shade">
+                    <span class="number">02</span><span>A table in shade</span><svg aria-hidden="true"><use href="#i-arrow"></use></svg>
+                  </button>
+                </div>
+              </section>
+            </div>
+
+            <nav class="tabbar" aria-label="Primary navigation">
+              <button class="tab is-active" type="button" data-tab="Today" aria-label="Today" aria-current="page" title="Today"><svg aria-hidden="true"><use href="#i-home"></use></svg><span>Today</span></button>
+              <button class="tab" type="button" data-tab="Map" aria-label="Map" title="Map"><svg aria-hidden="true"><use href="#i-map"></use></svg><span>Map</span></button>
+              <button class="tab" type="button" data-tab="Saved" aria-label="Saved" title="Saved"><svg aria-hidden="true"><use href="#i-bookmark"></use></svg><span>Saved</span></button>
+            </nav>
+            <div class="home-indicator" aria-hidden="true"></div>
+          </div>
+        </div>
+        <p class="device-caption" id="feedback" role="status">Today is open</p>
+      </section>
+    </main>
+
+    <svg class="icon-sprite" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+      <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="5.6"></circle><path d="m15 15 4.4 4.4"></path></symbol>
+      <symbol id="i-bookmark" viewBox="0 0 24 24"><path d="M7 4.7A1.7 1.7 0 0 1 8.7 3h6.6A1.7 1.7 0 0 1 17 4.7V21l-5-3.1L7 21V4.7Z"></path></symbol>
+      <symbol id="i-home" viewBox="0 0 24 24"><path d="m4 10 8-6 8 6v9.2a.8.8 0 0 1-.8.8H4.8a.8.8 0 0 1-.8-.8V10Z"></path><path d="M9.3 20v-5.4h5.4V20"></path></symbol>
+      <symbol id="i-map" viewBox="0 0 24 24"><path d="m3.5 5.3 5-2.1 7 2.4 5-2.1v15.2l-5 2.1-7-2.4-5 2.1V5.3Z"></path><path d="M8.5 3.2v17.2M15.5 5.6v15"></path></symbol>
+      <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h13"></path><path d="m14 7 5 5-5 5"></path></symbol>
+      <symbol id="i-signal" viewBox="0 0 24 24"><path d="M4 18h2v-3H4v3Zm5 0h2v-6H9v6Zm5 0h2V9h-2v9Zm5 0h2V5h-2v13Z" fill="currentColor" stroke="none"></path></symbol>
+      <symbol id="i-wifi" viewBox="0 0 24 24"><path d="M3.4 9.1a12.7 12.7 0 0 1 17.2 0M6.7 12.5a7.9 7.9 0 0 1 10.6 0M10 15.9a3.2 3.2 0 0 1 4 0"></path><circle cx="12" cy="19" r="1" fill="currentColor" stroke="none"></circle></symbol>
+      <symbol id="i-battery" viewBox="0 0 28 24"><rect x="3" y="6" width="20" height="12" rx="2"></rect><path d="M25 10v4"></path><path d="M5.5 8.5h14v7h-14z" fill="currentColor" stroke="none"></path></symbol>
+    </svg>
+    <script src="script.js"></script>
+  </body>
+</html>

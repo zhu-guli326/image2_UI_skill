@@ -1,0 +1,4 @@
+{
+  "assets": [{"id":"coast-hero","type":"hero-image","implementation":"image2","slot":"366x222","source":"assets/lisbon-coast-hero.png","alt":"A red kayak floating on deep blue water below limestone cliffs"}],
+  "code_ui": ["status bar", "navigation", "route metrics", "timeline", "tabs", "buttons", "icons"]
+}

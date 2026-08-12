@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { UiIcon } from "./UiIcon.jsx";
 import "./styles.css";
@@ -27,6 +27,8 @@ function App() {
   const [climateRoom, setClimateRoom] = useState("Living Room");
   const [activeAction, setActiveAction] = useState("air");
   const [cameraOn, setCameraOn] = useState(true);
+  const [powerOn, setPowerOn] = useState(true);
+  const [playerState, setPlayerState] = useState("paused");
   const [roomDevices, setRoomDevices] = useState(() => Object.fromEntries(deviceCards.map((device) => [device.name, device.on])));
 
   function toggleRoomDevice(name) {
@@ -43,6 +45,8 @@ function App() {
             setActiveRoom={setHomeRoom}
             setCameraOn={setCameraOn}
             temperature={temperature}
+            playerState={playerState}
+            setPlayerState={setPlayerState}
           />
         </PhoneFrame>
 
@@ -54,6 +58,8 @@ function App() {
             setActiveRoom={setClimateRoom}
             setTemperature={setTemperature}
             temperature={temperature}
+            powerOn={powerOn}
+            setPowerOn={setPowerOn}
           />
         </PhoneFrame>
 
@@ -98,7 +104,7 @@ function IconButton({ label, icon, onClick, variant = "ghost", size = 18 }) {
   );
 }
 
-function HomeScreen({ activeRoom, cameraOn, setActiveRoom, setCameraOn, temperature }) {
+function HomeScreen({ activeRoom, cameraOn, playerState, setActiveRoom, setCameraOn, setPlayerState, temperature }) {
   return (
     <div className="view home-view">
       <header className="home-header">
@@ -167,7 +173,13 @@ function HomeScreen({ activeRoom, cameraOn, setActiveRoom, setCameraOn, temperat
         </div>
         <div className="player-controls">
           <IconButton label="Previous track" icon="previous" size={15} />
-          <IconButton label="Play" icon="play" variant="dark" size={15} />
+          <IconButton
+            label={playerState === "playing" ? "Pause" : "Play"}
+            icon={playerState === "playing" ? "pause" : "play"}
+            variant="dark"
+            size={15}
+            onClick={() => setPlayerState((value) => value === "playing" ? "paused" : "playing")}
+          />
           <IconButton label="Next track" icon="next" size={15} />
         </div>
       </section>
@@ -188,7 +200,21 @@ function HomeScreen({ activeRoom, cameraOn, setActiveRoom, setCameraOn, temperat
   );
 }
 
-function ClimateScreen({ activeAction, activeRoom, setActiveAction, setActiveRoom, setTemperature, temperature }) {
+function ClimateScreen({ activeAction, activeRoom, powerOn, setActiveAction, setActiveRoom, setPowerOn, setTemperature, temperature }) {
+  const dialRef = useRef(null);
+  const temperatureRatio = (temperature - 10) / 20;
+
+  function updateFromPointer(event) {
+    const rect = dialRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const ratio = Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width));
+    setTemperature(Math.round(10 + ratio * 20));
+  }
+
+  function handleDialPointerDown(event) {
+    event.currentTarget.setPointerCapture(event.pointerId);
+    updateFromPointer(event);
+  }
   return (
     <div className="view climate-view">
       <header className="nav-header">
@@ -197,7 +223,15 @@ function ClimateScreen({ activeAction, activeRoom, setActiveAction, setActiveRoo
         <IconButton label="Settings" icon="settings" size={17} />
       </header>
 
-      <div className="segmented" aria-label="Air conditioner room selection">
+      <div
+        className="segmented"
+        style={{
+          "--segment-index": ["Living Room", "Bedroom"].indexOf(activeRoom),
+          "--segment-offset": `${["Living Room", "Bedroom"].indexOf(activeRoom) * 100}%`,
+        }}
+        aria-label="Air conditioner room selection"
+      >
+        <span className="segmented-indicator" aria-hidden="true" />
         {["Living Room", "Bedroom"].map((room) => (
           <button
             className={activeRoom === room ? "selected" : ""}
@@ -211,7 +245,24 @@ function ClimateScreen({ activeAction, activeRoom, setActiveAction, setActiveRoo
       </div>
 
       <section className="dial-zone" aria-label="Temperature control">
-        <div className="dial-scale">
+        <div
+          className="dial-scale"
+          ref={dialRef}
+          role="slider"
+          tabIndex="0"
+          aria-label="Temperature"
+          aria-valuemin="10"
+          aria-valuemax="30"
+          aria-valuenow={temperature}
+          style={{ "--dial-angle": `${-120 + temperatureRatio * 240}deg` }}
+          onPointerDown={handleDialPointerDown}
+          onPointerMove={(event) => event.currentTarget.hasPointerCapture(event.pointerId) && updateFromPointer(event)}
+          onPointerUp={(event) => event.currentTarget.releasePointerCapture(event.pointerId)}
+          onKeyDown={(event) => {
+            if (event.key === "ArrowLeft") setTemperature((value) => Math.max(10, value - 1));
+            if (event.key === "ArrowRight") setTemperature((value) => Math.min(30, value + 1));
+          }}
+        >
           <span className="tick tick-left">10°</span>
           <span className="tick tick-top">20°</span>
           <span className="tick tick-right">25°</span>
@@ -227,7 +278,13 @@ function ClimateScreen({ activeAction, activeRoom, setActiveAction, setActiveRoo
 
         <div className="temperature-controls">
           <IconButton label="Decrease temperature" icon="minus" onClick={() => setTemperature((value) => Math.max(10, value - 1))} />
-          <IconButton label="Toggle air conditioner" icon="power" variant="accent" size={20} />
+          <IconButton
+            label={powerOn ? "Turn air conditioner off" : "Turn air conditioner on"}
+            icon="power"
+            variant={powerOn ? "accent" : "ghost"}
+            size={20}
+            onClick={() => setPowerOn((value) => !value)}
+          />
           <IconButton label="Increase temperature" icon="plus" onClick={() => setTemperature((value) => Math.min(30, value + 1))} />
         </div>
       </section>

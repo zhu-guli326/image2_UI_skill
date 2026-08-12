@@ -1,0 +1,11 @@
+{
+  "channel": "image2 fallback",
+  "source": "youtoken-gpt-image-2",
+  "action": "generate",
+  "output": "demo/lumen-journal/assets/hero-kayak.png",
+  "model": "gpt-image-2",
+  "size_requested": "1536x1024",
+  "quality": "medium",
+  "output_format": "png",
+  "prompt": "Editorial travel photography for a calm mobile journaling app: a lone red sea kayak drifting on deep cobalt water beside pale limestone cliffs, overhead three-quarter view, late afternoon sun, crisp film grain, minimal composition with generous negative space, refined magazine art direction, no people close-up, no readable text, no logos, no UI, no icons, no watermark"
+}

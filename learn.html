@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="description" content="给零基础学习者准备的前端与 UI 入门科普页。">
+  <title>前端与 UI 入门 · IMAGE2 UI</title>
+  <link rel="stylesheet" href="./learn.css">
+  <script src="./analytics.config.js"></script>
+  <script src="./analytics.js" defer></script>
+  <script src="./learn.js" defer></script>
+</head>
+<body>
+  <header class="learn-topbar">
+    <a class="brand" href="./library.html" aria-label="返回 image2 UI 案例库">
+      <span class="brand-mark" aria-hidden="true"><i></i></span>
+      <span>IMAGE2 UI</span>
+      <small>BEGINNER GUIDE</small>
+    </a>
+    <nav aria-label="页面导航">
+      <a class="active" href="./learn.html">新手入门</a>
+      <a href="./library.html">案例库</a>
+      <a href="./skills.html">设计 Skill</a>
+    </nav>
+  </header>
+
+  <nav class="learning-map" aria-label="本页学习地图">
+    <div class="learning-map-inner">
+      <strong>学习地图</strong>
+      <div class="learning-map-links">
+        <a class="is-current" href="#learning-path" data-learn-section="learning-path">分析方法</a>
+        <a href="#case-study" data-learn-section="case-study">案例拆解</a>
+        <a href="#three-parts" data-learn-section="three-parts">前端三件套</a>
+        <a href="#beginner-answers" data-learn-section="beginner-answers">新手问题</a>
+        <a href="#ui-vocabulary" data-learn-section="ui-vocabulary">UI 词汇</a>
+        <a href="#playground" data-learn-section="playground">动手修改</a>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <section class="learn-hero" aria-labelledby="heroTitle">
+      <div class="hero-copy">
+        <p class="eyebrow">FRONTEND + UI / START HERE</p>
+        <h1 id="heroTitle"><span class="hero-line">先看懂网页，</span><span class="hero-line hero-line-accent">再开始做界面。</span></h1>
+        <p class="hero-intro">先看一个真实页面解决什么问题，再认识做出它需要的前端知识。</p>
+        <a class="hero-cta" href="#case-study">查看案例拆解</a>
+      </div>
+      <div class="hero-visual" aria-label="前端三件套学习示意图">
+        <img src="./assets/readme/hero.png" alt="网页界面参考图拼贴">
+        <div class="visual-note visual-note-html"><b>HTML</b><span>内容骨架</span></div>
+        <div class="visual-note visual-note-css"><b>CSS</b><span>外观与布局</span></div>
+        <div class="visual-note visual-note-js"><b>JS</b><span>交互与反馈</span></div>
+      </div>
+    </section>
+
+    <section class="learning-path" id="learning-path" aria-labelledby="pathTitle">
+      <div class="section-heading">
+        <p class="eyebrow">A SIMPLE PATH</p>
+        <h2 id="pathTitle">分析案例的三步</h2>
+      </div>
+      <ol class="path-list">
+        <li><span class="path-number">01</span><div><strong>看它要解决什么</strong><p>先说清用户来到这个页面，要完成什么任务。</p></div></li>
+        <li><span class="path-number">02</span><div><strong>找出画面分工</strong><p>把页面分成内容、布局、图片、按钮和状态。</p></div></li>
+        <li><span class="path-number">03</span><div><strong>映射到前端</strong><p>再判断哪些用 HTML、CSS，哪些需要 JavaScript。</p></div></li>
+      </ol>
+    </section>
+
+    <section class="case-study" id="case-study" aria-labelledby="caseTitle">
+      <div class="section-heading section-heading-wide">
+        <p class="eyebrow">CASE STUDY / START WITH A REAL SCREEN</p>
+        <h2 id="caseTitle">先分析一个真实案例</h2>
+        <p>下面的案例都来自案例库。点击切换，你会看到同一套分析方法如何适用于旅行、食谱和音乐产品。</p>
+      </div>
+      <div class="case-tabs" role="tablist" aria-label="选择教学案例">
+        <button class="case-tab is-selected" type="button" role="tab" aria-selected="true" data-case="buddy">Buddy <small>旅行计划</small></button>
+        <button class="case-tab" type="button" role="tab" aria-selected="false" data-case="plate">Plate Play <small>食谱插画</small></button>
+        <button class="case-tab" type="button" role="tab" aria-selected="false" data-case="relay">RELAY <small>音乐发现</small></button>
+      </div>
+      <div class="case-board">
+        <div class="case-image-wrap">
+          <img id="caseImage" src="./demo/buddy-travel/mobile-preview.png" alt="Buddy 旅行计划案例预览">
+          <span class="case-caption" id="caseCaption">案例库 · Buddy / 轻盈旅行计划</span>
+        </div>
+        <div class="case-analysis" id="caseAnalysis">
+          <div class="analysis-block"><span class="analysis-label">先看任务</span><strong id="caseTask">帮助用户从一个目的地开始安排旅行</strong></div>
+          <div class="analysis-block"><span class="analysis-label">再看结构</span><p id="caseStructure">顶部品牌名，中间主视觉和目的地标签，底部是三项主导航。</p></div>
+          <div class="analysis-block"><span class="analysis-label">最后看实现</span><div class="implementation-tags" id="caseTags"><span>HTML：标题与导航</span><span>CSS：荧光黄背景与圆形标签</span><span>JS：目的地点击反馈</span></div></div>
+          <p class="case-question" id="caseQuestion">你可以先问自己：如果删掉图片，这个页面的任务还说得清吗？</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="three-parts" id="three-parts" aria-labelledby="partsTitle">
+      <div class="section-heading section-heading-wide">
+        <p class="eyebrow">THE FRONTEND TRIO</p>
+        <h2 id="partsTitle">把案例映射到前端</h2>
+        <p>理解案例后，再看 HTML、CSS、JavaScript 就不抽象了：它们分别负责内容、外观和回应。</p>
+      </div>
+      <div class="parts-grid">
+        <article class="part-card part-html">
+          <span class="part-label">01 / STRUCTURE</span>
+          <h3>HTML</h3>
+          <p>决定页面“有什么”。标题、段落、图片、按钮，都先用 HTML 写出来。</p>
+          <code>&lt;button&gt;开始学习&lt;/button&gt;</code>
+          <small>关键词：内容、结构、语义</small>
+        </article>
+        <article class="part-card part-css">
+          <span class="part-label">02 / STYLE</span>
+          <h3>CSS</h3>
+          <p>决定页面“长什么样”。颜色、字体、间距、布局和响应式都属于 CSS。</p>
+          <code>button { color: white; }</code>
+          <small>关键词：外观、布局、适配</small>
+        </article>
+        <article class="part-card part-js">
+          <span class="part-label">03 / BEHAVIOR</span>
+          <h3>JavaScript</h3>
+          <p>决定页面“怎么回应”。点击、切换、校验和动态内容都可以交给 JavaScript。</p>
+          <code>button.addEventListener(...)</code>
+          <small>关键词：交互、状态、反馈</small>
+        </article>
+      </div>
+    </section>
+
+    <section class="beginner-answers" id="beginner-answers" aria-labelledby="answersTitle">
+      <div class="section-heading section-heading-wide">
+        <p class="eyebrow">WHAT BEGINNERS ASK MOST</p>
+        <h2 id="answersTitle">新手最常问的 4 个问题</h2>
+        <p>这些问题反复出现在前端学习社区里。答案不用背，先知道该往哪里走。</p>
+      </div>
+      <div class="answer-list">
+        <article class="answer-row">
+          <span class="answer-number">01</span>
+          <div>
+            <h3>“我完全没学过，前端到底是什么？”</h3>
+            <p>就是你在网页里能看到、能点击的这一层。比如 Buddy 的标题、图片、目的地按钮和点击后的变化。</p>
+          </div>
+        </article>
+        <article class="answer-row">
+          <span class="answer-number">02</span>
+          <div>
+            <h3>“HTML、CSS、JavaScript 要一次学完吗？”</h3>
+            <p>不用。先用 HTML 放内容，再用 CSS 排好看；页面需要点击和切换时，才加入一点 JavaScript。</p>
+          </div>
+        </article>
+        <article class="answer-row">
+          <span class="answer-number">03</span>
+          <div>
+            <h3>“UI 和 UX 听起来很像，有什么区别？”</h3>
+            <p>不是。UI 是你看见和点击的东西；UX 是你完成一件事顺不顺。按钮属于 UI，能不能轻松订好行程属于 UX。</p>
+          </div>
+        </article>
+        <article class="answer-row">
+          <span class="answer-number">04</span>
+          <div>
+            <h3>“课程这么多，我第一步到底做什么？”</h3>
+            <p>选一个小页面，先照着做出标题、图片和一个按钮。不要等课程全部看完，做的过程中再查不会的地方。</p>
+          </div>
+        </article>
+      </div>
+      <aside class="research-note" aria-label="内容来源">
+        <strong>这份入门顺序从哪里来？</strong>
+        <p>MDN 建议新手从一个简单网站开始；社区高讨论帖也反复提到，真正的难点不是课程太少，而是缺少小项目练习。</p>
+        <div class="source-links">
+          <a href="https://developer.mozilla.org/en-US/docs/Learn_web_development/Getting_started/Your_first_website" target="_blank" rel="noreferrer">MDN：第一个网站 ↗</a>
+          <a href="https://web.dev/learn/" target="_blank" rel="noreferrer">web.dev：学习路径 ↗</a>
+          <a href="https://www.nngroup.com/articles/what-is-user-experience/" target="_blank" rel="noreferrer">NN/g：UI 与 UX ↗</a>
+          <a href="https://www.reddit.com/r/learnprogramming/comments/1hxft96/tutorial_hell_dont_want_to_stuck_as_at_age_35/" target="_blank" rel="noreferrer">Reddit：走出教程循环 ↗</a>
+        </div>
+      </aside>
+    </section>
+
+    <section class="ui-vocabulary" id="ui-vocabulary" aria-labelledby="vocabularyTitle">
+      <div class="section-heading section-heading-wide">
+        <p class="eyebrow">UI WORDS YOU WILL SEE</p>
+        <h2 id="vocabularyTitle">看着页面，认识每个部分</h2>
+        <p>这是一张完整的 Buddy 页面。点击图上的名称，看看这个部分叫什么、负责什么。</p>
+      </div>
+      <div class="vocab-layout">
+        <div class="screen-anatomy">
+          <div class="anatomy-phone" aria-label="标出 UI 部件名称的 Buddy 页面图">
+            <img src="./demo/buddy-travel/mobile-preview.png" alt="Buddy 旅行计划完整页面">
+            <button class="anatomy-marker marker-header is-selected" type="button" data-vocab="页头" aria-pressed="true"><span>01</span><b>页头</b></button>
+            <button class="anatomy-marker marker-visual" type="button" data-vocab="主视觉" aria-pressed="false"><span>02</span><b>主视觉</b></button>
+            <button class="anatomy-marker marker-title" type="button" data-vocab="标题区" aria-pressed="false"><span>03</span><b>标题区</b></button>
+            <button class="anatomy-marker marker-action" type="button" data-vocab="主按钮" aria-pressed="false"><span>04</span><b>主按钮</b></button>
+            <button class="anatomy-marker marker-navigation" type="button" data-vocab="底部导航" aria-pressed="false"><span>05</span><b>底部导航</b></button>
+          </div>
+          <p class="anatomy-caption">图上的绿色标注都可以点击</p>
+        </div>
+        <div class="vocab-list">
+          <div class="vocab-question"><span>现在选中</span><strong id="vocabName">页头</strong></div>
+          <p class="vocab-detail" id="vocabDetail">页头在页面最上方。这里放品牌名，让用户一眼知道自己正在使用哪个产品。</p>
+          <div class="vocab-choices" aria-label="选择要认识的页面部分">
+            <button class="vocab-item is-selected" type="button" data-vocab="页头" aria-pressed="true"><b>01</b><span>页头</span><small>告诉用户这是哪个产品</small></button>
+            <button class="vocab-item" type="button" data-vocab="主视觉" aria-pressed="false"><b>02</b><span>主视觉</span><small>最先吸引注意的画面</small></button>
+            <button class="vocab-item" type="button" data-vocab="标题区" aria-pressed="false"><b>03</b><span>标题区</span><small>说清页面能带来什么</small></button>
+            <button class="vocab-item" type="button" data-vocab="主按钮" aria-pressed="false"><b>04</b><span>主按钮</span><small>推动用户完成下一步</small></button>
+            <button class="vocab-item" type="button" data-vocab="底部导航" aria-pressed="false"><b>05</b><span>底部导航</span><small>在几个主要页面之间切换</small></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="playground" id="playground" aria-labelledby="playgroundTitle">
+      <div class="section-heading section-heading-wide">
+        <p class="eyebrow">TRY ONE SMALL CHANGE</p>
+        <h2 id="playgroundTitle">从案例里改一个视觉决定</h2>
+        <p>Buddy 的荧光黄负责制造出发感。选择颜色，看看同一个内容换了视觉语言后会发生什么。</p>
+      </div>
+      <div class="playground-grid">
+        <div class="code-panel">
+          <div class="code-panel-top"><span>style.css</span><span class="live-dot">LIVE</span></div>
+          <pre><code>.learning-card {
+  background: <strong id="codeColor">#b8f36b</strong>;
+  padding: 24px;
+  border-radius: 14px;
+}</code></pre>
+          <div class="swatches" aria-label="选择卡片颜色">
+            <button type="button" class="swatch swatch-green is-active" data-color="#b8f36b" aria-label="选择绿色" title="绿色"></button>
+            <button type="button" class="swatch swatch-blue" data-color="#91d8ee" aria-label="选择蓝色" title="蓝色"></button>
+            <button type="button" class="swatch swatch-coral" data-color="#ff9f8f" aria-label="选择珊瑚色" title="珊瑚色"></button>
+          </div>
+        </div>
+        <div class="preview-panel">
+          <span class="preview-label">PREVIEW</span>
+          <div class="learning-card" id="learningCard"><span class="card-icon">+</span><div><strong>一小步就够了</strong><p>你刚刚完成了一次 CSS 修改。</p></div></div>
+          <p class="preview-feedback" id="previewFeedback" aria-live="polite">点击左侧颜色试试</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="learn-footer">
+    <p><strong>下一步：</strong>去案例库找一个你喜欢的界面，试着说出它的结构、颜色和交互。</p>
+    <a href="./library.html">打开案例库 <span aria-hidden="true">↗</span></a>
+  </footer>
+</body>
+</html>

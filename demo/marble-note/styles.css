@@ -94,7 +94,7 @@ button {
   content: "";
   position: absolute;
   width: 3px;
-  border-radius: 999px;
+  border-radius:18px;
   background: #17181b;
 }
 
@@ -131,7 +131,7 @@ button {
   align-items: center;
   justify-content: space-between;
   padding: 0 24px;
-  font-size: 11px;
+  font-size:14px;
   font-weight: 700;
 }
 
@@ -141,7 +141,7 @@ button {
   top: 9px;
   width: 72px;
   height: 20px;
-  border-radius: 999px;
+  border-radius:18px;
   background: #050506;
   transform: translateX(-50%);
 }
@@ -286,7 +286,7 @@ button {
 
 .cover-copy p {
   margin: 10px 0 22px;
-  font-size: 12px;
+  font-size:14px;
   color: #555;
 }
 
@@ -299,7 +299,7 @@ button {
 .actions button {
   height: 39px;
   border: 1.4px solid #111;
-  border-radius: 999px;
+  border-radius:18px;
   background: #fff;
   cursor: pointer;
 }
@@ -330,6 +330,14 @@ button {
   pointer-events: auto;
 }
 
+.app-view.is-visible.motion-forward {
+  animation: motion-view-forward var(--motion-duration-base) var(--motion-ease-emphasized) both;
+}
+
+.app-view.is-visible.motion-back {
+  animation: motion-view-back var(--motion-duration-base) var(--motion-ease-emphasized) both;
+}
+
 .app-head {
   display: flex;
   justify-content: space-between;
@@ -343,7 +351,7 @@ button {
 
 .app-head p {
   margin: 5px 0 0;
-  font-size: 10px;
+  font-size:14px;
   color: #777;
 }
 
@@ -366,7 +374,7 @@ button {
   min-width: 28px;
   min-height: 28px;
   border: 0;
-  border-radius: 999px;
+  border-radius:18px;
   background: #f0f0ed;
   cursor: pointer;
 }
@@ -378,7 +386,7 @@ button {
 
 .view-head p {
   margin: 3px 0 0;
-  font-size: 10px;
+  font-size:14px;
   color: #777;
 }
 
@@ -397,9 +405,9 @@ button {
   flex: 0 0 auto;
   padding: 7px 12px;
   border: 1px solid #ddd;
-  border-radius: 999px;
+  border-radius:18px;
   background: #fff;
-  font-size: 10px;
+  font-size:14px;
 }
 
 .chips button.active {
@@ -447,7 +455,7 @@ button {
 }
 
 .folder-grid span {
-  font-size: 10px;
+  font-size:14px;
 }
 
 .folder-grid i {
@@ -490,13 +498,13 @@ button {
 .schedule span {
   display: block;
   margin-top: 4px;
-  font-size: 13px;
+  font-size:14px;
 }
 
 .mini-note span {
   display: block;
   margin-top: 7px;
-  font-size: 9px;
+  font-size:14px;
   line-height: 1.45;
 }
 
@@ -569,7 +577,7 @@ button {
 .folder-hero p,
 .calendar-card p {
   margin: 8px 0 0;
-  font-size: 11px;
+  font-size:14px;
   line-height: 1.45;
   color: #555;
 }
@@ -597,13 +605,13 @@ button {
 
 .list-stack strong,
 .settings-list span {
-  font-size: 13px;
+  font-size:14px;
 }
 
 .list-stack small,
 .profile-card small {
   grid-column: 2;
-  font-size: 10px;
+  font-size:14px;
   color: #666;
 }
 
@@ -622,7 +630,7 @@ button {
   margin-top: 18px;
   padding: 12px 14px;
   border: 2px solid #111;
-  border-radius: 999px;
+  border-radius:18px;
   background: #fff;
 }
 
@@ -644,7 +652,7 @@ button {
 .editor-card label span {
   display: block;
   margin-bottom: 5px;
-  font-size: 10px;
+  font-size:14px;
   color: #777;
 }
 
@@ -654,7 +662,7 @@ button {
   border: 1.4px solid #dedbd1;
   border-radius: 10px;
   background: #fff;
-  font-size: 12px;
+  font-size:14px;
 }
 
 .editor-card textarea {
@@ -690,9 +698,9 @@ button {
   display: grid;
   place-items: center;
   height: 28px;
-  border-radius: 999px;
+  border-radius:18px;
   background: #f2f0ea;
-  font-size: 11px;
+  font-size:14px;
 }
 
 .calendar-grid strong {
@@ -736,13 +744,15 @@ button {
 
 .settings-list b {
   padding: 5px 8px;
-  border-radius: 999px;
+  border-radius:18px;
   color: #fff;
   background: #111;
-  font-size: 10px;
+  font-size:14px;
 }
 
 .dock {
+  --dock-index: 0;
+  --dock-offset: 0%;
   position: absolute;
   left: 35px;
   right: 35px;
@@ -753,9 +763,23 @@ button {
   align-items: center;
   height: 39px;
   padding: 0 12px;
-  border-radius: 999px;
+  border-radius:18px;
   color: #fff;
   background: #050505;
+}
+
+.dock::before {
+  content: "";
+  position: absolute;
+  left: 8px;
+  bottom: 5px;
+  width: calc((100% - 16px) / 5);
+  height: 3px;
+  border-radius:18px;
+  background: #f2d447;
+  transform: translateX(var(--dock-offset));
+  transition: transform var(--motion-duration-base) var(--motion-ease-emphasized);
+  pointer-events: none;
 }
 
 .dock button {
@@ -794,7 +818,7 @@ button {
   padding: 5px 10px;
   border-radius: 8px;
   background: #f0f0ed;
-  font-size: 12px;
+  font-size:14px;
 }
 
 .doc h1 {
@@ -804,19 +828,19 @@ button {
 
 .date {
   margin: 0 0 18px;
-  font-size: 11px;
+  font-size:14px;
   color: #555;
 }
 
 .doc h2 {
   margin: 0 0 6px;
-  font-size: 13px;
+  font-size:14px;
 }
 
 .doc ul {
   margin: 0;
   padding-left: 18px;
-  font-size: 11px;
+  font-size:14px;
   line-height: 1.55;
 }
 
@@ -856,7 +880,7 @@ button {
   align-items: center;
   height: 38px;
   padding: 0 10px;
-  border-radius: 999px;
+  border-radius:18px;
   background: #050505;
 }
 
@@ -866,7 +890,7 @@ button {
   border: 0;
   color: #fff;
   background: transparent;
-  font-size: 12px;
+  font-size:14px;
 }
 
 .formatbar button.active {
@@ -881,7 +905,7 @@ button {
   bottom: 15px;
   z-index: 3;
   padding: 5px 10px;
-  border-radius: 999px;
+  border-radius:18px;
   color: rgba(255, 255, 255, 0.32);
   background: rgba(255, 255, 255, 0.12);
   font-weight: 700;
@@ -893,7 +917,7 @@ button {
   bottom: 24px;
   z-index: 20;
   padding: 11px 16px;
-  border-radius: 999px;
+  border-radius:18px;
   color: #fff;
   background: rgba(20, 20, 20, 0.86);
   opacity: 0;
@@ -926,6 +950,14 @@ button {
   }
 }
 
+.embed-mode { overflow: hidden; }
+.embed-mode body { width: 390px; min-width: 390px; height: 693.3333px; overflow: hidden; transform: scale(var(--embed-scale, 1)); transform-origin: top left; }
+.embed-mode .hero { display: block; width: 390px; min-height: 693.3333px; padding: 0; overflow: hidden; }
+.embed-mode .band, .embed-mode .phone:not(.phone-center) { display: none; }
+.embed-mode .phone-center { width: 390px; height: 693.3333px; transform: none; }
+.embed-mode .device { width: 390px; height: 693.3333px; aspect-ratio: 9 / 16; border-radius: 43px; }
+.embed-mode .screen { border-width: 7px; border-radius: 35px; }
+
 :root {
   --motion-duration-fast: 160ms;
   --motion-duration-base: 220ms;
@@ -947,22 +979,26 @@ button,
     box-shadow var(--motion-duration-fast) var(--motion-ease-standard);
 }
 
-button:hover,
+.actions button:hover,
+.app-head button:hover,
+.dock button:hover,
+.settings-list button:hover { background-color: rgba(20, 18, 15, 0.08); }
+
 .folder-card:hover,
 .mini-note:hover,
-.schedule:hover,
-.list-stack button:hover { transform: translateY(-2px); }
+.schedule:hover { box-shadow: inset 0 0 0 2px rgba(20, 18, 15, 0.13); }
 
-button:active { transform: scale(0.97); }
+.actions button:active,
+.app-head button:active,
+.folder-card:active,
+.mini-note:active,
+.schedule:active,
+.settings-list button:active { scale: 0.97; }
 
 .app-view {
   transition:
     opacity var(--motion-duration-base) var(--motion-ease-standard),
     transform var(--motion-duration-base) var(--motion-ease-standard);
-}
-
-.app-view.is-visible {
-  animation: motion-view-enter var(--motion-duration-slow) var(--motion-ease-emphasized) both;
 }
 
 .folder-card,
@@ -977,8 +1013,13 @@ button:active { transform: scale(0.97); }
     transform var(--motion-duration-base) var(--motion-ease-standard);
 }
 
-@keyframes motion-view-enter {
+@keyframes motion-view-forward {
   from { opacity: 0; transform: translateX(18px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes motion-view-back {
+  from { opacity: 0; transform: translateX(-18px); }
   to { opacity: 1; transform: translateX(0); }
 }
 
@@ -997,8 +1038,10 @@ button:active { transform: scale(0.97); }
     transition-duration: 0.01ms !important;
   }
 
-  button:hover,
-  .folder-card:hover,
-  .mini-note:hover,
-  .schedule:hover { transform: none; }
+  .actions button:active,
+  .app-head button:active,
+  .folder-card:active,
+  .mini-note:active,
+  .schedule:active,
+  .settings-list button:active { scale: 1; }
 }

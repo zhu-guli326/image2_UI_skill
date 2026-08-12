@@ -1,0 +1,13 @@
+{
+  "assets": [
+    {
+      "id": "morning-stillness",
+      "type": "background-visual",
+      "implementation": "youtoken-gpt-image-2",
+      "slot": "Reflect home hero, journal card, collection and article photo",
+      "source": "assets/morning-stillness.png",
+      "alt": "Misty path through meadow grass in early morning"
+    }
+  ],
+  "code_ui": ["iOS phone frame", "status bar", "menu", "profile", "mood controls", "journal cards", "tags", "back and done controls", "bottom tabs", "home indicator"]
+}

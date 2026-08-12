@@ -1,6 +1,6 @@
 ---
 name: image-to-ui-skill
-description: Use when the user asks for image2, image generation, image-to-UI, UI screenshot to code, design to code, clickable app demo, mobile prototype, iOS preview, high-fidelity UI recreation, production-ready UI architecture, multi-agent UI implementation, or generating bitmap assets for a UI. Split the reference into code-rendered UI and image2-generated assets, orchestrate specialist agents when available, build a clickable preview, and verify the output.
+description: Use when the user asks for image2, image generation, image-to-UI, UI screenshot to code, design to code, clickable app demo, mobile prototype, iOS preview, high-fidelity UI recreation, production-ready UI architecture, multi-agent UI implementation, or generating bitmap assets for a UI. Generate and inspect a complete effect image from the reference before decomposing that effect image into code-rendered UI and image2 assets, then build a clickable preview and verify the output.
 ---
 
 # Image To UI Skill
@@ -9,18 +9,72 @@ description: Use when the user asks for image2, image generation, image-to-UI, U
 
 Turn UI references into clickable demos. Keep the explanation lean and make the output real.
 
+## 首轮入口 / First-turn entry
+
+When a new image-to-UI or visual-style request starts, the first user-facing
+reply must invite the user to open the local visual library and choose a
+concrete direction before implementation:
+
+`file:///Users/zzhu/Documents/image2%20ui/library.html`
+
+Use this concise first-turn wording: `先从案例库选一个接近的风格，我会基于它的参考图、提示词和布局规则继续制作。`
+
+Use the library's filters, real demo videos, local reference images, and copy
+buttons as the first-round style selection surface. After the user chooses a
+case, carry its local reference image path and prompt into the asset plan and
+implementation. If the local file is unavailable in the current workspace,
+provide the repository-relative `library.html` path instead.
+
+## 对外表达 / User-facing language
+
+Keep user-facing replies focused on the desired result. Do not expose internal
+tool names, skill loading, repository inspection, agent roles, execution
+statuses, or implementation prerequisites as narration.
+
+- Do not say: `我会使用 image-to-ui-skill，并先检查仓库是否可用。`
+  Say: `我会根据你的参考方向制作可点击预览，并保留后续可修改的结构。`
+- Do not say: `它需要一张参考图片才能生成贴近原图的 UI。`
+  Say: `有参考图时可以更准确还原；没有参考图，也可以先从案例库选择一个风格方向。`
+- Do not emit English-only progress labels such as `Inspecting repository` to
+  the user. Report only a short, outcome-oriented update when useful.
+- When a required input is missing, state the practical next choice and keep
+  moving with an available local style reference when that is appropriate.
+
 ## &#24517;&#23432;&#21407;&#21017; / Non-Negotiables
 
 - &#38656;&#35201;&#29983;&#22270;&#26102;&#65292;&#35843;&#29992;&#39033;&#30446;&#25351;&#23450;&#30340; `image2`&#12290;&#22914;&#26524;&#24403;&#21069;&#29615;&#22659;&#27809;&#26377;&#21487;&#29992;&#20837;&#21475;&#65292;&#35201;&#35828;&#26126;&#32570;&#21475;&#65292;&#19981;&#33021;&#25226; CSS/SVG/&#21344;&#20301;&#22270;&#35828;&#25104;&#24050;&#29983;&#22270;&#12290;
 - When image generation is needed, call the project-designated `image2`. If no channel is available, state the gap instead of presenting CSS/SVG/placeholders as generated images.
 - `image2` &#21482;&#36127;&#36131;&#22797;&#26434;&#20301;&#22270;&#65306;&#29031;&#29255;&#12289;&#20135;&#21697;&#22270;&#12289;&#20154;&#29289;&#12289;&#25554;&#30011;&#12289;&#32441;&#29702;&#12289;&#32972;&#26223;&#12289;&#22320;&#22270;&#12289;&#21345;&#29255;&#32553;&#30053;&#22270;&#12289;&#29289;&#20307;&#25248;&#22270;&#12290;
-- `image2` is for complex bitmap work: photos, products, people, illustrations, textures, backgrounds, maps, thumbnails, and object cutouts.
+- For implementation assets, `image2` is for complex bitmap work: photos, products, people, illustrations, textures, backgrounds, maps, thumbnails, and object cutouts. The complete effect image is a temporary planning artifact generated before this asset split.
 - &#20195;&#30721;&#36127;&#36131; UI&#65306;&#25991;&#23383;&#12289;&#25353;&#38062;&#12289;&#29366;&#24577;&#26639;&#12289;&#23548;&#33322;&#12289;&#34920;&#21333;&#12289;&#24320;&#20851;&#12289;&#20215;&#26684;&#12289;&#26631;&#31614;&#12289;&#26222;&#36890; icon&#12289;&#25773;&#25918;&#22120;&#25511;&#20214;&#12290;
 - Code owns UI: text, buttons, status bars, navigation, forms, toggles, prices, labels, common icons, and player controls.
 - &#29983;&#25104;&#22270;&#29255;&#37324;&#19981;&#35201;&#21253;&#21547;&#21487;&#35835; UI &#25991;&#26696;&#12289;logo&#12289;&#27700;&#21360;&#12289;&#29366;&#24577;&#26639;&#12289;&#25353;&#38062;&#25110;&#23567;&#22270;&#26631;&#12290;
-- Generated images must not contain readable UI text, logos, watermarks, status bars, buttons, or small UI icons.
+- Generated implementation assets must not contain readable UI text, logos, watermarks, status bars, buttons, or small UI icons. A full effect image is a temporary visual specification and may show the complete composition, but it must never be shipped as the interactive UI or used as a substitute for real text and controls.
 - &#26368;&#32456; demo &#24517;&#39035;&#21487;&#25171;&#24320;&#12289;&#21487;&#28857;&#20987;&#12289;&#21487;&#32487;&#32493;&#20462;&#25913;&#12290;
 - The final demo must be openable, clickable, and editable.
+
+## 效果图门禁 / Effect-image gate
+
+For image-to-UI implementation, use this mandatory order:
+
+`reference image -> complete effect image -> effect-image review -> UI decomposition -> clickable implementation`
+
+The effect image is a saved, full-frame visual mockup of the target screen or screen set. It is the visual source of truth for decomposition; it is not an isolated hero asset, an asset manifest, or a screenshot of code that was already implemented.
+
+1. Analyze the reference only far enough to capture composition, visual language, device format, content hierarchy, and the prompt needed to generate the effect image. Do not produce the implementation-level `code-ui` / `image2-assets` split yet.
+2. Actually generate and save the complete effect image. Record its path and generation channel.
+3. Inspect the saved effect image for framing, hierarchy, legibility, and reference fidelity. If the user requested an approval checkpoint, wait for approval; otherwise perform and record the review internally.
+4. Decompose the UI from the approved or inspected effect image. Treat the original reference as a fidelity check, not as the implementation decomposition source.
+5. Implement real text, controls, icons, states, image assets, and interactions, then validate the rendered demo against the effect image.
+
+Do not:
+
+- decompose the original reference directly into implementation tasks before a complete effect image exists;
+- claim UI decomposition is complete when only the original reference was analyzed;
+- start frontend implementation before the effect image has been saved and inspected;
+- use the flattened effect image itself as the final clickable screen.
+
+Skip this gate only when the user explicitly asks for analysis/a static audit only, or explicitly asks to skip effect-image generation. A missing image-generation channel is a blocker for the normal implementation workflow, not permission to silently bypass the gate.
 
 ## Image2 &#36890;&#36947; / Image2 Channels
 
@@ -51,21 +105,12 @@ image2-ui doctor
 
 ## &#24037;&#20316;&#27969; / Workflow
 
-1. &#25286;&#20986;&#20004;&#24352;&#28165;&#21333;&#65306;`code-ui` &#21644; `image2-assets`&#12290;
-2. &#20026;&#27599;&#20010; `image2-assets` &#20889;&#28165;&#26970;&#29992;&#36884;&#12289;&#23610;&#23544;&#12289;&#39118;&#26684;&#12289;&#35009;&#20999;&#26041;&#24335;&#21644;&#36127;&#38754;&#32422;&#26463;&#12290;
-3. &#35843;&#29992; `image2` &#29983;&#25104;&#30495;&#23454;&#22270;&#29255;&#25991;&#20214;&#65292;&#24182;&#25918;&#36827;&#39033;&#30446;&#36164;&#28304;&#30446;&#24405;&#12290;
-4. &#29992;&#39033;&#30446;&#29616;&#26377;&#25216;&#26415;&#23454;&#29616;&#39029;&#38754;&#65292;&#25226;&#29983;&#25104;&#36164;&#20135;&#25509;&#22238;&#30028;&#38754;&#12290;
-5. &#22914;&#26524;&#26159; App &#25110;&#25163;&#26426;&#21442;&#32771;&#22270;&#65292;&#40664;&#35748;&#20570;&#25163;&#26426;&#22806;&#26694;&#12289;&#29366;&#24577;&#26639;&#23433;&#20840;&#21306;&#12289;Dynamic Island &#25110;&#31561;&#20215;&#35774;&#22791; chrome&#65292;&#20197;&#21450;&#21487;&#28857;&#20987;&#39029;&#38754;&#20999;&#25442;&#12290;
-6. &#25171;&#24320;&#26412;&#22320;&#39044;&#35272;&#26816;&#26597;&#28210;&#26579;&#21644;&#20132;&#20114;&#12290;
-
-English version:
-
-1. Produce two inventories: `code-ui` and `image2-assets`.
-2. For each `image2-assets` item, record purpose, size, style, crop strategy, and negative constraints.
-3. Call `image2` to generate real image files and place them in the project asset directory.
-4. Build the page with the existing project stack and wire the generated assets into the UI.
-5. For app or mobile references, include the device frame, safe area, Dynamic Island or equivalent device chrome, and clickable screen changes by default.
-6. Open the local preview and verify rendering and interactions.
+1. Analyze the reference for effect-image composition and write the full-screen generation prompt. Do not create the implementation inventory yet.
+2. Generate, save, and inspect the complete effect image.
+3. Use that effect image to produce the `code-ui` and `image2-assets` inventories.
+4. For each `image2-assets` item, record purpose, size, style, crop strategy, negative constraints, and target path; then generate the real implementation assets.
+5. Build with the existing project stack and wire the generated assets into real UI. For app/mobile work, include device chrome, safe areas, and clickable screen changes by default.
+6. Open the local preview, verify interactions, and compare the rendered result against the effect image. Use the original reference as a secondary fidelity check.
 
 ## Multi-Agent Orchestration
 
@@ -79,7 +124,7 @@ The lead agent owns the user request, repository architecture, task decompositio
 
 Recommended roles:
 
-- `visual-analyst`: inspect references, identify visual hierarchy, and split `code-ui` from `image2-assets`.
+- `visual-analyst`: inspect references to define the complete effect-image prompt; only after that effect image exists, identify visual hierarchy and split `code-ui` from `image2-assets`.
 - `asset-engineer`: create or verify the asset manifest, prompt records, formats, paths, alt text, and provenance.
 - `ui-architect`: define routes, feature boundaries, component APIs, design tokens, state models, and i18n structure.
 - `backend-contract`: define API contracts, request/response schemas, error envelopes, permissions, and mock data boundaries.
@@ -102,6 +147,7 @@ Read only the relevant reference files for the current task:
 - `references/asset-manifest-and-prompts.md`: asset inventory, prompt templates, and page output audit loop.
 - `references/icon-system.md`: icon system, UI Glyph lock rule, and approved icon libraries.
 - `references/loop-engineering.md`: iterative verification loop.
+- `references/ui-section-vocabulary.md`: names for app sections, controls, states, overlays, card layouts, and asset split labels.
 - `references/museum-app-case-study.md`: museum/mobile multi-screen case.
 - `references/fashion-shopping-app-case-study.md`: fashion shopping visual asset case.
 - `references/hicolor-case-study.md`: content graphic case.
@@ -109,6 +155,9 @@ Read only the relevant reference files for the current task:
 
 ## Design, Icons, And Layout
 
+- Before building, name the visible UI regions with `references/ui-section-vocabulary.md` when the screen has multiple sections, controls, states, or repeated content blocks.
+- Prefer precise pattern names: top app bar, sidebar, rail navigation, bottom tab bar, search field, filter chips, segmented control, card grid, masonry grid, bento grid, detail drawer, bottom sheet, modal, loading skeleton, empty state, no-results state, inline error, and toast.
+- In the `code-ui` inventory, list section names and state names, not only individual components. Example: `library screen -> top app bar, category rail, search field, filter chips, masonry card grid, detail drawer, empty state`.
 - &#22270;&#26631;&#32479;&#19968;&#29992;&#19968;&#22871;&#20195;&#30721;&#22270;&#26631;&#31995;&#32479;&#12290;
 - Use one code-rendered icon system.
 - &#36820;&#22238;&#12289;&#20851;&#38381;&#12289;&#33756;&#21333;&#12289;&#25628;&#32034;&#12289;&#35774;&#32622;&#12289;&#29366;&#24577;&#26639;&#12289;&#30005;&#37327;/Wi-Fi/&#20449;&#21495;&#12289;&#25773;&#25918;&#12289;&#24213;&#37096; tab&#12289;&#24320;&#20851;&#12289;&#21152;&#20943;&#21495;&#37117;&#29992;&#20195;&#30721;&#12290;

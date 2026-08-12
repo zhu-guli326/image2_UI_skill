@@ -1,0 +1,17 @@
+{
+  "channel": "youtoken-gpt-image-2",
+  "action": "edit",
+  "reference": "/var/folders/l7/4hlsdlq943jfvrclvf0wmmgc0000gn/T/codex-clipboard-a81ac189-28fe-49a3-ba27-b9514149bea6.png",
+  "output": "assets/outdoor-backpack.png",
+  "model": "gpt-image-2",
+  "size_requested": "1024x1024",
+  "quality": "medium",
+  "output_format": "png",
+  "prompt_record": "../artifacts/image2-prompts.md",
+  "constraints": [
+    "No readable text",
+    "No brand logo",
+    "No watermark",
+    "No phone or interface"
+  ]
+}

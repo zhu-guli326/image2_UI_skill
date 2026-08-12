@@ -808,19 +808,45 @@ button,
     box-shadow var(--motion-duration-fast) var(--motion-ease-standard);
 }
 
-button:hover,
-.exhibit-card:hover,
-.art-tile:hover,
-.visit-grid button:hover {
-  transform: translateY(-2px);
+.icon-btn:hover,
+.plain-btn:hover,
+.tabs button:hover,
+.detail-tabs button:hover,
+.tabbar button:hover { background-color: rgba(126, 99, 76, 0.08); }
+
+.visit-grid button:hover { box-shadow: inset 0 0 0 2px rgba(75, 50, 35, 0.18); }
+.art-tile img,
+.exhibit-card .line-art { transition: transform var(--motion-duration-base) var(--motion-ease-emphasized); }
+.art-tile:hover img,
+.exhibit-card:hover .line-art { transform: scale(1.025); }
+
+.icon-btn:active,
+.plain-btn:active,
+.arrow-link:active,
+.audio-card:active,
+.visit-grid button:active { scale: 0.97; }
+
+.stage[data-nav-direction="forward"] .phone.is-active .device {
+  animation: motion-phone-forward var(--motion-duration-base) var(--motion-ease-emphasized) both;
 }
 
-button:active {
-  transform: scale(0.97);
+.stage[data-nav-direction="back"] .phone.is-active .device {
+  animation: motion-phone-back var(--motion-duration-base) var(--motion-ease-emphasized) both;
 }
 
-.phone.is-active .device {
-  transform: translateY(-3px);
+.favorite-button {
+  transition: color var(--motion-duration-fast) var(--motion-ease-standard), transform var(--motion-duration-fast) var(--motion-ease-standard);
+}
+
+.favorite-button.is-selected {
+  color: #9d3348;
+  transform: scale(1.08);
+}
+
+.tabs button::after,
+.detail-tabs button::after,
+.tabbar button svg {
+  transition: transform var(--motion-duration-base) var(--motion-ease-emphasized), color var(--motion-duration-fast) var(--motion-ease-standard), stroke var(--motion-duration-fast) var(--motion-ease-standard);
 }
 
 .hero-card,
@@ -845,6 +871,16 @@ button:active {
   to { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes motion-phone-forward {
+  from { opacity: 0.72; transform: translateX(18px) scale(0.985); }
+  to { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+@keyframes motion-phone-back {
+  from { opacity: 0.72; transform: translateX(-18px) scale(0.985); }
+  to { opacity: 1; transform: translateX(0) scale(1); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -855,9 +891,13 @@ button:active {
     transition-duration: 0.01ms !important;
   }
 
-  button:hover,
-  .exhibit-card:hover,
-  .art-tile:hover,
-  .visit-grid button:hover,
-  .phone.is-active .device { transform: none; }
+  .art-tile:hover img,
+  .exhibit-card:hover .line-art,
+  .icon-btn:active,
+  .plain-btn:active,
+  .arrow-link:active,
+  .audio-card:active,
+  .visit-grid button:active,
+  .stage[data-nav-direction] .phone.is-active .device,
+  .favorite-button.is-selected { transform: none; }
 }

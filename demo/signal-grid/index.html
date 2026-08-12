@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light">
+    <title>Signal Grid</title>
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <svg class="sprite" aria-hidden="true">
+      <symbol id="i-menu" viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></symbol>
+      <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></symbol>
+      <symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H5m6-6-6 6 6 6"/></symbol>
+      <symbol id="i-signal" viewBox="0 0 24 24"><path d="M5 19v-3M9.5 19v-6M14 19V9M18.5 19V5"/></symbol>
+      <symbol id="i-wifi" viewBox="0 0 24 24"><path d="M4.4 9.4a11.2 11.2 0 0 1 15.2 0M7.4 12.5a7 7 0 0 1 9.2 0M10.4 15.5a2.8 2.8 0 0 1 3.2 0"/><path d="M12 19h.01"/></symbol>
+      <symbol id="i-battery" viewBox="0 0 24 24"><rect x="3.5" y="7" width="16" height="10" rx="2"/><path d="M21 10v4M6.5 10h8"/></symbol>
+      <symbol id="i-scan" viewBox="0 0 24 24"><path d="M5 9V5h4M15 5h4v4M19 15v4h-4M9 19H5v-4"/><circle cx="12" cy="12" r="3"/></symbol>
+      <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M5 7h14M5 17h14M9 7v4M15 13v4"/><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/></symbol>
+      <symbol id="i-card" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h3"/></symbol>
+      <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4.5 4.5L19 7"/></symbol>
+    </svg>
+    <main class="stage">
+      <aside class="brief"><p class="eyebrow">Signal Grid / network matching</p><h1>A better signal starts here.</h1><p>Thermal gradients, strict typography and a wireframe signal model make connection planning feel precise instead of technical for its own sake.</p><dl><div><dt>Surface</dt><dd>Deep teal to heat orange</dd></div><div><dt>Flow</dt><dd>Settings, scan, plan</dd></div><div><dt>Input</dt><dd>Tabs and inline controls</dd></div></dl></aside>
+      <section class="phone" aria-label="Signal Grid interactive mobile app"><div class="screen">
+        <div class="island" aria-hidden="true"></div>
+        <header class="statusbar"><time>9:41</time><span class="status-icons" aria-label="Signal, Wi-Fi, battery"><svg><use href="#i-signal"/></svg><svg><use href="#i-wifi"/></svg><svg><use href="#i-battery"/></svg></span></header>
+        <section class="view scan-view is-active" data-view="scan" aria-label="Network scan"><header class="appbar"><p>Signal Grid<sup>®</sup></p><button type="button" class="menu-button" data-view-target="settings" aria-label="Open connection settings"><svg><use href="#i-menu"/></svg><span>Menu</span></button></header><p class="status-line"><span>112 networks nearby</span><b>Matched: <i id="matchCount">14</i></b></p><div class="scan-copy"><h1>Find the best<br>option for<br>your space <span>↘</span></h1><p id="scanStatus">Ready to map nearby connections.</p></div><div class="orb-visual"><img src="./assets/network-orb.png" alt="Abstract wireframe network globe"><button class="orb-button" type="button" data-scan aria-label="Scan nearby connections"></button></div><div class="scan-foot"><strong class="step-chip">07.</strong><button class="inline-action" type="button" data-scan>Scan nearby <svg><use href="#i-arrow"/></svg></button></div></section>
+        <section class="view settings-view" data-view="settings" hidden aria-label="Connection settings"><header class="appbar"><p>Signal Grid<sup>®</sup></p><button type="button" class="menu-button" data-view-target="scan" aria-label="Return to scan"><svg><use href="#i-back"/></svg><span>Back</span></button></header><div class="settings-copy"><h1>Main settings <span>↘</span></h1><p>Fine-tune the details that help us match a reliable connection.</p><nav class="settings-tabs" aria-label="Settings categories"><button class="is-active" type="button" data-setting-tab="Connection">Connection</button><button type="button" data-setting-tab="Testing">Testing</button><button type="button" data-setting-tab="Hotspot">Hotspot</button></nav><div class="settings-list"><button type="button" data-setting="Fiber type"><span>Fiber type</span><b>Optic</b></button><button type="button" data-setting="Plan switch"><span>Plan switch</span><b>Available</b></button><button type="button" data-setting="Speed"><span>Speed</span><b>Up to 150 Mb/s <i>→</i></b></button><button type="button" data-setting="Support"><span>Support</span><b>24/7 assistance <i>→</i></b></button><button type="button" class="toggle-row" data-toggle><span>Signal booster</span><i aria-hidden="true"></i></button><button type="button" data-setting="Installation"><span>Installation</span><b>Included</b></button></div></div><div class="settings-foot"><strong class="step-chip">04.</strong><button class="inline-action" type="button" data-view-target="plans">Compare plans <svg><use href="#i-arrow"/></svg></button></div></section>
+        <section class="view plans-view" data-view="plans" hidden aria-label="Plans"><header class="appbar"><p>Signal Grid<sup>®</sup></p><button type="button" class="menu-button" data-view-target="settings" aria-label="Open connection settings"><svg><use href="#i-menu"/></svg><span>Menu</span></button></header><div class="plans-copy"><h1>Choose your<br>plan <span>↘</span></h1><div class="plan-tabs" role="tablist" aria-label="Plan tier"><button class="is-active" type="button" role="tab" aria-selected="true" data-plan="Starter">Starter</button><button type="button" role="tab" aria-selected="false" data-plan="Plus">Plus</button><button type="button" role="tab" aria-selected="false" data-plan="Studio">Studio</button></div><section class="plan-summary"><p class="best-for" id="bestFor">Best for home</p><h2 id="planData">100 Gb +</h2><p id="planText">An easy, reliable option for browsing, calls and the everyday devices at home.</p><strong id="planPrice">$39<sup>00</sup></strong><small id="planFine">A flexible monthly connection with setup included.</small></section></div><div class="plans-foot"><strong class="step-chip">05.</strong><button class="inline-action" type="button" data-purchase>Purchase <svg><use href="#i-arrow"/></svg></button></div></section>
+        <section class="view confirmation-view" data-view="confirmation" hidden aria-label="Purchase confirmed"><div class="confirmation-mark"><svg><use href="#i-check"/></svg></div><p class="eyebrow">Connection reserved</p><h1>Your plan is ready.</h1><p id="confirmationText">Starter has been added to your account. We will keep this signal open for 20 minutes.</p><button class="solid-button" type="button" data-view-target="scan">Back to scan</button></section>
+        <nav class="tabbar" aria-label="Primary navigation"><button class="tab is-active" type="button" data-view-target="scan" aria-current="page"><svg><use href="#i-scan"/></svg><span>Scan</span></button><button class="tab" type="button" data-view-target="settings"><svg><use href="#i-sliders"/></svg><span>Settings</span></button><button class="tab" type="button" data-view-target="plans"><svg><use href="#i-card"/></svg><span>Plans</span></button></nav><p class="feedback" id="feedback" role="status">Scan is ready.</p><div class="home-indicator" aria-hidden="true"></div>
+      </div></section>
+    </main>
+    <script src="./script.js"></script>
+  </body>
+</html>

@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Still Form</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <svg class="sprite" aria-hidden="true">
+      <symbol id="back" viewBox="0 0 24 24">
+        <path d="M20 12H4m6-6-6 6 6 6" />
+      </symbol>
+      <symbol id="heart" viewBox="0 0 24 24">
+        <path
+          d="M20.8 8.4c0 5-8.8 10.5-8.8 10.5S3.2 13.4 3.2 8.4A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 8.8 1.4Z"
+        />
+      </symbol>
+      <symbol id="bag" viewBox="0 0 24 24">
+        <path d="M5 8h14l1 12H4L5 8Zm4 0a3 3 0 0 1 6 0" />
+      </symbol>
+      <symbol id="arrow" viewBox="0 0 24 24">
+        <path d="M4 12h16m-6-6 6 6-6 6" />
+      </symbol>
+      <symbol id="signal" viewBox="0 0 24 24">
+        <path d="M5 19v-3m4.5 3v-6m4.5 6V9m4.5 10V5" />
+      </symbol>
+      <symbol id="wifi" viewBox="0 0 24 24">
+        <path
+          d="M4 9a12 12 0 0 1 16 0m-13 3a7 7 0 0 1 10 0m-7 3a3 3 0 0 1 4 0m-2 4h.01"
+        />
+      </symbol>
+      <symbol id="battery" viewBox="0 0 24 24">
+        <rect x="3" y="7" width="16" height="10" rx="2" />
+        <path d="M21 10v4M6 10h8" />
+      </symbol>
+    </svg>
+    <main class="stage">
+      <p class="label">STILL FORM / 2026</p>
+      <p class="note">Natural materials. <br />Considered everyday pieces.</p>
+      <section class="phone">
+        <div class="screen">
+          <div class="island"></div>
+          <header class="status">
+            <time>9:41</time
+            ><span
+              ><svg><use href="#signal" /></svg><svg><use href="#wifi" /></svg
+              ><svg><use href="#battery" /></svg
+            ></span>
+          </header>
+          <section class="view intro active" data-view="intro">
+            <img
+              src="assets/recycled-scarf.png"
+              alt="Model wearing recycled wool scarf"
+            />
+            <div class="shade"></div>
+            <div class="intro-copy">
+              <h1>Sustainable style<br />made simple</h1>
+              <p>
+                Thoughtful fashion made from natural fibers and ethical
+                production.
+              </p>
+              <button data-set="catalog">
+                Explore <svg><use href="#arrow" /></svg>
+              </button>
+            </div>
+          </section>
+          <section class="view catalog" data-view="catalog" hidden>
+            <div class="hero">
+              <img src="assets/recycled-scarf.png" alt="" />
+              <div>
+                <h1>Sustainable<br />Collection 2026</h1>
+                <p>Timeless pieces, made for the planet.</p>
+                <button data-set="intro">Explore collection</button>
+              </div>
+            </div>
+            <div class="cats">
+              <button class="selected">Women</button><button>Men</button
+              ><button>Accessories</button>
+            </div>
+            <div class="sort">
+              <b>67 items</b><span>Popular first</span
+              ><button data-feedback="Filters opened.">Filters</button>
+            </div>
+            <article class="product">
+              <button
+                class="product-main"
+                data-set="detail"
+                aria-label="Open Linen Shirt details"
+              >
+                <img src="assets/linen-shirt.png" alt="Natural linen shirt" />
+                <span class="product-copy">
+                  <h2>Linen Shirt</h2>
+                  <p>Field studio <b>€69.00</b></p>
+                </span>
+              </button>
+              <button
+                class="product-save"
+                data-feedback="Linen shirt saved."
+                aria-label="Save linen shirt"
+              >
+                <svg><use href="#heart" /></svg>
+              </button>
+            </article>
+          </section>
+          <section class="view detail" data-view="detail" hidden>
+            <header class="detail-top">
+              <button data-set="catalog" aria-label="Back">
+                <svg><use href="#back" /></svg></button
+              ><button
+                data-feedback="Recycled Wool Scarf saved."
+                aria-label="Save item"
+              >
+                <svg><use href="#heart" /></svg>
+              </button>
+            </header>
+            <img
+              class="detail-img"
+              src="assets/recycled-scarf.png"
+              alt="Recycled wool scarf"
+            />
+            <section class="details">
+              <h1>Recycled Wool Scarf</h1>
+              <p>
+                A soft scarf crafted from recycled wool, finished with subtle
+                fringe and a gentle texture for everyday comfort.
+              </p>
+              <div class="swatches">
+                <button class="selected" aria-label="Oat color"></button
+                ><button aria-label="Sage color"></button
+                ><button aria-label="Stone color"></button>
+              </div>
+              <div class="buy">
+                <b>€59.00</b><button data-cart>Add to cart</button>
+              </div>
+            </section>
+          </section>
+          <output id="feedback" aria-live="polite"></output>
+        </div>
+      </section>
+    </main>
+    <script src="script.js"></script>
+  </body>
+</html>

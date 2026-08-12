@@ -590,6 +590,7 @@ h2 {
 }
 
 .segmented {
+  position: relative;
   height: 37px;
   margin: 12px 0 18px;
   padding: 4px;
@@ -599,7 +600,21 @@ h2 {
   background: rgba(255, 255, 255, 0.72);
 }
 
+.segmented-indicator {
+  position: absolute;
+  inset: 4px auto 4px 4px;
+  z-index: 0;
+  width: calc(50% - 4px);
+  border-radius: 999px;
+  background: #0f0f0e;
+  transform: translateX(var(--segment-offset, 0%));
+  transition: transform var(--motion-duration-base) var(--motion-ease-emphasized);
+  pointer-events: none;
+}
+
 .segmented button {
+  position: relative;
+  z-index: 1;
   border: 0;
   border-radius: 999px;
   color: #79756e;
@@ -611,7 +626,7 @@ h2 {
 
 .segmented .selected {
   color: #fff;
-  background: #0f0f0e;
+  background: transparent;
 }
 
 .dial-zone {
@@ -623,6 +638,8 @@ h2 {
   position: relative;
   width: 214px;
   height: 198px;
+  touch-action: none;
+  cursor: ew-resize;
 }
 
 .dial-scale::before {
@@ -645,10 +662,10 @@ h2 {
 .dial-dot {
   position: absolute;
   left: 50%;
-  top: 25px;
+  top: 50%;
   width: 18px;
   height: 18px;
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%) rotate(var(--dial-angle, 0deg)) translateY(-76px);
   border: 5px solid #fff;
   border-radius: 50%;
   background: #11110f;
@@ -770,6 +787,9 @@ h2 {
   color: #151514;
   box-shadow: inset 0 0 0 1.5px rgba(255, 123, 32, 0.45);
 }
+
+.action-item.active svg { transform: scale(1.08); }
+.action-item svg { transition: transform var(--motion-duration-fast) var(--motion-ease-emphasized); }
 
 .schedule-card {
   height: 51px;
@@ -1195,10 +1215,7 @@ html.capture-wide .phone-right {
 
 .icon-button:hover,
 .chip:hover,
-.action-item:hover,
-.device-card:hover,
-.mini-device:hover,
-.schedule-card:hover { transform: translateY(-2px); }
+.action-item:hover { background-color: rgba(255, 255, 255, 0.88); }
 
 .icon-button:active,
 .chip:active,
@@ -1216,12 +1233,12 @@ html.capture-wide .phone-right {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .segmented-indicator,
+  .dial-dot,
+  .action-item svg { transition: none; }
   .icon-button:hover,
   .chip:hover,
   .action-item:hover,
-  .device-card:hover,
-  .mini-device:hover,
-  .schedule-card:hover,
   .icon-button:active,
   .chip:active,
   .action-item:active,

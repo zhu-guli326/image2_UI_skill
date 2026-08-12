@@ -329,6 +329,8 @@ h1 {
 }
 
 .bottom-nav {
+  --nav-index: 0;
+  --nav-offset: 0%;
   position: absolute;
   left: 20px;
   right: 20px;
@@ -343,7 +345,23 @@ h1 {
   box-shadow: 0 10px 22px rgba(20, 26, 34, 0.12);
 }
 
+.bottom-nav::before {
+  content: "";
+  position: absolute;
+  left: 10px;
+  top: 8px;
+  width: calc((100% - 20px) / 4);
+  height: 48px;
+  border-radius: 16px;
+  background: var(--deep);
+  transform: translateX(var(--nav-offset));
+  transition: transform var(--motion-duration-base) var(--motion-ease-emphasized);
+  pointer-events: none;
+}
+
 .bottom-nav button {
+  position: relative;
+  z-index: 1;
   inline-size: 48px;
   block-size: 48px;
   border-radius: 16px;
@@ -354,7 +372,7 @@ h1 {
 }
 
 .bottom-nav .active {
-  background: var(--deep);
+  background: transparent;
   color: #ffffff;
 }
 
@@ -569,6 +587,7 @@ h1 {
 }
 
 .room-tabs {
+  --room-index: 1;
   position: absolute;
   z-index: 3;
   left: 22px;
@@ -579,7 +598,26 @@ h1 {
   gap: 12px;
 }
 
+.room-tabs::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: calc((100% - 16px) / 3);
+  height: 100%;
+  border-radius: 18px;
+  background: rgba(13, 23, 40, 0.84);
+  transform: translateX(0);
+  transition: transform var(--motion-duration-base) var(--motion-ease-emphasized);
+  pointer-events: none;
+}
+
+.room-tabs[data-selected-index="1"]::before { transform: translateX(calc(100% + 8px)); }
+.room-tabs[data-selected-index="2"]::before { transform: translateX(calc(200% + 16px)); }
+
 .room-tabs button {
+  position: relative;
+  z-index: 1;
   min-inline-size: 0;
   min-block-size: 112px;
   border-radius: 18px;
@@ -614,7 +652,7 @@ h1 {
 
 .room-tabs .active {
   color: #ffffff;
-  background: rgba(13, 23, 40, 0.84);
+  background: transparent;
 }
 
 .room-tabs .active img {
@@ -672,9 +710,13 @@ button,
     opacity var(--motion-duration-base) var(--motion-ease-standard);
 }
 
-button:hover,
-.property-card:hover,
-.agent-card:hover { transform: translateY(-2px); }
+.icon-button:hover,
+.bottom-nav button:hover,
+.room-tabs button:hover { background-color: rgba(255, 255, 255, 0.16); }
+
+.property-card:hover { box-shadow: 0 18px 34px rgba(20, 26, 34, 0.15); }
+.property-card:hover > img { transform: scale(1.025); }
+.property-card > img { transition: transform var(--motion-duration-base) var(--motion-ease-emphasized); }
 
 button:active,
 .is-pressed { transform: scale(0.97); }
@@ -687,6 +729,19 @@ button:active,
   to { opacity: 1; transform: translateY(0); }
 }
 
+.phone[data-motion-direction="forward"] { animation: motion-phone-forward var(--motion-duration-base) var(--motion-ease-emphasized); }
+.phone[data-motion-direction="back"] { animation: motion-phone-back var(--motion-duration-base) var(--motion-ease-emphasized); }
+
+@keyframes motion-phone-forward {
+  from { opacity: 0.75; translate: 18px 0; scale: 0.99; }
+  to { opacity: 1; translate: 0 0; scale: 1; }
+}
+
+@keyframes motion-phone-back {
+  from { opacity: 0.75; translate: -18px 0; scale: 0.99; }
+  to { opacity: 1; translate: 0 0; scale: 1; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -697,9 +752,10 @@ button:active,
     transition-duration: 0.01ms !important;
   }
 
-  button:hover,
-  .property-card:hover,
-  .agent-card:hover,
+  .icon-button:hover,
+  .bottom-nav button:hover,
+  .room-tabs button:hover,
+  .property-card:hover > img,
   button:active,
   .is-pressed { transform: none; }
 }

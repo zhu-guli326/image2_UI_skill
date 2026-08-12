@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>FuFu Bakery - Hand-drawn bakery app</title>
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <svg class="icon-sprite" aria-hidden="true">
+      <symbol id="i-signal" viewBox="0 0 24 24"><path d="M4 19v-2M8 19v-5M12 19v-8M16 19v-11"/></symbol>
+      <symbol id="i-wifi" viewBox="0 0 24 24"><path d="M3.5 9.5a12.4 12.4 0 0 1 17 0M6.8 13a7.6 7.6 0 0 1 10.4 0M10.1 16.5a2.8 2.8 0 0 1 3.8 0"/><circle cx="12" cy="20" r=".9" fill="currentColor" stroke="none"/></symbol>
+      <symbol id="i-battery" viewBox="0 0 24 24"><rect x="3" y="7" width="17" height="10" rx="2"/><path d="M21 10v4"/><rect x="5" y="9" width="10" height="6" rx=".6" fill="currentColor" stroke="none"/></symbol>
+      <symbol id="i-arrow" viewBox="0 0 24 24"><path d="m14.5 5.5-6.5 6.5 6.5 6.5M8.5 12H20"/></symbol>
+      <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.4" fill="currentColor" stroke="none"/></symbol>
+      <symbol id="i-bag" viewBox="0 0 24 24"><path d="M5.5 8.5h13l-1 12h-11l-1-12Z"/><path d="M9 9V6.8a3 3 0 0 1 6 0V9"/></symbol>
+      <symbol id="i-cake" viewBox="0 0 24 24"><path d="M4 12h16v8H4zM3 12h18M6.5 12V9.5a1.5 1.5 0 0 1 3 0V12M10.5 12V8a1.5 1.5 0 0 1 3 0v4M14.5 12V9.5a1.5 1.5 0 0 1 3 0V12"/><path d="M4 17c2 1.7 4 1.7 6 0 2 1.7 4 1.7 6 0 1.5 1.4 2.8 1.6 4 1"/></symbol>
+      <symbol id="i-store" viewBox="0 0 24 24"><path d="M4 10h16v10H4zM3 10l2-6h14l2 6M3 10c0 1.6 2 2.4 3.3 1.1C7.6 12.4 9.6 11.6 11 10c1.4 1.6 3.4 2.4 4.7 1.1C17 12.4 19 11.6 20 10"/></symbol>
+      <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.3"/><path d="M5.2 20c.9-3.3 3.3-5 6.8-5s5.9 1.7 6.8 5"/></symbol>
+      <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></symbol>
+      <symbol id="i-ticket" viewBox="0 0 24 24"><path d="M4 6h16v4a2 2 0 0 0 0 4v4H4v-4a2 2 0 0 0 0-4V6Z"/><path d="M12 7.5v2M12 12v2M12 16.5v.1"/></symbol>
+      <symbol id="i-location" viewBox="0 0 24 24"><path d="M19 10c0 5-7 10-7 10S5 15 5 10a7 7 0 0 1 14 0Z"/><circle cx="12" cy="10" r="2.2"/></symbol>
+      <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+    </svg>
+    <main class="stage">
+      <aside class="brief" aria-label="FuFu Bakery design notes">
+        <p class="eyebrow">FuFu Bakery / commerce app</p>
+        <h1>Baked with a smile.</h1>
+        <p>Black ink linework, open paper-white space, and a single friendly baker make ordering feel like a little handwritten note.</p>
+        <dl>
+          <div><dt>Canvas</dt><dd>9:16 mobile</dd></div>
+          <div><dt>Asset</dt><dd>Generated baker art</dd></div>
+          <div><dt>Flow</dt><dd>Welcome / shop / member</dd></div>
+        </dl>
+      </aside>
+      <section class="phone" aria-label="FuFu Bakery interactive mobile preview">
+        <div class="screen">
+          <div class="island" aria-hidden="true"></div>
+          <header class="statusbar"><time>10:04</time><span class="status-icons" aria-label="Signal, Wi-Fi and battery"><svg><use href="#i-signal"></use></svg><svg><use href="#i-wifi"></use></svg><svg><use href="#i-battery"></use></svg></span></header>
+
+          <section class="app-view welcome-view is-active" data-view="welcome" aria-label="FuFu Bakery welcome screen">
+            <div class="welcome-brand" aria-label="FuFu Bakery"><span>FuFu</span><span>Bakery</span></div>
+            <p class="opening">OPENING</p>
+            <p class="welcome-subtitle">Coffee, bread, and a small<br>happy pause.</p>
+            <div class="welcome-visual"><img src="./assets/fufu-baker.png" alt="Hand-drawn dog baker holding a baguette"></div>
+            <p class="welcome-note">Baked fresh every day<br>with a big, fluffy smile.</p>
+            <button class="primary-button" type="button" data-go="home"><span>Enter the bakery</span><svg aria-hidden="true"><use href="#i-arrow"></use></svg></button>
+          </section>
+
+          <section class="app-view home-view" data-view="home" aria-label="FuFu Bakery shop home" hidden>
+            <header class="app-head"><div><p>Good morning</p><h2>FuFu Bakery</h2></div><button class="icon-button" type="button" aria-label="Open basket" data-toast="Your basket is ready for something warm"><svg><use href="#i-bag"></use></svg></button></header>
+            <button class="hero-card" type="button" data-go="menu" aria-label="Open today's warm bakes"><div><span>Fresh from the oven</span><strong>Warm<br>and fluffy.</strong><small>See today's bakes</small></div><img src="./assets/fufu-baker.png" alt="Dog baker with bread"></button>
+            <section class="quick-actions" aria-label="Bakery actions">
+              <button type="button" data-go="menu"><span class="quick-icon"><svg><use href="#i-cake"></use></svg></span><b>Order</b><small>Pick a bake</small></button>
+              <button type="button" data-toast="Table booking opens at 9:00"><span class="quick-icon"><svg><use href="#i-store"></use></svg></span><b>Dine in</b><small>Reserve a seat</small></button>
+              <button type="button" data-go="member"><span class="quick-icon"><svg><use href="#i-ticket"></use></svg></span><b>Member</b><small>Little perks</small></button>
+            </section>
+            <section class="weekly-bake"><div><p>This week's favorite</p><h3>Sea salt<br>butter roll</h3><button type="button" data-toast="Butter roll added to your basket">Add to basket</button></div><span class="roll-doodle" aria-hidden="true">&#9783;</span></section>
+            <p class="feedback" id="feedback" role="status">The oven is warm.</p>
+          </section>
+
+          <section class="app-view menu-view" data-view="menu" aria-label="FuFu Bakery order menu" hidden>
+            <header class="view-head"><button class="icon-button" type="button" aria-label="Back to bakery home" data-go="home"><svg><use href="#i-arrow"></use></svg></button><div><p>Fresh today</p><h2>Choose a bake</h2></div><button class="icon-button" type="button" aria-label="Open basket" data-toast="Your basket is empty"><svg><use href="#i-bag"></use></svg></button></header>
+            <section class="menu-list" aria-label="Bakery menu">
+              <button class="menu-item" type="button" data-add="Butter roll"><span class="menu-visual bun">&#9783;</span><span><b>Butter roll</b><small>Soft, warm, sea salt</small></span><strong>$3.50</strong></button>
+              <button class="menu-item" type="button" data-add="Milk loaf"><span class="menu-visual loaf">&#8764;</span><span><b>Milk loaf</b><small>Pull-apart and tender</small></span><strong>$5.00</strong></button>
+              <button class="menu-item" type="button" data-add="Morning croissant"><span class="menu-visual croissant">&#9694;</span><span><b>Morning croissant</b><small>Buttery, layered, crisp</small></span><strong>$3.80</strong></button>
+            </section>
+            <button class="checkout-button" type="button" data-toast="Your bakery order is saved for pickup">Save for pickup <svg aria-hidden="true"><use href="#i-bag"></use></svg></button>
+          </section>
+
+          <section class="app-view member-view" data-view="member" aria-label="FuFu Bakery member page" hidden>
+            <header class="view-head"><button class="icon-button" type="button" aria-label="Back to bakery home" data-go="home"><svg><use href="#i-arrow"></use></svg></button><div><p>FuFu friends</p><h2>Member card</h2></div><button class="icon-button" type="button" aria-label="Membership settings" data-toast="Member settings"><svg><use href="#i-more"></use></svg></button></header>
+            <section class="member-card"><img src="./assets/fufu-baker.png" alt="FuFu dog baker membership illustration"><div><small>FLUFFY CLUB</small><strong>Yuki's card</strong><span>3 stamps until a free roll</span></div><b>03</b></section>
+            <section class="stamp-row" aria-label="Three of six bakery stamps"><span class="is-stamped">&#10003;</span><span class="is-stamped">&#10003;</span><span class="is-stamped">&#10003;</span><span></span><span></span><span></span></section>
+            <section class="perk-panel"><p>Your little treats</p><button type="button" data-toast="Birthday latte perk saved"><svg><use href="#i-ticket"></use></svg><span><b>Birthday latte</b><small>One free drink in your birthday month</small></span></button><button type="button" data-toast="Nearest FuFu Bakery: 12 minutes away"><svg><use href="#i-location"></use></svg><span><b>Nearest bakery</b><small>Greenwich Street, 12 min away</small></span></button></section>
+          </section>
+
+          <nav class="tabbar" aria-label="Primary navigation">
+            <button class="tab is-active" type="button" data-tab="home" aria-current="page"><svg><use href="#i-store"></use></svg><span>Home</span></button>
+            <button class="tab" type="button" data-tab="menu"><svg><use href="#i-grid"></use></svg><span>Menu</span></button>
+            <button class="tab" type="button" data-tab="member"><svg><use href="#i-user"></use></svg><span>Member</span></button>
+          </nav>
+          <div class="home-indicator" aria-hidden="true"></div>
+        </div>
+      </section>
+    </main>
+    <script src="./script.js"></script>
+  </body>
+</html>

@@ -1,0 +1,15 @@
+{
+  "channel": "youtoken-gpt-image-2",
+  "action": "edit",
+  "reference": "assets/reference-overview.png",
+  "output": "assets/pasta-primavera-generated.png",
+  "model": "gpt-image-2",
+  "size_requested": "1024x1024",
+  "quality": "high",
+  "output_format": "png",
+  "prompt_record": "../artifacts/image2-prompts.md",
+  "constraints": [
+    "Original food photography only",
+    "No text, logo, watermark, UI, icons, symbols, or controls"
+  ]
+}

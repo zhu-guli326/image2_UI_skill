@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="description" content="RELAY fictional editorial music app UI case." />
+    <title>RELAY Music</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <svg class="sprite" aria-hidden="true">
+      <symbol id="i-back" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6" /></symbol>
+      <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1" /><circle cx="12" cy="12" r="1" /><circle cx="19" cy="12" r="1" /></symbol>
+      <symbol id="i-heart" viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z" /></symbol>
+      <symbol id="i-play" viewBox="0 0 24 24"><path d="m8 5 11 7-11 7Z" /></symbol>
+      <symbol id="i-pause" viewBox="0 0 24 24"><path d="M9 5v14M15 5v14" /></symbol>
+      <symbol id="i-prev" viewBox="0 0 24 24"><path d="M6 5v14M18 6l-9 6 9 6Z" /></symbol>
+      <symbol id="i-next" viewBox="0 0 24 24"><path d="M18 5v14M6 6l9 6-9 6Z" /></symbol>
+      <symbol id="i-shuffle" viewBox="0 0 24 24"><path d="M4 7h3c4 0 6 10 10 10h3M17 4l3 3-3 3M4 17h3c1.7 0 3-1.8 4.2-4M17 14l3 3-3 3" /></symbol>
+      <symbol id="i-repeat" viewBox="0 0 24 24"><path d="m17 2 4 4-4 4M3 11V9a3 3 0 0 1 3-3h15M7 22l-4-4 4-4M21 13v2a3 3 0 0 1-3 3H3" /></symbol>
+      <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 11 9-8 9 8v9a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1Z" /></symbol>
+      <symbol id="i-discover" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" /><path d="m20 20-4-4" /></symbol>
+      <symbol id="i-library" viewBox="0 0 24 24"><path d="M4 4h3v16H4zM10 4h3v16h-3zM16 5l3-1 3 15-3 1z" /></symbol>
+      <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" /><path d="M4 21a8 8 0 0 1 16 0" /></symbol>
+      <symbol id="i-headphones" viewBox="0 0 24 24"><path d="M4 14v-2a8 8 0 0 1 16 0v2M4 14h4v7H6a2 2 0 0 1-2-2Zm16 0h-4v7h2a2 2 0 0 0 2-2Z" /></symbol>
+      <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5" /><path d="m16 16 5 5" /></symbol>
+      <symbol id="i-close" viewBox="0 0 24 24"><path d="m5 5 14 14M19 5 5 19" /></symbol>
+      <symbol id="i-signal" viewBox="0 0 24 24"><path d="M4 18v-2M9 18v-5M14 18V9M19 18V5" /></symbol>
+      <symbol id="i-wifi" viewBox="0 0 24 24"><path d="M4 9a12 12 0 0 1 16 0M7 13a7 7 0 0 1 10 0M10 17a3 3 0 0 1 4 0" /></symbol>
+      <symbol id="i-battery" viewBox="0 0 28 14"><rect x="1" y="2" width="22" height="10" rx="3" /><path d="M25 5v4" /><path class="battery-fill" d="M4 5h15v4H4z" /></symbol>
+    </svg>
+
+    <main class="stage">
+      <header class="stage-heading">
+        <p>EDITORIAL MUSIC / 01</p>
+        <h1>RELAY</h1>
+      </header>
+
+      <div class="phone-grid" aria-label="RELAY music interface showcase">
+        <article class="phone phone-artist" data-phone="artist" aria-label="Artist profile screen">
+          <div class="screen artist-screen">
+            <div class="dynamic-island"></div>
+            <div class="statusbar statusbar-overlay"><time>9:41</time><span><svg><use href="#i-signal" /></svg><svg><use href="#i-wifi" /></svg><svg><use href="#i-battery" /></svg></span></div>
+            <img class="artist-hero" src="./assets/artist-nova-ray-hero.png" alt="Fictional musician Nova Ray in a silver jacket" />
+            <div class="hero-shade"></div>
+            <div class="top-actions"><button class="icon-button glass" type="button" data-mobile-target="discover" aria-label="Back to Discover"><svg><use href="#i-back" /></svg></button><button class="icon-button glass" type="button" data-feedback="Artist options opened" aria-label="Artist options"><svg><use href="#i-more" /></svg></button></div>
+            <div class="artist-title"><p>ARTIST</p><h2 data-artist-name>NOVA RAY</h2><span data-artist-meta>1.8M monthly listeners</span></div>
+            <section class="artist-sheet">
+              <div class="section-heading"><h3>Popular tracks</h3><button type="button" data-route="library">View all</button></div>
+              <div class="track-list compact" data-track-list="artist"></div>
+              <div class="section-heading playlists-heading"><h3>Curated by Relay</h3><button type="button" data-route="favorites">Saved</button></div>
+              <div class="playlist-grid">
+                <button class="playlist-tile tile-blue" type="button" data-track-id="afterimage"><span>Night current</span><small>14 tracks</small></button>
+                <button class="playlist-tile tile-coral" type="button" data-track-id="slow-bloom"><span>Soft voltage</span><small>11 tracks</small></button>
+              </div>
+            </section>
+            <nav class="bottom-nav" aria-label="Artist navigation">
+              <button class="is-active" type="button" data-route="artist" aria-label="Artist"><svg><use href="#i-home" /></svg><span>Artist</span></button>
+              <button type="button" data-route="discover" aria-label="Discover"><svg><use href="#i-discover" /></svg><span>Discover</span></button>
+              <button type="button" data-route="favorites" aria-label="Favorites"><svg><use href="#i-heart" /></svg><span>Favorites</span></button>
+              <button type="button" data-route="library" aria-label="Library"><svg><use href="#i-library" /></svg><span>Library</span></button>
+            </nav>
+            <div class="home-indicator"></div>
+          </div>
+        </article>
+
+        <article class="phone phone-player is-focused" data-phone="player" aria-label="Now Playing screen">
+          <div class="screen player-screen">
+            <div class="player-glow"></div>
+            <div class="dynamic-island"></div>
+            <div class="statusbar statusbar-overlay"><time>9:41</time><span><svg><use href="#i-signal" /></svg><svg><use href="#i-wifi" /></svg><svg><use href="#i-battery" /></svg></span></div>
+            <header class="player-header"><button class="icon-button transparent" type="button" data-mobile-target="discover" aria-label="Back to Discover"><svg><use href="#i-back" /></svg></button><div><small>PLAYING FROM</small><strong>RELAY RADIO</strong></div><button class="icon-button transparent favorite-button" type="button" data-favorite aria-label="Favorite current track" aria-pressed="false"><svg><use href="#i-heart" /></svg></button></header>
+            <section class="player-content">
+              <div class="artwork-shell"><img data-player-art src="./assets/album-afterimage.png" alt="Abstract chrome ribbon album artwork" /></div>
+              <div class="track-copy"><p>NOW PLAYING</p><h2 data-player-title>AFTERIMAGE</h2><button type="button" data-mobile-target="artist" data-player-artist>NOVA RAY</button></div>
+              <section class="transport-panel" aria-label="Playback controls">
+                <div class="transport-row">
+                  <button class="small-control" type="button" data-shuffle aria-label="Shuffle" aria-pressed="false"><svg><use href="#i-shuffle" /></svg></button>
+                  <button class="transport-control" type="button" data-previous aria-label="Previous track"><svg><use href="#i-prev" /></svg></button>
+                  <button class="play-control" type="button" data-play aria-label="Pause" aria-pressed="true"><svg><use href="#i-pause" /></svg></button>
+                  <button class="transport-control" type="button" data-next aria-label="Next track"><svg><use href="#i-next" /></svg></button>
+                  <button class="small-control" type="button" data-repeat aria-label="Repeat" aria-pressed="false"><svg><use href="#i-repeat" /></svg></button>
+                </div>
+                <label class="progress-control"><span class="sr-only">Playback position</span><input data-progress type="range" min="0" max="100" value="31" /></label>
+                <div class="time-row"><time data-elapsed>1:18</time><time data-duration>4:12</time></div>
+              </section>
+            </section>
+            <div class="home-indicator light"></div>
+          </div>
+        </article>
+
+        <article class="phone phone-discover" data-phone="discover" aria-label="Discover screen">
+          <div class="screen discover-screen">
+            <div class="dynamic-island"></div>
+            <div class="statusbar statusbar-overlay"><time>9:41</time><span><svg><use href="#i-signal" /></svg><svg><use href="#i-wifi" /></svg><svg><use href="#i-battery" /></svg></span></div>
+            <div class="discover-content" data-discover-main>
+              <header class="discover-header"><div><p>RELAY / TODAY</p><h2>Discover</h2></div><button class="icon-button subtle" type="button" data-feedback="Search is ready" aria-label="Search"><svg><use href="#i-search" /></svg></button></header>
+              <div class="artist-rail" data-artist-rail></div>
+              <div class="section-heading discover-section-heading"><h3>Live sessions</h3><button type="button" data-live-open>See live</button></div>
+              <button class="live-card" type="button" data-live-open aria-label="Play Nova Ray live session">
+                <img src="./assets/live-session-poster.png" alt="Fictional performer in cobalt stage light" />
+                <span class="live-label"><b>LIVE / STUDIO 07</b><strong>Nova Ray: Static Bloom</strong></span>
+                <i class="live-play"><svg><use href="#i-play" /></svg></i>
+              </button>
+              <div class="section-heading discover-section-heading tracks-heading"><h3>Top tracks</h3><button type="button" data-route="library">View all</button></div>
+              <div class="track-list ranked" data-track-list="discover"></div>
+            </div>
+            <section class="collection-view" data-collection-view hidden>
+              <header class="collection-header"><p>YOUR RELAY</p><h2 data-collection-title>Favorites</h2></header>
+              <div class="collection-summary"><svg><use href="#i-headphones" /></svg><div><strong data-collection-count>4 saved tracks</strong><span>Synced locally in this prototype</span></div></div>
+              <div class="track-list collection-list" data-track-list="collection"></div>
+            </section>
+            <button class="mini-player" type="button" data-mini-player aria-label="Open Now Playing">
+              <img data-mini-art src="./assets/album-afterimage.png" alt="" />
+              <span><strong data-mini-title>Afterimage</strong><small data-mini-artist>Nova Ray</small></span>
+              <i class="mini-action" data-mini-icon><svg><use href="#i-pause" /></svg></i>
+            </button>
+            <nav class="bottom-nav discover-nav" aria-label="Discover navigation">
+              <button type="button" data-route="artist" aria-label="Artist"><svg><use href="#i-home" /></svg><span>Artist</span></button>
+              <button class="is-active" type="button" data-route="discover" aria-label="Discover"><svg><use href="#i-discover" /></svg><span>Discover</span></button>
+              <button type="button" data-route="favorites" aria-label="Favorites"><svg><use href="#i-heart" /></svg><span>Favorites</span></button>
+              <button type="button" data-route="library" aria-label="Library"><svg><use href="#i-library" /></svg><span>Library</span></button>
+            </nav>
+            <section class="live-overlay" data-live-overlay hidden aria-label="Live session player">
+              <img src="./assets/live-session-poster.png" alt="Fictional performer in cobalt stage light" />
+              <div class="live-overlay-shade"></div>
+              <button class="icon-button glass live-close" type="button" data-live-close aria-label="Close live session"><svg><use href="#i-close" /></svg></button>
+              <div class="live-overlay-copy"><p>RELAY LIVE / STUDIO 07</p><h2>STATIC<br />BLOOM</h2><span>Nova Ray · exclusive session</span><button type="button" data-live-toggle aria-pressed="true"><svg><use href="#i-pause" /></svg><b>Pause session</b></button></div>
+            </section>
+            <div class="home-indicator"></div>
+          </div>
+        </article>
+      </div>
+
+      <div class="mobile-switch" role="group" aria-label="Choose showcase screen">
+        <button type="button" data-mobile-target="artist" aria-label="Artist screen"><svg><use href="#i-user" /></svg></button>
+        <button class="is-active" type="button" data-mobile-target="player" aria-label="Player screen"><svg><use href="#i-headphones" /></svg></button>
+        <button type="button" data-mobile-target="discover" aria-label="Discover screen"><svg><use href="#i-discover" /></svg></button>
+      </div>
+      <p class="feedback" id="feedback" aria-live="polite"></p>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,36 @@
+{
+  "assets": [
+    {
+      "id": "chef-illustration",
+      "type": "editorial-cookbook-illustration",
+      "implementation": "youtoken-gpt-image-2",
+      "slot": "home hero",
+      "source": "assets/chef-illustration-youtoken-v3.png",
+      "size": "1254x1254",
+      "alt": "Editorial illustrated chef whisking batter in a bowl"
+    },
+    {
+      "id": "pasta-primavera",
+      "type": "food-photograph",
+      "implementation": "youtoken-gpt-image-2",
+      "slot": "recipe list",
+      "source": "assets/pasta-primavera-generated.png",
+      "alt": "Pasta primavera with tomatoes, peas and basil"
+    },
+    {
+      "id": "miso-ramen",
+      "type": "food-photograph",
+      "implementation": "youtoken-gpt-image-2",
+      "slot": "recipe list and recipe detail",
+      "source": "assets/miso-ramen-generated.png",
+      "alt": "Miso ramen with pork, egg and greens"
+    }
+  ],
+  "code_ui": [
+    "iOS phone frame and status bar",
+    "headings and recipe metadata",
+    "category tabs and recipe cards",
+    "primary actions and bottom navigation",
+    "toast, saved state, and view transitions"
+  ]
+}

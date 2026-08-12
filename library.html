@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="description" content="image2 UI 风格案例库。">
+  <title>image2 UI 风格案例库</title>
+  <link rel="stylesheet" href="./library.css?v=20260812-video-canvas-v6">
+  <script src="./analytics.config.js"></script>
+  <script src="./analytics.js" defer></script>
+  <script type="module" src="./library.js?v=20260812-video-canvas-v6"></script>
+</head>
+<body>
+  <a class="skip-link" href="#demoGallery">跳到案例列表</a>
+
+  <header class="topbar">
+    <a class="brand" href="./reference.html?doc=readme" aria-label="打开 image2 UI README">
+      <span class="brand-mark" aria-hidden="true"><i></i></span>
+      <span>IMAGE2 UI</span>
+      <small>STYLE LIBRARY</small>
+    </a>
+    <nav class="topnav" aria-label="外部链接">
+      <a class="github-nav-link" href="https://github.com/zhu-guli326/image2_UI_skill" target="_blank" rel="noreferrer">
+        GitHub <span id="githubStarsNav">...</span>
+      </a>
+      <a href="./learn.html">新手入门</a>
+      <a href="./skills.html">设计 Skill</a>
+      <a href="./reference.html?doc=ui-section-vocabulary">UI 词典</a>
+    </nav>
+  </header>
+
+  <div class="library-shell">
+    <aside class="sidebar" aria-label="案例类别">
+      <p class="sidebar-label">案例类型</p>
+      <nav class="category-nav" id="categoryNav">
+        <button class="category-link is-active" type="button" data-filter="all"><span>全部案例</span><b>23</b></button>
+        <button class="category-link" type="button" data-filter="culture"><span>文化内容</span><b>1</b></button>
+        <button class="category-link" type="button" data-filter="commerce"><span>零售电商</span><b>6</b></button>
+        <button class="category-link" type="button" data-filter="editorial"><span>新闻阅读</span><b>1</b></button>
+        <button class="category-link" type="button" data-filter="travel"><span>旅行体验</span><b>3</b></button>
+        <button class="category-link" type="button" data-filter="creative"><span>创意工具</span><b>4</b></button>
+        <button class="category-link" type="button" data-filter="wellness"><span>健康陪伴</span><b>8</b></button>
+      </nav>
+      <section class="sidebar-skills" aria-labelledby="sidebarSkillsTitle">
+        <div class="sidebar-skills-heading"><p id="sidebarSkillsTitle">设计 Skill</p><a href="./skills.html">全部浏览</a></div>
+        <a href="https://github.com/Vincentwei1021/video-shotcraft" target="_blank" rel="noreferrer"><span>video-shotcraft</span><small>视频与镜头</small></a>
+        <a href="https://github.com/pbakaus/impeccable" target="_blank" rel="noreferrer"><span>impeccable</span><small>设计质量</small></a>
+        <a href="https://github.com/Leonxlnx/taste-skill" target="_blank" rel="noreferrer"><span>taste-skill</span><small>设计品味</small></a>
+        <a href="https://github.com/greensock/GSAP" target="_blank" rel="noreferrer"><span>GSAP</span><small>动效系统</small></a>
+      </section>
+      <section class="sidebar-resources" aria-label="Image2 UI 资源">
+        <button type="button" data-info-panel="guide"><span>使用指南</span><small>从选择到交付</small></button>
+        <button type="button" data-info-panel="principles"><span>项目原理</span><small>Image2 UI</small></button>
+      </section>
+      <div class="sidebar-note">
+        <span>本地演示</span>
+        <strong>23 个真实 UI 案例</strong>
+      </div>
+    </aside>
+
+    <main class="catalog-main">
+      <section class="catalog-heading" aria-labelledby="pageTitle">
+        <div>
+          <p class="kicker">UI STYLE REFERENCE</p>
+          <h1 id="pageTitle">界面风格案例库</h1>
+          <p class="intro">从已有的真实 App 演示中提炼画面、排版与交互方向。选择一个案例，复制它的风格配置，再开始做下一张界面。</p>
+        </div>
+        <a class="stats-panel" href="https://github.com/zhu-guli326/image2_UI_skill" target="_blank" rel="noreferrer" aria-label="打开 GitHub 项目">
+          <span><small>案例</small><strong>23</strong></span>
+          <span><small>风格</small><strong>23</strong></span>
+          <span><small>Stars</small><strong id="githubStars">...</strong></span>
+        </a>
+      </section>
+
+      <section class="search-section" aria-label="搜索案例">
+        <label class="search-field" for="styleSearch">
+          <span class="search-icon" aria-hidden="true"></span>
+          <input id="styleSearch" type="search" autocomplete="off" placeholder="搜索案例名称、使用场景或风格...">
+          <kbd>Esc</kbd>
+        </label>
+      </section>
+
+      <section class="catalog-section" aria-labelledby="catalogTitle">
+        <div class="catalog-bar">
+          <div>
+            <p class="kicker">精选案例</p>
+            <h2 id="catalogTitle">从画面开始</h2>
+          </div>
+          <p id="resultCount" aria-live="polite">23 个案例</p>
+        </div>
+        <div class="demo-gallery" id="demoGallery" aria-live="polite"></div>
+        <p class="empty-state" id="emptyState" hidden>没有找到匹配的案例。</p>
+      </section>
+    </main>
+  </div>
+
+  <dialog class="style-dialog" id="styleDialog" aria-labelledby="styleDialogTitle">
+    <div class="style-dialog-shell">
+      <form method="dialog" class="dialog-close-form"><button class="dialog-close" type="submit" aria-label="关闭风格详情">&#215;</button></form>
+      <div class="style-dialog-content" id="styleDialogContent"></div>
+    </div>
+  </dialog>
+
+  <dialog class="preview-dialog" id="previewDialog" aria-labelledby="previewDialogTitle">
+    <form method="dialog" class="dialog-close-form"><button class="dialog-close" type="submit" aria-label="关闭预览">&#215;</button></form>
+    <div class="preview-dialog-content">
+      <header class="preview-dialog-header">
+        <p id="previewDialogTitle">案例预览</p>
+        <div class="preview-mode-switch" id="previewModeSwitch" aria-label="预览方式"></div>
+      </header>
+      <div class="preview-media-frame" id="previewMediaFrame">
+        <img id="previewDialogImage" alt="" hidden />
+        <video id="previewDialogVideo" width="390" height="844" controls loop playsinline preload="metadata" hidden></video>
+        <iframe id="previewDialogDemo" width="390" height="693" title="可点击 demo 预览" loading="eager" hidden></iframe>
+        <div class="preview-media-status" id="previewMediaStatus" role="status" aria-live="polite" hidden><span id="previewMediaStatusText"></span><button id="previewMediaRetry" type="button" hidden>重试</button></div>
+        <span class="interaction-cursor preview-cursor" id="previewCursor" aria-hidden="true" hidden><i></i></span>
+      </div>
+      <footer class="preview-dialog-footer">
+        <p id="previewDialogReference"></p>
+        <a id="previewDialogOpenLive" target="_blank" rel="noopener" hidden>新窗口打开可点击 Demo</a>
+      </footer>
+    </div>
+  </dialog>
+
+  <dialog class="info-dialog" id="infoDialog" aria-labelledby="infoDialogTitle">
+    <form method="dialog" class="dialog-close-form"><button class="dialog-close" type="submit" aria-label="关闭说明">&#215;</button></form>
+    <div class="info-dialog-content" id="infoDialogContent"></div>
+  </dialog>
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f5f4ef" />
+    <title>Current - Aegean itinerary</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="stage">
+      <aside class="brief" aria-label="Design brief">
+        <p class="eyebrow">Travel planner / 01</p>
+        <h1>Current</h1>
+        <p class="brief-copy">A usable mobile itinerary for the part of a trip where timings, route context, and the next stop matter.</p>
+        <dl>
+          <div><dt>Surface</dt><dd>Field paper</dd></div>
+          <div><dt>Signal</dt><dd>Terracotta</dd></div>
+          <div><dt>Mode</dt><dd>Day planning</dd></div>
+        </dl>
+      </aside>
+
+      <section class="phone-wrap" aria-label="Current itinerary mobile app">
+        <div class="phone">
+          <div class="island" aria-hidden="true"></div>
+          <div class="screen">
+            <header class="statusbar" aria-label="Device status">
+              <time datetime="09:41">9:41</time>
+              <div class="status-icons" aria-label="Full signal, Wi-Fi connected, battery at 84 percent">
+                <svg aria-hidden="true"><use href="#i-signal"></use></svg>
+                <svg aria-hidden="true"><use href="#i-wifi"></use></svg>
+                <svg aria-hidden="true"><use href="#i-battery"></use></svg>
+              </div>
+            </header>
+
+            <div class="app-bar">
+              <button class="icon-button" type="button" aria-label="Back to trips" title="Back"><svg aria-hidden="true"><use href="#i-arrow-left"></use></svg></button>
+              <div><p class="eyebrow">Your trip</p><h2>Aegean Escape</h2></div>
+              <button class="icon-button" id="share-button" type="button" aria-label="Share itinerary" title="Share itinerary"><svg aria-hidden="true"><use href="#i-share"></use></svg></button>
+            </div>
+
+            <div class="scroll-area">
+              <section class="date-rail" aria-label="Select day" role="tablist">
+                <button class="day" type="button" data-day="Friday" data-date="12" role="tab" aria-selected="false"><span>Fri</span><strong>12</strong></button>
+                <button class="day is-selected" type="button" data-day="Saturday" data-date="13" role="tab" aria-selected="true"><span>Sat</span><strong>13</strong></button>
+                <button class="day" type="button" data-day="Sunday" data-date="14" role="tab" aria-selected="false"><span>Sun</span><strong>14</strong></button>
+              </section>
+
+              <section class="day-heading" aria-live="polite">
+                <div><p class="eyebrow" id="day-label">Saturday, 13 June</p><h3 id="day-title">The blue edge</h3></div>
+                <button class="weather" type="button" aria-label="Weather: 26 degrees and clear" title="Weather"><svg aria-hidden="true"><use href="#i-sun"></use></svg><span>26°</span></button>
+              </section>
+
+              <article class="route-card">
+                <img src="assets/lisbon-coast-hero.png" alt="A red kayak floating on deep blue water below limestone cliffs" />
+                <div class="route-scrim"></div>
+                <div class="route-copy"><p class="eyebrow">Coastal loop</p><strong id="route-time">5h 40m</strong><span id="route-detail">7.2 km on foot · 3 stops</span></div>
+                <button class="map-button" type="button" aria-label="Open route map" title="Open route map"><svg aria-hidden="true"><use href="#i-map"></use></svg></button>
+              </article>
+
+              <section class="plan" aria-labelledby="plan-title">
+                <div class="section-head"><div><p class="eyebrow">Day plan</p><h3 id="plan-title">Three gentle stops</h3></div><span id="progress" class="progress">0 of 3 done</span></div>
+                <div class="timeline" id="timeline"></div>
+              </section>
+            </div>
+
+            <button class="add-stop" id="add-stop" type="button"><svg aria-hidden="true"><use href="#i-plus"></use></svg><span>Add stop</span></button>
+            <nav class="tabbar" aria-label="Primary navigation">
+              <button class="tab is-active" type="button" data-tab="Plan" aria-current="page"><svg aria-hidden="true"><use href="#i-list"></use></svg><span>Plan</span></button>
+              <button class="tab" type="button" data-tab="Map"><svg aria-hidden="true"><use href="#i-map"></use></svg><span>Map</span></button>
+              <button class="tab" type="button" data-tab="Saved"><svg aria-hidden="true"><use href="#i-bookmark"></use></svg><span>Saved</span></button>
+              <button class="tab" type="button" data-tab="Profile"><svg aria-hidden="true"><use href="#i-user"></use></svg><span>Profile</span></button>
+            </nav>
+            <div class="home-indicator" aria-hidden="true"></div>
+          </div>
+        </div>
+        <p class="feedback" id="feedback" role="status">Saturday itinerary open</p>
+      </section>
+    </main>
+
+    <div class="sheet-backdrop" id="sheet-backdrop" hidden></div>
+    <section class="sheet" id="add-sheet" aria-labelledby="sheet-title" aria-modal="true" role="dialog" hidden>
+      <div class="sheet-handle" aria-hidden="true"></div>
+      <div class="sheet-header"><div><p class="eyebrow">Build your day</p><h2 id="sheet-title">Add a stop</h2></div><button class="icon-button" id="close-sheet" type="button" aria-label="Close add stop" title="Close"><svg aria-hidden="true"><use href="#i-close"></use></svg></button></div>
+      <label class="place-search"><svg aria-hidden="true"><use href="#i-search"></use></svg><input id="place-search" type="search" placeholder="Search places" /></label>
+      <div class="suggestion-list" id="suggestions">
+        <button type="button" data-place="A swim at Agios Nikitas"><span><strong>Agios Nikitas</strong><small>Beach · 18 min away</small></span><svg aria-hidden="true"><use href="#i-plus"></use></svg></button>
+        <button type="button" data-place="Lunch at the citrus table"><span><strong>The citrus table</strong><small>Lunch · 12 min away</small></span><svg aria-hidden="true"><use href="#i-plus"></use></svg></button>
+      </div>
+    </section>
+
+    <svg class="icon-sprite" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+      <symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="m14.5 5-7 7 7 7"/><path d="M8 12h9.5"/></symbol>
+      <symbol id="i-share" viewBox="0 0 24 24"><path d="M12 15V3"/><path d="m8 7 4-4 4 4"/><path d="M5 11v8.2c0 .44.36.8.8.8h12.4c.44 0 .8-.36.8-.8V11"/></symbol>
+      <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.8"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4"/></symbol>
+      <symbol id="i-map" viewBox="0 0 24 24"><path d="m3.5 5.3 5-2.1 7 2.4 5-2.1v15.2l-5 2.1-7-2.4-5 2.1V5.3Z"/><path d="M8.5 3.2v17.2M15.5 5.6v15"/></symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+      <symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h12M8 12h12M8 18h12"/><path d="M4 6h.01M4 12h.01M4 18h.01"/></symbol>
+      <symbol id="i-bookmark" viewBox="0 0 24 24"><path d="M7 4.7A1.7 1.7 0 0 1 8.7 3h6.6A1.7 1.7 0 0 1 17 4.7V21l-5-3.1L7 21V4.7Z"/></symbol>
+      <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c.8-3.2 3.1-5 7-5s6.2 1.8 7 5"/></symbol>
+      <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.3 4.2L19 7"/></symbol>
+      <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></symbol>
+      <symbol id="i-pin" viewBox="0 0 24 24"><path d="M19 10c0 5-7 10-7 10s-7-5-7-10a7 7 0 1 1 14 0Z"/><circle cx="12" cy="10" r="2"/></symbol>
+      <symbol id="i-walk" viewBox="0 0 24 24"><circle cx="13.5" cy="4.5" r="1.7"/><path d="m10.5 9 2.1-2.2 2.4 1.2 2 1.9M12.6 6.8l-1 5.2-3.5 3M11.7 12l3 2.3.3 4.7M10.7 12.8 8 19"/></symbol>
+      <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="5.6"/><path d="m15 15 4.4 4.4"/></symbol>
+      <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+      <symbol id="i-signal" viewBox="0 0 24 24"><path d="M4 18h2v-3H4v3Zm5 0h2v-6H9v6Zm5 0h2V9h-2v9Zm5 0h2V5h-2v13Z" fill="currentColor" stroke="none"/></symbol>
+      <symbol id="i-wifi" viewBox="0 0 24 24"><path d="M3.4 9.1a12.7 12.7 0 0 1 17.2 0M6.7 12.5a7.9 7.9 0 0 1 10.6 0M10 15.9a3.2 3.2 0 0 1 4 0"/><circle cx="12" cy="19" r="1" fill="currentColor" stroke="none"/></symbol>
+      <symbol id="i-battery" viewBox="0 0 28 24"><rect x="3" y="6" width="20" height="12" rx="2"/><path d="M25 10v4"/><path d="M5.5 8.5h14v7h-14z" fill="currentColor" stroke="none"/></symbol>
+    </svg>
+    <script src="script.js"></script>
+  </body>
+</html>

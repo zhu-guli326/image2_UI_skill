@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
+    <title>Volt Route - EV charging</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <svg class="sprite" aria-hidden="true">
+      <symbol id="i-back" viewBox="0 0 24 24">
+        <path d="M19 12H5m6-6-6 6 6 6" />
+      </symbol>
+      <symbol id="i-search" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="6" />
+        <path d="m16 16 4 4" />
+      </symbol>
+      <symbol id="i-home" viewBox="0 0 24 24">
+        <path d="m4 10 8-6 8 6v9H4v-9Z" />
+        <path d="M9 19v-5h6v5" />
+      </symbol>
+      <symbol id="i-pin" viewBox="0 0 24 24">
+        <path d="M20 10c0 5.4-8 10-8 10S4 15.4 4 10a8 8 0 1 1 16 0Z" />
+        <circle cx="12" cy="10" r="2.4" />
+      </symbol>
+      <symbol id="i-settings" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="3" />
+        <path
+          d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.22 2.22-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.04 1.56v.08h-3.14v-.08A1.7 1.7 0 0 0 10.4 18.8a1.7 1.7 0 0 0-1.88.34l-.06.06-2.22-2.22.06-.06A1.7 1.7 0 0 0 6.64 15a1.7 1.7 0 0 0-1.56-1.04H5v-3.14h.08A1.7 1.7 0 0 0 6.64 9.8a1.7 1.7 0 0 0-.34-1.88l-.06-.06 2.22-2.22.06.06A1.7 1.7 0 0 0 10.4 6a1.7 1.7 0 0 0 1.04-1.56v-.08h3.14v.08A1.7 1.7 0 0 0 15.6 6a1.7 1.7 0 0 0 1.88-.34l.06-.06 2.22 2.22-.06.06a1.7 1.7 0 0 0-.34 1.88A1.7 1.7 0 0 0 20.92 10.8H21v3.14h-.08A1.7 1.7 0 0 0 19.4 15Z"
+        />
+      </symbol>
+      <symbol id="i-bolt" viewBox="0 0 24 24">
+        <path d="m13 2-8 12h6l-1 8 9-13h-6l0-7Z" />
+      </symbol>
+      <symbol id="i-clock" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="8" />
+        <path d="M12 7v5l3 2" />
+      </symbol>
+      <symbol id="i-stop" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="8" />
+        <path d="M9 9h6v6H9z" />
+      </symbol>
+      <symbol id="i-route" viewBox="0 0 24 24">
+        <circle cx="6" cy="18" r="2" />
+        <circle cx="18" cy="6" r="2" />
+        <path d="M7.5 16.5 11 13l3-1.5 2.5-4" />
+      </symbol>
+      <symbol id="i-signal" viewBox="0 0 24 24">
+        <path d="M5 19v-3M9.5 19v-6M14 19V9M18.5 19V5" />
+      </symbol>
+      <symbol id="i-wifi" viewBox="0 0 24 24">
+        <path
+          d="M4.4 9.4a11.2 11.2 0 0 1 15.2 0M7.4 12.5a7 7 0 0 1 9.2 0M10.4 15.5a2.8 2.8 0 0 1 3.2 0"
+        />
+        <path d="M12 19h.01" />
+      </symbol>
+      <symbol id="i-battery" viewBox="0 0 24 24">
+        <rect x="3.5" y="7" width="16" height="10" rx="2" />
+        <path d="M21 10v4M6.5 10h8" />
+      </symbol>
+    </svg>
+    <main class="stage">
+      <header class="showcase-bar">
+        <p><i></i> CASE UI/UX</p>
+        <p>VOLT ROUTE <span>♥</span></p>
+      </header>
+      <section class="showcase-phone static-charge" aria-hidden="true">
+        <div class="static-screen">
+          <p class="static-time">9:41</p>
+          <div class="static-back">
+            <svg><use href="#i-back" /></svg>
+          </div>
+          <p class="static-percent">74%</p>
+          <p class="static-label">Your EV is charging <span>100%</span></p>
+          <div class="static-progress"><i></i></div>
+          <div class="static-stats">
+            <span>Time to full<b>45 mins</b></span
+            ><span>Charge speed<b>120 kW</b></span
+            ><span>Cost<b>$24.22</b></span>
+          </div>
+          <img src="./assets/graphite-ev-rear.png" alt="" />
+          <div class="static-dock">
+            <b
+              ><svg><use href="#i-bolt" /></svg></b
+            ><i>›››</i
+            ><b
+              ><svg><use href="#i-clock" /></svg></b
+            ><b class="danger"
+              ><svg><use href="#i-stop" /></svg
+            ></b>
+          </div>
+        </div>
+      </section>
+      <section class="showcase-phone static-map" aria-hidden="true">
+        <div class="static-screen map-static">
+          <p class="static-time">9:41</p>
+          <img src="./assets/night-street-grid.png" alt="" />
+          <div class="static-back">
+            <svg><use href="#i-back" /></svg>
+          </div>
+          <div class="static-search">
+            <svg><use href="#i-search" /></svg>
+          </div>
+          <div class="route-art">
+            <svg viewBox="0 0 360 580">
+              <path d="M166 130 234 218 186 333 290 426" />
+              <circle cx="166" cy="130" r="15" />
+              <circle cx="234" cy="218" r="10" />
+              <circle cx="186" cy="333" r="10" />
+              <circle cx="290" cy="426" r="17" />
+            </svg>
+          </div>
+          <div class="static-sheet">
+            <h2>Volt Supercharger -<br />Central Park</h2>
+            <p>4/8 stalls available · 250 kW</p>
+            <b>2.11 km</b><b>$2.23 / kW</b>
+          </div>
+        </div>
+      </section>
+
+      <section
+        class="phone"
+        aria-label="Volt Route interactive EV charging app"
+      >
+        <div class="screen">
+          <div class="island" aria-hidden="true"></div>
+          <header class="statusbar">
+            <time>9:41</time
+            ><span
+              ><svg><use href="#i-signal" /></svg
+              ><svg><use href="#i-wifi" /></svg
+              ><svg><use href="#i-battery" /></svg
+            ></span>
+          </header>
+          <section
+            class="view dashboard is-active"
+            data-view="dashboard"
+            aria-label="Vehicle charging dashboard"
+          >
+            <header class="profile-row">
+              <span class="avatar">M<i></i></span
+              ><button
+                type="button"
+                class="back-small"
+                data-toast="Garage selector opened"
+                aria-label="Change vehicle"
+              >
+                <svg><use href="#i-back" /></svg>
+              </button>
+            </header>
+            <p class="dashboard-copy">Manage your EV's<br />charge here</p>
+            <strong class="hero-percent">54%</strong>
+            <div class="car-hero">
+              <img
+                src="./assets/graphite-ev-rear.png"
+                alt="Graphite electric car charging"
+              />
+            </div>
+            <div class="metric-row">
+              <section>
+                <small>Charge remaining</small>
+                <div class="gauge"><i></i><b>54%</b></div>
+              </section>
+              <section>
+                <small>Est. range</small>
+                <div class="range-ring"><b>210 km</b></div>
+              </section>
+            </div>
+          </section>
+          <section
+            class="view charging"
+            data-view="charging"
+            hidden
+            aria-label="Charging status"
+          >
+            <header class="tool-row">
+              <button
+                type="button"
+                data-view-target="dashboard"
+                aria-label="Back to dashboard"
+              >
+                <svg><use href="#i-back" /></svg></button
+              ><button
+                type="button"
+                data-toast="Charging details opened"
+                aria-label="Charging details"
+              >
+                <svg><use href="#i-settings" /></svg>
+              </button>
+            </header>
+            <strong class="charge-percent">74%</strong>
+            <p class="charge-title">Your EV is charging <span>100%</span></p>
+            <div class="charge-progress"><i></i></div>
+            <div class="charge-stats">
+              <span>Time to full<b>45 mins</b></span
+              ><span>Charge speed<b>120 kW</b></span
+              ><span>Cost<b>$24.22</b></span>
+            </div>
+            <div class="charge-photo">
+              <img
+                src="./assets/graphite-ev-rear.png"
+                alt="Graphite electric car with charging cable"
+              />
+            </div>
+            <button class="charging-toggle" type="button" data-charge>
+              <svg><use href="#i-stop" /></svg><span>Pause charging</span>
+            </button>
+          </section>
+          <section
+            class="view routes"
+            data-view="routes"
+            hidden
+            aria-label="Supercharger route"
+          >
+            <img
+              class="map-image"
+              src="./assets/night-street-grid.png"
+              alt="Dark city street grid map"
+            />
+            <header class="tool-row">
+              <button
+                type="button"
+                data-view-target="dashboard"
+                aria-label="Back to dashboard"
+              >
+                <svg><use href="#i-back" /></svg></button
+              ><button
+                type="button"
+                data-toast="Search chargers opened"
+                aria-label="Search chargers"
+              >
+                <svg><use href="#i-search" /></svg>
+              </button>
+            </header>
+            <div class="route-art route-live">
+              <svg viewBox="0 0 360 580" aria-hidden="true">
+                <path d="M166 130 234 218 186 333 290 426" />
+                <circle cx="166" cy="130" r="15" />
+                <circle cx="234" cy="218" r="10" />
+                <circle cx="186" cy="333" r="10" />
+                <circle cx="290" cy="426" r="17" /></svg
+              ><button
+                class="route-pin start"
+                type="button"
+                data-toast="Current charge: 54%"
+                aria-label="Current vehicle location"
+              ></button
+              ><button
+                class="route-pin target"
+                type="button"
+                data-toast="Volt Central Park has 4 stalls available"
+                aria-label="Volt Central Park charger"
+              ></button>
+            </div>
+            <section class="charger-sheet">
+              <h1>
+                Volt Supercharger -<br />Central Park
+                <svg><use href="#i-bolt" /></svg>
+              </h1>
+              <p>4/8 stalls available · 250 kW</p>
+              <div><b>2.11 km</b><b>$2.23 / kW</b></div>
+              <button
+                type="button"
+                data-toast="Navigation started to Central Park"
+              >
+                Start navigation <svg><use href="#i-route" /></svg>
+              </button>
+            </section>
+          </section>
+          <nav class="tabbar" aria-label="Primary navigation">
+            <button
+              class="tab is-active"
+              type="button"
+              data-view-target="dashboard"
+              aria-current="page"
+            >
+              <svg><use href="#i-home" /></svg><span>Home</span></button
+            ><button class="tab" type="button" data-view-target="routes">
+              <svg><use href="#i-pin" /></svg><span>Route</span></button
+            ><button class="tab" type="button" data-view-target="charging">
+              <svg><use href="#i-bolt" /></svg><span>Charge</span>
+            </button>
+          </nav>
+          <p id="feedback" class="feedback" role="status">
+            Your vehicle is at 54%.
+          </p>
+          <div class="home-indicator" aria-hidden="true"></div>
+        </div>
+      </section>
+    </main>
+    <script src="./script.js"></script>
+  </body>
+</html>

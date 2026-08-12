@@ -1,0 +1,9 @@
+{
+  "channel": "youtoken-gpt-image-2",
+  "action": "edit",
+  "reference": "/var/folders/l7/4hlsdlq943jfvrclvf0wmmgc0000gn/T/codex-clipboard-cda80a3c-10af-418c-b761-38c3641a544d.png",
+  "output": "assets/target-athlete.png",
+  "model": "gpt-image-2",
+  "quality": "medium",
+  "prompt_record": "../artifacts/image2-prompts.md"
+}

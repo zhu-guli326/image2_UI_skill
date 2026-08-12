@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Moodly - check in</title>
+    <link rel="stylesheet" href="./styles.css">
+    <style>body.is-confirm .screen{background:#087a75}body.is-confirm .statusbar{color:#fff}.mood-track{height:44px}.mood-knob{top:6px}</style>
+  </head>
+  <body>
+    <svg class="sprite" aria-hidden="true">
+      <symbol id="i-close" viewBox="0 0 24 24"><path d="m5 5 14 14M19 5 5 19"/></symbol>
+      <symbol id="i-left" viewBox="0 0 24 24"><path d="M19 12H5m6-6-6 6 6 6"/></symbol>
+      <symbol id="i-right" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></symbol>
+      <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4.4 4.4L19 6.8"/></symbol>
+      <symbol id="i-signal" viewBox="0 0 24 24"><path d="M5 19v-3M9.5 19v-6M14 19V9M18.5 19V5"/></symbol>
+      <symbol id="i-wifi" viewBox="0 0 24 24"><path d="M4.4 9.4a11.2 11.2 0 0 1 15.2 0M7.4 12.5a7 7 0 0 1 9.2 0M10.4 15.5a2.8 2.8 0 0 1 3.2 0"/><path d="M12 19h.01"/></symbol>
+      <symbol id="i-battery" viewBox="0 0 24 24"><rect x="3.5" y="7" width="16" height="10" rx="2"/><path d="M21 10v4M6.5 10h8"/></symbol>
+    </svg>
+    <main class="stage">
+      <aside class="brief"><p class="eyebrow">Moodly / daily check-in</p><h1>Feel it, then name it.</h1><p>A soft visual check-in with a single clear choice, a responsive slider and a calm completion state.</p></aside>
+      <section class="phone" aria-label="Moodly wellness mobile app"><div class="screen">
+        <div class="island" aria-hidden="true"></div>
+        <header class="statusbar"><time>9:41</time><span class="status-icons" aria-label="Signal, Wi-Fi, battery"><svg><use href="#i-signal"></use></svg><svg><use href="#i-wifi"></use></svg><svg><use href="#i-battery"></use></svg></span></header>
+        <section class="view checkin is-active" data-view="checkin" aria-label="How are you feeling today">
+          <header class="topline"><button class="icon-button" type="button" aria-label="Close check-in" data-close><svg><use href="#i-close"></use></svg></button><div class="progress" aria-label="Step 1 of 2"><i class="is-active"></i><i></i></div></header>
+          <h1>How are you<br>feeling today?</h1>
+          <div class="mood-art"><img src="./assets/moodly-mascot.png" alt="Friendly pink mood mascot"></div>
+          <section class="mood-picker" aria-label="Choose your mood"><div class="mood-track" id="moodTrack"><button type="button" data-mood="Anxious" aria-label="Choose anxious mood"></button><button type="button" data-mood="Low" aria-label="Choose low mood"></button><button type="button" data-mood="Okay" aria-label="Choose okay mood"></button><button type="button" data-mood="Happy" aria-label="Choose happy mood"></button><button type="button" data-mood="Great" aria-label="Choose great mood"></button><span class="mood-knob" aria-hidden="true"></span></div><p id="moodLabel" aria-live="polite">Happy</p></section>
+          <div class="step-actions"><button type="button" class="arrow-button muted" aria-label="Previous step" disabled><svg><use href="#i-left"></use></svg></button><button type="button" class="arrow-button" aria-label="Continue to confirmation" data-next><svg><use href="#i-right"></use></svg></button></div>
+        </section>
+        <section class="view confirm" data-view="confirm" hidden aria-label="Mood saved"><div class="celebrate-art"><img src="./assets/moodly-mascot.png" alt="Friendly pink mood mascot"></div><p class="brand">moodly</p><div class="confirm-copy"><p class="eyebrow">CHECK-IN COMPLETE</p><h1>You showed up.</h1><p>Your mood is saved. A small note is enough for today.</p></div><button class="continue-button" type="button" data-complete>Continue <svg><use href="#i-check"></use></svg></button></section>
+        <p class="feedback" id="feedback" role="status">Choose the feeling that is closest right now.</p>
+        <div class="home-indicator" aria-hidden="true"></div>
+      </div></section>
+    </main>
+    <script src="./script.js"></script>
+  </body>
+</html>

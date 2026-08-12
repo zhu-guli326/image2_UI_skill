@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="description" content="image2 UI 参考文档阅读页">
+  <title>参考文档 · IMAGE2 UI</title>
+  <link rel="stylesheet" href="./markdown.css">
+  <script>
+    window.image2Documents = {
+      "ui-section-vocabulary": {
+        defaultLocale: "zh",
+        locales: {
+          zh: { title: "UI 界面词典", source: "./references/ui-section-vocabulary.zh.md" },
+          en: { title: "UI Section Vocabulary", source: "./references/ui-section-vocabulary.md" }
+        }
+      },
+      "readme": {
+        defaultLocale: "en",
+        locales: { en: { title: "image2 UI skill", source: "./README.md" } }
+      }
+    };
+  </script>
+  <script src="./reference.js" defer></script>
+  <script src="./markdown.js" defer></script>
+</head>
+<body>
+  <header class="docs-topbar">
+    <a class="brand" href="./library.html" aria-label="返回 image2 UI 案例库">
+      <span class="brand-mark" aria-hidden="true"><i></i></span>
+      <span>IMAGE2 UI</span>
+      <small>REFERENCE READER</small>
+    </a>
+    <nav id="documentTopNavigation" aria-label="文档导航">
+      <a href="./library.html" data-label-zh="案例库" data-label-en="Library">案例库</a>
+      <a href="./skills.html" data-label-zh="设计 Skill" data-label-en="Design Skills">设计 Skill</a>
+      <a class="github-link" href="https://github.com/zhu-guli326/image2_UI_skill" target="_blank" rel="noreferrer">GitHub</a>
+      <div class="language-switch" id="languageSwitch" role="group" aria-label="语言 / Language"></div>
+    </nav>
+  </header>
+  <main class="docs-layout">
+    <aside class="docs-sidebar" id="documentNavigation" aria-label="文档信息">
+      <a class="back-link" href="./library.html" data-label-zh="← 返回案例库" data-label-en="← Back to library">← 返回案例库</a>
+      <p class="sidebar-kicker" data-label-zh="当前文档" data-label-en="CURRENT DOCUMENT">当前文档</p>
+      <h1 id="documentName">正在加载</h1>
+      <p id="documentPath"></p>
+    </aside>
+    <article class="markdown-body" id="documentContent" aria-live="polite">
+      <p class="loading-state">正在加载文档…</p>
+    </article>
+  </main>
+</body>
+</html>

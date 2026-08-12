@@ -1,0 +1,4 @@
+{
+  "assets":[{"id":"moodly-mascot","type":"illustration-asset","implementation":"youtoken-gpt-image-2","slot":"mood selector and completion visual","source":"assets/moodly-mascot.png","alt":"Friendly pink mood mascot"}],
+  "code_ui":["iOS phone frame","status bar","close action","step progress","mood slider","previous and next controls","completion state","home indicator"]
+}

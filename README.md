@@ -95,6 +95,71 @@ The bundled demos share a CSS-first Motion System for durations, easing,
 entrances, Toasts, hover/press feedback, and reduced-motion behavior. See
 [`references/motion-system.md`](./references/motion-system.md).
 
+## UI Knowledge Library
+
+Inspired by the browsable recipe-library format in
+[video-shotcraft](https://vincentwei1021.github.io/video-shotcraft/library.html),
+this project now treats UI patterns as named things you can recognize, request,
+and rebuild. The goal is simple: when Codex looks at a screen, it should not say
+"some cards here." It should say "top app bar, filter rail, content cards,
+detail sheet, empty state, and bottom tab bar."
+
+Start here:
+
+- [`library.html`](./library.html) is a visual, browser-openable version of the
+  UI knowledge library with filters, cards, screenshots, and an asset-split
+  board.
+- [`skills.html`](./skills.html) is a separate design-skill radar page for
+  browsing design methods, visual directions, and copyable first-turn prompts.
+- `analytics.config.js` configures the anonymous library event endpoint. Set
+  `endpoint` to your deployed collector URL; the included default is
+  `/api/analytics/events`. The page records views, category filters, searches,
+  first video plays, style copies, and GitHub clicks without user identity data.
+- [`references/ui-section-vocabulary.md`](./references/ui-section-vocabulary.md)
+  names the common sections, controls, states, and layout patterns used in app
+  and web UI.
+- The case studies below now double as learning cards: each demo shows what
+  should be code-rendered, what should become an `image2` asset, and which UI
+  pattern names are useful when you ask for changes.
+
+### What Each Block Is Called
+
+| Screen area | Common names | Code or image2? |
+| --- | --- | --- |
+| Top strip with title and actions | Top app bar, navigation bar, header, toolbar | Code UI |
+| Left or bottom destination list | Sidebar, rail navigation, bottom tab bar | Code UI |
+| Search and category controls | Search field, segmented control, filter chips, tabs | Code UI |
+| Repeated content previews | Card grid, feed row, media tile, product card | Code UI plus image2 thumbnails |
+| Large visual surface | Hero media, cover image, product cutout, background plate | Usually image2 |
+| Extra details over the current page | Drawer, bottom sheet, popover, modal, inspector panel | Code UI |
+| Before data arrives | Loading skeleton, shimmer placeholder, progress state | Code UI |
+| When nothing matches | Empty state, zero state, no-results panel | Code UI |
+| When something fails | Inline error, toast, retry banner, validation message | Code UI |
+
+### More Interesting Prompts
+
+Instead of asking:
+
+```text
+Make this screen prettier.
+```
+
+Try:
+
+```text
+Turn the home screen into a library-style interface: top app bar, search field,
+filter chips, masonry card grid, preview drawer, loading skeleton, empty state,
+and one selected-card detail view.
+```
+
+Or:
+
+```text
+Name every visible UI block first, then rebuild it. Keep text, buttons, tabs,
+icons, filters, and states in code. Use image2 only for covers, product photos,
+textures, and object cutouts.
+```
+
 The npm package keeps only the core skill, scripts, references, and README hero.
 Clone the GitHub repository when you need the full demo media archive and
 case-study videos.
