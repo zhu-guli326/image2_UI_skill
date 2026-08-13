@@ -24,6 +24,8 @@ a { color: inherit; }
 .docs-topbar nav a { color: var(--muted); font-size: 13px; text-decoration: none; }
 .docs-topbar nav a:hover { color: var(--ink); }
 .docs-topbar nav .github-link { color: var(--ink); font-weight: 750; }
+.docs-topbar nav .social-link { color: var(--ink); font-weight: 800; }
+.docs-topbar nav .social-link::after { display: inline-block; margin-left: 4px; color: var(--green); content: "↗"; font-size: 10px; }
 .language-switch { display: inline-grid; grid-template-columns: repeat(2, 1fr); overflow: hidden; border: 1px solid var(--line-strong); border-radius: 6px; background: var(--surface); }
 .language-switch[hidden] { display: none; }
 .language-switch button { min-width: 58px; min-height: 30px; padding: 0 9px; border: 0; border-right: 1px solid var(--line); background: transparent; color: var(--muted); font: inherit; font-size: 11px; cursor: pointer; }
@@ -71,7 +73,7 @@ a { color: inherit; }
   .brand small { display: none; }
   .docs-topbar nav { gap: 8px; }
   .docs-topbar nav a { font-size: 11px; }
-  .docs-topbar nav > a:not(.github-link) { display: none; }
+  .docs-topbar nav > a:not(.github-link):not(.social-link) { display: none; }
   .language-switch button { min-width: 51px; padding-inline: 7px; }
   .docs-layout { display: block; padding: 34px 18px 70px; }
   .docs-sidebar { position: static; margin-bottom: 28px; }

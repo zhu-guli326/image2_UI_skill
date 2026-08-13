@@ -29,6 +29,8 @@ button { font: inherit; cursor: pointer; }
 .learn-topbar nav a { color: var(--muted); font-size: 13px; text-decoration: none; }
 .learn-topbar nav a:hover, .learn-topbar nav a.active { color: var(--ink); font-weight: 800; }
 .learn-topbar nav a.active { text-decoration: underline; text-decoration-color: var(--green); text-underline-offset: 7px; }
+.learn-topbar nav .social-nav-link { color: var(--ink); font-weight: 800; }
+.learn-topbar nav .social-nav-link::after { display: inline-block; margin-left: 4px; color: var(--green); content: "↗"; font-size: 10px; }
 .learning-map { position: sticky; top: 74px; z-index: 19; border-bottom: 1px solid var(--line); background: rgba(255, 254, 250, .96); backdrop-filter: blur(12px); }
 .learning-map-inner { display: flex; align-items: center; gap: 32px; width: min(1320px, calc(100% - 48px)); min-height: 48px; margin: 0 auto; }
 .learning-map-inner > strong { flex: 0 0 auto; color: var(--green); font-size: 11px; }
@@ -56,7 +58,7 @@ main { overflow: hidden; }
 .visual-note-html { top: 3%; left: 2%; transform: rotate(-7deg); }
 .visual-note-css { right: 0; top: 28%; transform: rotate(6deg); }
 .visual-note-js { bottom: 3%; left: 19%; transform: rotate(-4deg); }
-.learning-path, .three-parts, .beginner-answers, .ui-vocabulary, .playground { width: min(1160px, calc(100% - 48px)); margin: 0 auto; padding: 82px 0; scroll-margin-top: 132px; }
+.learning-path, .three-parts, .beginner-answers, .app-beginner-guide, .ui-vocabulary, .playground { width: min(1160px, calc(100% - 48px)); margin: 0 auto; padding: 82px 0; scroll-margin-top: 132px; }
 .learning-path { display: grid; grid-template-columns: .72fr 1.28fr; gap: 60px; border-top: 1px solid var(--line); }
 .section-heading h2 { margin: 12px 0 0; font-size: clamp(32px, 4vw, 52px); line-height: 1.08; letter-spacing: -1px; }
 .section-heading-wide { max-width: 650px; }
@@ -97,6 +99,22 @@ main { overflow: hidden; }
 .source-links { grid-column: 2; display: flex; flex-wrap: wrap; gap: 8px 18px; }
 .source-links a { color: var(--dark); font-size: 12px; font-weight: 750; text-underline-offset: 3px; }
 .source-links a:hover { color: var(--green); }
+.app-beginner-guide { width: 100%; margin-top: 58px; padding-bottom: 0; border-top: 1px solid var(--line); }
+.app-route-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-top: 34px; }
+.app-route-card { min-height: 232px; padding: 20px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+.app-route-card span { display: inline-flex; margin-bottom: 24px; color: var(--green); font-size: 10px; font-weight: 850; letter-spacing: .8px; text-transform: uppercase; }
+.app-route-card h3 { margin: 0; font-size: 23px; line-height: 1.15; letter-spacing: 0; }
+.app-route-card p { margin: 14px 0 0; color: var(--muted); font-size: 13px; line-height: 1.65; }
+.app-route-card.is-recommended { background: var(--dark); color: #fff; }
+.app-route-card.is-recommended span { color: var(--yellow); }
+.app-route-card.is-recommended p { color: #d8ead8; }
+.app-guide-bottom { display: grid; grid-template-columns: minmax(280px, .9fr) minmax(0, 1.1fr); gap: 16px; margin-top: 16px; }
+.app-stack-note, .app-source-links { padding: 22px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--green-pale); }
+.app-stack-note strong { font-size: 18px; }
+.app-stack-note p { margin: 10px 0 0; color: var(--dark); font-size: 14px; line-height: 1.65; }
+.app-source-links { display: flex; flex-wrap: wrap; align-content: start; gap: 10px; background: var(--surface); }
+.app-source-links a { padding: 9px 10px; border: 1px solid var(--line); border-radius: 8px; color: var(--dark); font-size: 12px; font-weight: 800; text-decoration: none; }
+.app-source-links a:hover, .app-source-links a:focus-visible { border-color: var(--green); color: var(--green); }
 .ui-vocabulary { border-top: 1px solid var(--line); }
 .vocab-layout { display: grid; grid-template-columns: minmax(380px, 1.08fr) minmax(0, .92fr); gap: clamp(34px, 7vw, 84px); align-items: center; margin-top: 42px; }
 .screen-anatomy { min-width: 0; }
@@ -109,13 +127,13 @@ main { overflow: hidden; }
 .anatomy-marker:hover, .anatomy-marker.is-selected { background: var(--dark); color: #fff; transform: translateY(-1px); }
 .anatomy-marker.is-selected span { color: var(--yellow); }
 .anatomy-marker:focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
-.marker-header { top: 8%; right: 4px; }
-.marker-visual { top: 31%; left: 4px; }
-.marker-title { top: 66%; right: 4px; }
-.marker-action { top: 79%; left: 4px; }
-.marker-navigation { right: 4px; bottom: 4%; }
-.marker-header::after, .marker-title::after, .marker-navigation::after { right: 100%; }
-.marker-visual::after, .marker-action::after { left: 100%; }
+.marker-header { top: 9%; right: 4px; }
+.marker-title { top: 21%; left: 4px; }
+.marker-visual { top: 49%; right: 4px; }
+.marker-action { top: 74%; left: 4px; }
+.marker-navigation { right: 4px; bottom: 3%; }
+.marker-header::after, .marker-visual::after, .marker-navigation::after { right: 100%; }
+.marker-title::after, .marker-action::after { left: 100%; }
 .anatomy-caption { margin: 14px 0 0; color: var(--muted); font-size: 12px; text-align: center; }
 .vocab-list { min-width: 0; }
 .vocab-question { display: grid; gap: 6px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
@@ -129,12 +147,14 @@ main { overflow: hidden; }
 .vocab-item small { color: var(--muted); font-size: 11px; line-height: 1.45; }
 .vocab-item:hover, .vocab-item.is-selected { border-color: var(--green); background: var(--green-pale); }
 .vocab-item:focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
+.vocab-deep-link { display: inline-flex; align-items: center; gap: 8px; margin-top: 18px; color: var(--green); font-size: 13px; font-weight: 800; text-underline-offset: 4px; }
+.vocab-deep-link:hover, .vocab-deep-link:focus-visible { color: var(--dark); }
 .playground { border-top: 1px solid var(--line); }
 .playground-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 42px; }
 .code-panel, .preview-panel { min-height: 275px; padding: 20px; border-radius: var(--radius); }
 .code-panel { background: var(--dark); color: #dff6df; }.code-panel-top { display: flex; align-items: center; justify-content: space-between; color: #a9c1af; font-family: ui-monospace, monospace; font-size: 12px; }.live-dot { color: var(--yellow); font-size: 10px; font-weight: 800; }.code-panel pre { margin: 34px 0 0; font: 15px/1.8 ui-monospace, SFMono-Regular, Menlo, monospace; white-space: pre-wrap; }.code-panel code strong { color: var(--yellow); font-weight: 500; }.swatches { display: flex; gap: 9px; margin-top: 28px; }.swatch { width: 31px; height: 31px; border: 2px solid transparent; border-radius: 50%; }.swatch.is-active { outline: 2px solid #fff; outline-offset: 3px; }.swatch-green { background: var(--yellow); }.swatch-blue { background: var(--blue); }.swatch-coral { background: var(--coral); }
 .preview-panel { display: grid; align-content: center; background: var(--surface); border: 1px solid var(--line); }.preview-label { color: var(--quiet); font-size: 10px; font-weight: 850; letter-spacing: 1px; }.learning-card { display: flex; gap: 14px; align-items: center; max-width: 390px; margin-top: 17px; padding: 24px; border-radius: var(--radius); background: var(--yellow); transition: background .2s ease, transform .2s ease; }.learning-card.is-changing { transform: translateY(-2px); }.card-icon { display: grid; width: 38px; height: 38px; flex: 0 0 auto; place-items: center; border-radius: 50%; background: rgba(255,255,255,.65); color: var(--dark); font-size: 22px; }.learning-card strong { font-size: 17px; }.learning-card p { margin: 4px 0 0; color: var(--dark); font-size: 12px; line-height: 1.4; }.preview-feedback { margin: 15px 0 0; color: var(--muted); font-size: 13px; }
-.learn-footer { display: flex; justify-content: space-between; gap: 24px; align-items: center; padding: 24px max(24px, calc((100vw - 1160px) / 2)); border-top: 1px solid var(--line); background: var(--dark); color: #fff; }.learn-footer p { margin: 0; font-size: 14px; }.learn-footer a { color: var(--yellow); font-size: 14px; font-weight: 800; text-decoration: none; white-space: nowrap; }
-@media (max-width: 880px) { .learn-hero { grid-template-columns: 1fr; gap: 30px; padding-top: 46px; }.hero-copy h1 { width: min-content; }.hero-visual { min-height: 330px; max-width: 590px; width: 100%; }.learning-path { grid-template-columns: 1fr; gap: 38px; }.case-board { grid-template-columns: 1fr; }.case-image-wrap { min-height: 340px; }.parts-grid { grid-template-columns: 1fr; }.part-card { min-height: 0; }.part-card p { min-height: 0; }.research-note { grid-template-columns: 1fr; }.source-links { grid-column: 1; }.vocab-layout { grid-template-columns: 1fr; }.anatomy-phone { width: min(100%, 460px); }.vocab-list { width: min(100%, 560px); margin: 0 auto; }.playground-grid { grid-template-columns: 1fr; } }
-@media (max-width: 620px) { .learn-topbar { min-height: 64px; padding: 11px 16px; }.brand { font-size: 13px; }.brand small { display: none; }.brand-mark { width: 32px; height: 32px; }.learn-topbar nav { gap: 12px; }.learn-topbar nav a { font-size: 11px; }.learning-map { top: 64px; }.learning-map-inner { width: 100%; min-height: 44px; padding-left: 18px; gap: 18px; }.learning-map-inner > strong { display: none; }.learning-map-links { gap: 22px; padding-right: 18px; }.learn-hero, .learning-path, .case-study, .three-parts, .beginner-answers, .ui-vocabulary, .playground { width: min(100% - 36px, 1160px); }.learn-hero { min-height: 0; gap: 16px; padding: 30px 0 34px; }.hero-copy h1 { font-size: 38px; letter-spacing: 0; }.hero-intro { margin-top: 16px; font-size: 14px; line-height: 1.65; }.hero-cta { margin-top: 22px; }.hero-visual { min-height: 190px; }.hero-visual img { top: 8%; left: 8%; width: 84%; height: 76%; border-width: 5px; }.visual-note { min-width: 74px; padding: 6px 8px; }.visual-note b { font-size: 12px; }.visual-note span { font-size: 8px; }.visual-note-css { right: 0; }.visual-note-js { bottom: 0; }.learning-path, .case-study, .three-parts, .beginner-answers, .ui-vocabulary, .playground { padding: 64px 0; scroll-margin-top: 116px; }.section-heading h2 { font-size: 34px; letter-spacing: 0; }.path-list li { grid-template-columns: 45px 1fr; gap: 10px; }.path-list strong { font-size: 17px; }.case-tabs { overflow-x: auto; margin-right: -18px; padding-right: 18px; }.case-tab { min-width: 132px; }.case-board { padding: 12px; }.case-image-wrap { min-height: 285px; }.case-image-wrap img { width: min(100%, 260px); }.answer-row { grid-template-columns: 38px minmax(0, 1fr); gap: 8px; }.answer-row h3 { font-size: 18px; }.answer-row p { font-size: 14px; }.research-note { padding: 19px 17px; }.source-links { display: grid; gap: 11px; }.vocab-layout { gap: 30px; }.anatomy-phone { width: 100%; padding: 14px 42px; }.anatomy-marker { min-height: 27px; padding: 4px 6px; }.anatomy-marker::after { width: 16px; }.anatomy-marker b { font-size: 9px; }.anatomy-marker span { font-size: 8px; }.vocab-choices { grid-template-columns: 1fr; }.vocab-item { min-height: 72px; }.vocab-detail { min-height: 0; }.learn-footer { display: block; padding: 23px 18px; }.learn-footer p { line-height: 1.55; }.learn-footer a { display: inline-block; margin-top: 12px; } }
+.learn-footer { display: flex; justify-content: space-between; gap: 24px; align-items: center; padding: 24px max(24px, calc((100vw - 1160px) / 2)); border-top: 1px solid var(--line); background: var(--dark); color: #fff; }.learn-footer p { margin: 0; font-size: 14px; }.learn-footer nav { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 10px 20px; }.learn-footer a { color: var(--yellow); font-size: 14px; font-weight: 800; text-decoration: none; white-space: nowrap; }.learn-footer a:hover, .learn-footer a:focus-visible { color: #fff; text-decoration: underline; text-underline-offset: 4px; }
+@media (max-width: 880px) { .learn-hero { grid-template-columns: 1fr; gap: 30px; padding-top: 46px; }.hero-copy h1 { width: min-content; }.hero-visual { min-height: 330px; max-width: 590px; width: 100%; }.learning-path { grid-template-columns: 1fr; gap: 38px; }.case-board { grid-template-columns: 1fr; }.case-image-wrap { min-height: 340px; }.parts-grid { grid-template-columns: 1fr; }.part-card { min-height: 0; }.part-card p { min-height: 0; }.research-note { grid-template-columns: 1fr; }.source-links { grid-column: 1; }.app-route-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }.app-guide-bottom { grid-template-columns: 1fr; }.vocab-layout { grid-template-columns: 1fr; }.anatomy-phone { width: min(100%, 460px); }.vocab-list { width: min(100%, 560px); margin: 0 auto; }.playground-grid { grid-template-columns: 1fr; } }
+@media (max-width: 620px) { .learn-topbar { min-height: 64px; padding: 11px 16px; }.brand { font-size: 13px; }.brand small { display: none; }.brand-mark { width: 32px; height: 32px; }.learn-topbar nav { gap: 12px; }.learn-topbar nav a { font-size: 11px; }.learning-map { top: 64px; }.learning-map-inner { width: 100%; min-height: 44px; padding-left: 18px; gap: 18px; }.learning-map-inner > strong { display: none; }.learning-map-links { gap: 22px; padding-right: 18px; }.learn-hero, .learning-path, .case-study, .three-parts, .beginner-answers, .app-beginner-guide, .ui-vocabulary, .playground { width: min(100% - 36px, 1160px); }.learn-hero { min-height: 0; gap: 16px; padding: 30px 0 34px; }.hero-copy h1 { font-size: 38px; letter-spacing: 0; }.hero-intro { margin-top: 16px; font-size: 14px; line-height: 1.65; }.hero-cta { margin-top: 22px; }.hero-visual { min-height: 190px; }.hero-visual img { top: 8%; left: 8%; width: 84%; height: 76%; border-width: 5px; }.visual-note { min-width: 74px; padding: 6px 8px; }.visual-note b { font-size: 12px; }.visual-note span { font-size: 8px; }.visual-note-css { right: 0; }.visual-note-js { bottom: 0; }.learning-path, .case-study, .three-parts, .beginner-answers, .app-beginner-guide, .ui-vocabulary, .playground { padding: 64px 0; scroll-margin-top: 116px; }.section-heading h2 { font-size: 34px; letter-spacing: 0; }.path-list li { grid-template-columns: 45px 1fr; gap: 10px; }.path-list strong { font-size: 17px; }.case-tabs { overflow-x: auto; margin-right: -18px; padding-right: 18px; }.case-tab { min-width: 132px; }.case-board { padding: 12px; }.case-image-wrap { min-height: 285px; }.case-image-wrap img { width: min(100%, 260px); }.answer-row { grid-template-columns: 38px minmax(0, 1fr); gap: 8px; }.answer-row h3 { font-size: 18px; }.answer-row p { font-size: 14px; }.research-note { padding: 19px 17px; }.source-links { display: grid; gap: 11px; }.app-beginner-guide { margin-top: 46px; }.app-route-grid { grid-template-columns: 1fr; }.app-route-card { min-height: 0; padding: 18px; }.app-route-card span { margin-bottom: 15px; }.app-source-links { display: grid; }.vocab-layout { gap: 30px; }.anatomy-phone { width: 100%; padding: 14px 42px; }.anatomy-marker { min-height: 27px; padding: 4px 6px; }.anatomy-marker::after { width: 16px; }.anatomy-marker b { font-size: 9px; }.anatomy-marker span { font-size: 8px; }.vocab-choices { grid-template-columns: 1fr; }.vocab-item { min-height: 72px; }.vocab-detail { min-height: 0; }.learn-footer { display: block; padding: 23px 18px; }.learn-footer p { line-height: 1.55; }.learn-footer nav { margin-top: 12px; justify-content: flex-start; }.learn-footer a { display: inline-block; } }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; }.hero-cta, .learning-card { transition: none; } }

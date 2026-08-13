@@ -22,6 +22,8 @@
       <a class="active" href="./learn.html">新手入门</a>
       <a href="./library.html">案例库</a>
       <a href="./skills.html">设计 Skill</a>
+      <a class="social-nav-link" href="https://x.com/JGuli49724" target="_blank" rel="noopener noreferrer" aria-label="在 X 查看 JGuli49724 的主页">X</a>
+      <a class="social-nav-link" href="https://www.xiaohongshu.com/user/profile/57b3456c82ec3947f79496e9" target="_blank" rel="noopener noreferrer">小红书</a>
     </nav>
   </header>
 
@@ -33,6 +35,7 @@
         <a href="#case-study" data-learn-section="case-study">案例拆解</a>
         <a href="#three-parts" data-learn-section="three-parts">前端三件套</a>
         <a href="#beginner-answers" data-learn-section="beginner-answers">新手问题</a>
+        <a href="#app-beginner-guide" data-learn-section="app-beginner-guide">App 开发</a>
         <a href="#ui-vocabulary" data-learn-section="ui-vocabulary">UI 词汇</a>
         <a href="#playground" data-learn-section="playground">动手修改</a>
       </div>
@@ -169,21 +172,68 @@
           <a href="https://www.reddit.com/r/learnprogramming/comments/1hxft96/tutorial_hell_dont_want_to_stuck_as_at_age_35/" target="_blank" rel="noreferrer">Reddit：走出教程循环 ↗</a>
         </div>
       </aside>
+
+      <section class="app-beginner-guide" id="app-beginner-guide" aria-labelledby="appGuideTitle">
+        <div class="section-heading section-heading-wide">
+          <p class="eyebrow">APP DEVELOPMENT / FIRST DECISION</p>
+          <h2 id="appGuideTitle">新手想做 App，先选平台路线</h2>
+          <p>App 是应用本身，iOS 和 Android 是运行平台；Swift、Kotlin、Dart、TypeScript 是语言；SwiftUI、Compose、Flutter、React Native 是开发框架或 UI 工具。</p>
+        </div>
+
+        <div class="app-route-grid" aria-label="App 开发路线对比">
+          <article class="app-route-card">
+            <span>iOS 原生</span>
+            <h3>Swift + SwiftUI</h3>
+            <p>只做 iPhone/iPad，且手上有 Mac 时最直接。体验和系统能力最好，但主要服务 Apple 生态。</p>
+          </article>
+          <article class="app-route-card">
+            <span>Android 原生</span>
+            <h3>Kotlin + Compose</h3>
+            <p>只做 Android 或没有 Mac 时更顺手。Android Studio 可在 Windows、macOS、Linux 上开发。</p>
+          </article>
+          <article class="app-route-card is-recommended">
+            <span>双端新手推荐</span>
+            <h3>Flutter + Dart</h3>
+            <p>一套代码做 iOS 和 Android，学习路线比较整齐。后端可先接 Firebase 或 Supabase。</p>
+          </article>
+          <article class="app-route-card">
+            <span>会前端的人</span>
+            <h3>React Native + Expo</h3>
+            <p>如果已经会 JavaScript 或 React，这条路很自然。Expo 能降低创建项目和真机预览的门槛。</p>
+          </article>
+        </div>
+
+        <div class="app-guide-bottom">
+          <div class="app-stack-note">
+            <strong>最小学习顺序</strong>
+            <p>先定 3 个核心功能，画 5 到 8 个页面，做本地版 MVP，再加登录、数据库、云同步、真机测试和上架材料。不要一开始把后端、支付、推送全塞进学习计划里。</p>
+          </div>
+          <div class="app-source-links" aria-label="App 开发官方资料">
+            <a href="https://developer.apple.com/swiftui/" target="_blank" rel="noreferrer">Apple SwiftUI ↗</a>
+            <a href="https://developer.android.com/compose" target="_blank" rel="noreferrer">Android Compose ↗</a>
+            <a href="https://flutter.dev/development" target="_blank" rel="noreferrer">Flutter ↗</a>
+            <a href="https://reactnative.dev/docs/environment-setup" target="_blank" rel="noreferrer">React Native ↗</a>
+            <a href="https://docs.expo.dev/get-started/create-a-project/" target="_blank" rel="noreferrer">Expo ↗</a>
+            <a href="https://firebase.google.com/docs" target="_blank" rel="noreferrer">Firebase ↗</a>
+            <a href="https://supabase.com/docs/guides/getting-started" target="_blank" rel="noreferrer">Supabase ↗</a>
+          </div>
+        </div>
+      </section>
     </section>
 
     <section class="ui-vocabulary" id="ui-vocabulary" aria-labelledby="vocabularyTitle">
       <div class="section-heading section-heading-wide">
         <p class="eyebrow">UI WORDS YOU WILL SEE</p>
         <h2 id="vocabularyTitle">看着页面，认识每个部分</h2>
-        <p>这是一张完整的 Buddy 页面。点击图上的名称，看看这个部分叫什么、负责什么。</p>
+        <p>这是一张完整的 Plate Play 食谱首页。点击图上的名称，看看每个部分叫什么、负责什么；完整图鉴还会告诉你何时使用和怎样交给 AI。</p>
       </div>
       <div class="vocab-layout">
         <div class="screen-anatomy">
-          <div class="anatomy-phone" aria-label="标出 UI 部件名称的 Buddy 页面图">
-            <img src="./demo/buddy-travel/mobile-preview.png" alt="Buddy 旅行计划完整页面">
+          <div class="anatomy-phone" aria-label="标出 UI 部件名称的 Plate Play 食谱首页">
+            <img src="./demo/plate-play/mobile-preview.png" alt="Plate Play 食谱首页完整页面">
             <button class="anatomy-marker marker-header is-selected" type="button" data-vocab="页头" aria-pressed="true"><span>01</span><b>页头</b></button>
-            <button class="anatomy-marker marker-visual" type="button" data-vocab="主视觉" aria-pressed="false"><span>02</span><b>主视觉</b></button>
-            <button class="anatomy-marker marker-title" type="button" data-vocab="标题区" aria-pressed="false"><span>03</span><b>标题区</b></button>
+            <button class="anatomy-marker marker-title" type="button" data-vocab="标题区" aria-pressed="false"><span>02</span><b>标题区</b></button>
+            <button class="anatomy-marker marker-visual" type="button" data-vocab="主视觉" aria-pressed="false"><span>03</span><b>主视觉</b></button>
             <button class="anatomy-marker marker-action" type="button" data-vocab="主按钮" aria-pressed="false"><span>04</span><b>主按钮</b></button>
             <button class="anatomy-marker marker-navigation" type="button" data-vocab="底部导航" aria-pressed="false"><span>05</span><b>底部导航</b></button>
           </div>
@@ -191,14 +241,15 @@
         </div>
         <div class="vocab-list">
           <div class="vocab-question"><span>现在选中</span><strong id="vocabName">页头</strong></div>
-          <p class="vocab-detail" id="vocabDetail">页头在页面最上方。这里放品牌名，让用户一眼知道自己正在使用哪个产品。</p>
+          <p class="vocab-detail" id="vocabDetail">页头位于页面最上方。这里用品牌标志和个人入口告诉用户“我在哪”，也提供常用操作。</p>
           <div class="vocab-choices" aria-label="选择要认识的页面部分">
-            <button class="vocab-item is-selected" type="button" data-vocab="页头" aria-pressed="true"><b>01</b><span>页头</span><small>告诉用户这是哪个产品</small></button>
-            <button class="vocab-item" type="button" data-vocab="主视觉" aria-pressed="false"><b>02</b><span>主视觉</span><small>最先吸引注意的画面</small></button>
-            <button class="vocab-item" type="button" data-vocab="标题区" aria-pressed="false"><b>03</b><span>标题区</span><small>说清页面能带来什么</small></button>
+            <button class="vocab-item is-selected" type="button" data-vocab="页头" aria-pressed="true"><b>01</b><span>页头</span><small>确认位置并提供常用入口</small></button>
+            <button class="vocab-item" type="button" data-vocab="标题区" aria-pressed="false"><b>02</b><span>标题区</span><small>一句话说清页面价值</small></button>
+            <button class="vocab-item" type="button" data-vocab="主视觉" aria-pressed="false"><b>03</b><span>主视觉</span><small>用核心画面传达主题</small></button>
             <button class="vocab-item" type="button" data-vocab="主按钮" aria-pressed="false"><b>04</b><span>主按钮</span><small>推动用户完成下一步</small></button>
             <button class="vocab-item" type="button" data-vocab="底部导航" aria-pressed="false"><b>05</b><span>底部导航</span><small>在几个主要页面之间切换</small></button>
           </div>
+          <a class="vocab-deep-link" href="./vocabulary.html">打开完整图文 UI 词典 <span aria-hidden="true">↗</span></a>
         </div>
       </div>
     </section>
@@ -234,7 +285,11 @@
 
   <footer class="learn-footer">
     <p><strong>下一步：</strong>去案例库找一个你喜欢的界面，试着说出它的结构、颜色和交互。</p>
-    <a href="./library.html">打开案例库 <span aria-hidden="true">↗</span></a>
+    <nav aria-label="页脚链接">
+      <a href="./library.html">打开案例库 <span aria-hidden="true">↗</span></a>
+      <a href="https://x.com/JGuli49724" target="_blank" rel="noopener noreferrer" aria-label="在 X 查看 JGuli49724 的主页">X</a>
+      <a href="https://www.xiaohongshu.com/user/profile/57b3456c82ec3947f79496e9" target="_blank" rel="noopener noreferrer">小红书</a>
+    </nav>
   </footer>
 </body>
 </html>
