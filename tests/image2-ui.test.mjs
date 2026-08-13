@@ -797,5 +797,6 @@ test("primary pages link to the author's social profiles", () => {
   }
   assert.match(libraryMarkup, /class="social-nav-link"[^>]*href="https:\/\/x\.com\/JGuli49724"/);
   assert.match(libraryMarkup, /class="social-nav-link"[^>]*href="https:\/\/www\.xiaohongshu\.com\/user\/profile\/57b3456c82ec3947f79496e9"/);
+  assert.doesNotMatch(libraryMarkup, /class="hero-social"|作者主页/);
   assert.doesNotMatch(skillsMarkup, /x\.com\/search\?q=design/);
 });
