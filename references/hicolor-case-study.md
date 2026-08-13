@@ -12,7 +12,7 @@ Within the first 3 days, the site reached:
 - 2,102 page views
 - 62% bounce rate
 
-![hicolor traffic in the first 3 days](../assets/cases/hicolor/traffic-3-days.png)
+![hicolor traffic in the first 3 days](https://zhu-guli326.github.io/ui_case/assets/cases/hicolor/traffic-3-days.png)
 
 ## What triggered the project
 
@@ -38,9 +38,9 @@ The first version followed a small loop:
 6. Validate demand with a Xiaohongshu post.
 7. Watch the project get recommended back into overseas feeds such as Threads.
 
-![Xiaohongshu pinned post for hicolor](../assets/cases/hicolor/xiaohongshu-pinned.jpg)
+![Xiaohongshu pinned post for hicolor](https://zhu-guli326.github.io/ui_case/assets/cases/hicolor/xiaohongshu-pinned.jpg)
 
-![Threads recommendation mentioning hicolor](../assets/cases/hicolor/threads-recommendation.png)
+![Threads recommendation mentioning hicolor](https://zhu-guli326.github.io/ui_case/assets/cases/hicolor/threads-recommendation.png)
 
 ## Where the UI got painful
 
@@ -113,4 +113,3 @@ It should first identify:
 - how to prove the result with a local page, screenshots, and click paths
 
 The hicolor case is a reminder that the goal is not "a similar screenshot". The goal is a usable link that carries a visual trend into a working product.
-

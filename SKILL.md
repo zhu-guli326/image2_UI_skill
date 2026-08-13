@@ -11,18 +11,19 @@ description: Use when the user provides a UI screenshot or visual design referen
 
 When a new image-to-UI or visual-style request starts, the first user-facing
 reply must first collect the task direction. If the host exposes a native
-structured choice UI, ask these exact four choices: `探索并理解代码`, `构建新功能、应用或工具`,
-`审查代码并提出修改建议`, and `修复问题和失败`. Do not claim that the skill
-controls the host UI. If that native UI is unavailable, open the launcher:
+structured choice UI, offer these five intents: `探索现有项目`, `从零创建`,
+`参考图还原`, `优化现有页面`, and `切换设计系统`. Do not claim that the skill
+controls the host UI. If that native UI is unavailable, open the launcher with
+the closest intent:
 
-`https://zhu-guli326.github.io/ui_case/launcher.html?start=1`
+`https://zhu-guli326.github.io/ui_case/launcher.html?intent=explore`
 
-Use this concise fallback wording: `先选择这次的任务方向，再配置交付形式、风格和制作深度；复制生成的调用指令给我。`
+Use this concise fallback wording: `先选择这次的任务方向；每种模式会提供不同表单，填写必需信息后再复制生成的调用指令给我。`
 
 Treat the launcher's generated prompt as structured user intent. Preserve its
-selected format, local style case, effect-image workflow choice, interaction
-depth, device-frame choice, image2 channel preference, and verification
-requirements unless the user overrides them. When the launcher says a local
+intent-specific target, scope, permission boundary, output depth, reference
+source, design-system choice, and verification requirements unless the user
+overrides them. In `explore`, read-only means no file edits. When the launcher says a local
 reference file will be attached, use the image attached in the conversation;
 the browser preview itself never uploads that file. Use
 `https://zhu-guli326.github.io/ui_case/` when the user wants more cases. The
@@ -99,20 +100,20 @@ Diagnostic command:
 image2-ui doctor
 ```
 
-## 品牌工作流 / Brand-Aware Workflow
+## 组件与品牌工作流 / Component and Brand-Aware Workflow
 
 Use this order:
 
-`brand parsing -> UI decomposition -> asset generation -> token implementation -> brand compliance verification`
+`component selection -> brand/design-system resolution -> UI decomposition -> asset generation -> token implementation -> compliance verification`
 
-1. Resolve the selected case and optional brand profile. Record the profile source status and authorization boundary. When no brand is selected, use the project's existing tokens and say that no external brand profile was applied.
+1. Resolve the selected case, optional style profile, and selected Component References. Resolve each component's owning Brand Profile and record its public source, source status, review date, and authorization boundary. Never treat a Style Profile such as minimal technology as a brand.
 2. Analyze the reference for effect-image composition, apply only the permitted visual-language constraints, then generate, save, and inspect the complete effect image.
 3. Use the inspected effect image to produce the `code-ui` and `image2-assets` inventories. Keep all readable text, UI chrome, logos, and trademarks out of generated implementation assets.
 4. Generate real bitmap assets and record purpose, dimensions, crop strategy, negative constraints, path, channel, and provenance.
-5. Implement the selected brand tokens in the existing stack, then build the clickable UI with real states and responsive behavior.
-6. Verify interactions and compare the rendered result against the effect image, original reference, and selected brand profile.
+5. Implement tokens and behavior from the selected Component References in the existing stack, then build the clickable UI with real states and responsive behavior. Use the Brand Profile as provenance and grouping context, not as permission to copy logos or proprietary assets.
+6. Verify interactions and compare the rendered result against the effect image, original reference, selected components, and their owning Brand Profiles.
 
-When a brand profile is applied, always produce:
+When public design-system components or a Brand Profile are applied, always produce:
 
 ```text
 artifacts/brand-profile.json
@@ -120,7 +121,7 @@ artifacts/brand-tokens.json
 artifacts/brand-compliance.md
 ```
 
-`brand-compliance.md` must cover color, typography, spacing, radius, components, motion, visual language, content voice, accessibility, asset provenance, and the logo/trademark/font authorization boundary.
+`brand-profile.json` must include the selected `componentReferenceIds`. `brand-compliance.md` must cover component anatomy, states, behavior, tokens, accessibility, source provenance, and the logo/trademark/font authorization boundary. Public guidelines never imply affiliation or endorsement.
 
 ## Multi-Agent Orchestration
 
@@ -211,4 +212,4 @@ This repo also includes `ui_output_audit.mjs` to catch broken assets, remote ass
 - Actual channel, such as `native-image2 source=system-imagegen`, `source=project-image2`, `youtoken-gpt-image-2`, or `openrouter-icu-gpt-image-2`.
 - Which UI surfaces are code-rendered.
 - Which checks were run.
-- Which brand profile and source status were applied, plus paths to brand artifacts and any compliance exceptions.
+- Which Component References and owning Brand Profile source status were applied, plus paths to brand artifacts and any compliance exceptions.

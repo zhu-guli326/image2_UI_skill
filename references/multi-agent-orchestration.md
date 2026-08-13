@@ -35,7 +35,7 @@ Choose the smallest useful graph before delegating:
 
 Multi-agent availability is not itself a reason to use the complex tier. Single-agent execution is acceptable for simple and medium tasks, and it does not need to simulate inactive roles.
 
-When a brand profile is selected, the active tier also owns these shared artifacts:
+When Component References or their owning Brand Profile are selected, the active tier also owns these shared artifacts:
 
 - `artifacts/brand-profile.json`
 - `artifacts/brand-tokens.json`

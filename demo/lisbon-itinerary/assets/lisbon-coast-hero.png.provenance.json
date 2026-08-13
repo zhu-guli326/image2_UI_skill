@@ -1,9 +1,0 @@
-{
-  "channel": "verified-existing-image2",
-  "source": "youtoken-gpt-image-2",
-  "action": "reused-within-workspace",
-  "original_output": "demo/lumen-journal/assets/hero-kayak.png",
-  "output": "demo/lisbon-itinerary/assets/lisbon-coast-hero.png",
-  "model": "gpt-image-2",
-  "prompt": "Editorial travel photography for a calm mobile journaling app: a lone red sea kayak drifting on deep cobalt water beside pale limestone cliffs, overhead three-quarter view, late afternoon sun, crisp film grain, minimal composition with generous negative space, refined magazine art direction, no people close-up, no readable text, no logos, no UI, no icons, no watermark"
-}

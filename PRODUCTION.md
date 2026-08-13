@@ -40,19 +40,13 @@ Run these before shipping a change:
 
 ```bash
 npm test
-npm run validate:demo
 npm run doctor
+npm run pack:check
 ```
 
-`validate:demo` runs browser checks when Playwright is available and gracefully
-records `browser-skip` when it is not. Use `npm run validate:demo:static` when
-you intentionally want the static-only gate.
-
-`validate:all:static` audits every directory under `demo/`, builds package-based
-demos when their dependencies are missing, and prints the
-documented warning baseline. Use `validate:all` for the same repository-wide
-audit with browser checks. Any failure is a release blocker; warnings remain
-visible and must be explicitly allowed for that demo in `quality-baseline.json`.
+The Skill repository does not bundle the gallery demos. Use `image2-ui validate`
+against the demo directory produced by the current task. The maintained case
+gallery and its own site contract live in the separate `ui_case` repository.
 
 ## Multi-Agent Execution
 
@@ -60,7 +54,7 @@ Use the orchestrator when the host provides `codex exec` or a compatible agent
 CLI:
 
 ```bash
-image2-ui orchestrate ./demo/my-output \
+image2-ui orchestrate ./my-output \
   --task "Turn the reference into a production-shaped clickable demo" \
   --reference ./reference.png
 ```
@@ -82,11 +76,9 @@ the review and accessibility reports before producing the final fix queue.
 
 ## Motion Quality
 
-Use the shared CSS-first motion tokens in
-`references/motion-system.md`. Every demo must provide content entrance,
-control feedback, Toast or view transitions where applicable, and a final
-`prefers-reduced-motion` override. Motion must not be required to understand or
-operate the interface.
+Every generated demo should provide deliberate content entrance, control
+feedback, and a final `prefers-reduced-motion` override. Motion must not be
+required to understand or operate the interface.
 
 For a generated demo:
 
@@ -129,14 +121,13 @@ to the output image unless `--provenance` is provided.
 ## Release Checklist
 
 - `npm test` passes.
-- `npm run validate:all:static` passes for every bundled demo.
-- `npm run validate:demo` has no failures.
+- CLI and fixture tests pass with `npm test`.
+- A representative output is checked with `image2-ui validate` when validation behavior changes.
 - `npm run doctor` reports at least one available image channel, or the release
   notes state that image generation is intentionally unavailable in CI.
 - `scripts/image2-ui` and `scripts/image2_asset.py` are executable.
 - README, `SKILL.md`, and relevant `references/` files describe the same channel
   names and validation commands.
-- Generated loop artifacts are not committed unless they are deliberate case
-  study evidence.
+- Generated loop artifacts are not committed.
 - The package has an explicit license and release metadata; publishing is done
   through the manual GitHub Actions release workflow after a dry run.

@@ -5,7 +5,7 @@ clickable demos. The main job is to name what is on the screen before deciding
 whether it belongs in code or in `image2`.
 
 For a searchable version with local screenshots, anatomy, variants, related
-terms, and copyable Agent prompts, open the [illustrated UI vocabulary](../vocabulary.html).
+terms, and copyable Agent prompts, open the [illustrated UI vocabulary](https://zhu-guli326.github.io/ui_case/vocabulary.html?lang=en).
 
 ## Core Rule
 
