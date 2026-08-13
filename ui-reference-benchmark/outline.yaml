@@ -1,0 +1,149 @@
+topic: "Image2 UI 案例库参考调研"
+research_date: "2026-08-12"
+time_range: "不限年份，优先近两年仍有代表性的案例"
+
+items:
+  - name: "Dribbble - Breakthrough mobile app case study"
+    url: "https://dribbble.com/shots/27275520-Breakthrough-mobile-app-case-study"
+    source_type: "visual_case_study"
+    reference_focus:
+      - "首屏大设备视觉"
+      - "短文案与大图交替的叙事节奏"
+      - "功能、设计系统、进度状态、onboarding 分章节展示"
+    adoption_priority: "high"
+
+  - name: "Dribbble - Rizzle AI SaaS case study"
+    url: "https://dribbble.com/shots/24681174--Case-Study-AI-SaaS-UI-UX-Design-for-Rizzle"
+    source_type: "visual_case_study"
+    reference_focus:
+      - "AI 产品界面包装"
+      - "桌面 SaaS 场景"
+      - "高完成度产品画面编排"
+    adoption_priority: "medium"
+
+  - name: "Dribbble - Flow VR learning platform"
+    url: "https://dribbble.com/shots/24263804-Flow-VR-Learning-Platform-Immersive-UI-UX-Design-Case-Study"
+    source_type: "experimental_case_study"
+    reference_focus:
+      - "沉浸式视觉"
+      - "3D 与 UI 的组合"
+      - "特殊设备场景表达"
+    adoption_priority: "low"
+
+  - name: "Behance - Talkie language learning app"
+    url: "https://www.behance.net/gallery/177296223/Talkie-Language-Learning-app-UI-UX-case-study"
+    source_type: "long_form_case_study"
+    reference_focus:
+      - "连续长卷模块"
+      - "统一视觉母版"
+      - "高密度页面与品牌资产展示"
+    adoption_priority: "high"
+
+  - name: "Behance - Philly Auto web redesign"
+    url: "https://www.behance.net/gallery/218427689/UXUI-Case-Study-Philly-Auto-Web-Redesign-(2024)"
+    source_type: "ux_case_study"
+    reference_focus:
+      - "问题到设计决策的对应关系"
+      - "桌面、平板、手机多断点展示"
+      - "redesign 前后证据链"
+    adoption_priority: "high"
+
+  - name: "Behance - Comfy mobile app"
+    url: "https://www.behance.net/gallery/201221369/Comfy-Mobile-App-UXUI-Case-Study"
+    source_type: "mobile_case_study"
+    reference_focus:
+      - "用户流程"
+      - "移动端页面组"
+      - "功能与视觉的完整叙事"
+    adoption_priority: "medium"
+
+  - name: "SaaSFrame"
+    url: "https://www.saasframe.io/"
+    source_type: "real_product_library"
+    reference_focus:
+      - "按 Landing、Pricing、Dashboard、Add & Edit、Account Setup 分类"
+      - "桌面与移动端并列"
+      - "真实产品流程串联"
+      - "版本对比、截图文字搜索、Figma 入口"
+    adoption_priority: "high"
+
+  - name: "Refero"
+    url: "https://refero.design/"
+    source_type: "real_product_library"
+    reference_focus:
+      - "Page Types、Flows、UX Patterns、UI Elements 四层分类"
+      - "面向任务的 research mode"
+      - "AI 辅助设计研究入口"
+    adoption_priority: "high"
+
+  - name: "Page Flows"
+    url: "https://pageflows.com/"
+    source_type: "interaction_flow_library"
+    reference_focus:
+      - "真实用户流程录屏"
+      - "分步截图与注释"
+      - "按平台、流程、行业和 UX pattern 检索"
+    adoption_priority: "high"
+
+  - name: "Mobbin"
+    url: "https://mobbin.com/"
+    source_type: "real_product_library"
+    reference_focus:
+      - "真实产品屏幕与流程"
+      - "screen、flow、pattern 的交叉检索"
+      - "竞品横向 benchmark"
+    adoption_priority: "high"
+
+  - name: "Awwwards app collection"
+    url: "https://www.awwwards.com/websites/app/"
+    source_type: "immersive_web_gallery"
+    reference_focus:
+      - "首屏舞台感"
+      - "滚动叙事与动态转场"
+      - "WebGL、3D、声音等沉浸媒介"
+    adoption_priority: "medium"
+
+  - name: "Codrops - ToyFight 2024 case study"
+    url: "https://tympanus.net/codrops/2024/06/11/case-study-toyfight-2024/"
+    source_type: "technical_case_study"
+    reference_focus:
+      - "失败方案与迭代分支"
+      - "技术栈与媒介管线"
+      - "GSAP、3D、彩蛋和性能取舍"
+    adoption_priority: "medium"
+
+  - name: "Godly"
+    url: "https://godly.website/"
+    source_type: "curated_visual_gallery"
+    reference_focus:
+      - "Web、Interface、Product、Motion、3D 等快速筛选"
+      - "克制的侧栏浏览体验"
+      - "大画布预览"
+    adoption_priority: "medium"
+
+recommended_effects:
+  must_build:
+    - "参考图与成品的叠层滑块、闪烁切换或差异热图"
+    - "用户流程时间线：截图、录屏、步骤注释同步"
+    - "desktop/tablet/mobile 多断点并列对照"
+    - "交互状态矩阵：default、hover、focus、loading、empty、error、success、disabled"
+    - "案例详情 sticky 目录与阅读进度"
+    - "按页面类型、流程、pattern、设备、视觉风格组合筛选"
+    - "设计 token、可复用组件和 image2 资产清单"
+    - "真实 Demo、视频、参考图三种预览模式"
+  differentiators:
+    - "布局、字体、颜色、素材、响应式、交互的分项还原度评分"
+    - "issue -> decision -> implementation -> outcome 设计决策账本"
+    - "真实产品、概念稿、重设计、技术实验的可信度标签"
+    - "案例版本、采集时间、最后验证时间和运行状态"
+    - "相关案例横向 benchmark 集合"
+  flagship_only:
+    - "滚动驱动的大图转场和设备 mockup 演出"
+    - "可操纵 3D 对象、声音反馈、隐藏主题或彩蛋"
+    - "Canvas/WebGL 沉浸背景"
+    - "实验性终端或命令式导航"
+
+execution:
+  batch_size: 3
+  items_per_agent: 4
+  output_dir: "./ui-reference-benchmark/results"

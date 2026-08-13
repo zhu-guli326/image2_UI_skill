@@ -1,0 +1,33 @@
+{
+  "id": "fashion",
+  "category": "commerce",
+  "name": "Vestra",
+  "style": "编辑式时尚电商",
+  "video": "./assets/cases/fashion-shopping-app/fashion-app-demo.mp4",
+  "poster": "./assets/cases/fashion-shopping-app/fashion-app-preview.gif",
+  "previewImage": "./assets/cases/fashion-shopping-app/library-preview-2x.png",
+  "preview": "#eadfe0",
+  "reference": "时装画册的留白节奏，加上轻量化的收藏与浏览流程",
+  "referenceImage": "./assets/style-references/vestra-reference.png",
+  "prompt": "编辑式时尚电商 App 视觉参考：大幅人物或单品主视觉、柔和粉色调、宽松留白、克制的小字号文案，像设计师时装画册；商品成为画面主角，操作轻量；无拥挤价格标签、无复杂拼贴、无高频动效。",
+  "summary": "大幅人物视觉、粉色调留白和克制文字，让电商界面先像一本编辑画册。",
+  "bestFor": "时装、美妆、生活方式、设计师品牌",
+  "tags": [
+    "编辑画册",
+    "人物主视觉",
+    "轻量购物"
+  ],
+  "palette": "雾粉 / 奶白 / 深巧克力",
+  "layout": "沉浸大图 + 轻量商品列表",
+  "recipe": {
+    "principle": "让商品先成为画面主角，操作只在需要时出现。",
+    "image": "使用单一人物或单件商品的大图，统一光线与背景。",
+    "type": "标题有编辑感，正文则保持小而轻。",
+    "components": "圆润相片容器、轻量收藏按钮、单一强调色。",
+    "motion": "滑动、收藏和下一张转换要细腻。",
+    "avoid": "商品卡塞满价格、折扣和标签。"
+  },
+  "brandProfileIds": [
+    "editorial-commerce"
+  ]
+}

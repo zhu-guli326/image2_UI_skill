@@ -25,6 +25,22 @@ The lead agent owns user intent, repository discovery, task decomposition, share
 
 Give coding agents disjoint write scopes. Use analysis-only roles before implementation when scopes cannot be isolated.
 
+## Complexity Tiers
+
+Choose the smallest useful graph before delegating:
+
+- **Simple**: visual decomposition, implementation, QA. Use for a small clickable demo with local state and no backend contract.
+- **Medium**: simple tier plus asset engineering and accessibility. Use when several generated assets, responsive variants, or meaningful keyboard/screen-reader behavior are involved.
+- **Complex product**: medium tier plus architecture, backend contract, state machine, code review, and release. Use only when the product actually has APIs, permissions, asynchronous business states, or release requirements.
+
+Multi-agent availability is not itself a reason to use the complex tier. Single-agent execution is acceptable for simple and medium tasks, and it does not need to simulate inactive roles.
+
+When a brand profile is selected, the active tier also owns these shared artifacts:
+
+- `artifacts/brand-profile.json`
+- `artifacts/brand-tokens.json`
+- `artifacts/brand-compliance.md`
+
 ## Specialist Roles
 
 ### visual-analyst

@@ -515,7 +515,20 @@ async function runBrowserChecks(rootDir, entryFile) {
   const server = await startServer(browserTarget.rootDir);
   const entryPath = path.relative(browserTarget.rootDir, browserTarget.entryFile).split(path.sep).map(encodeURIComponent).join("/");
   const url = `${server.url}/${entryPath}`;
-  const browser = await playwright.chromium.launch({ headless: true });
+  let browser;
+  try {
+    try {
+      browser = await playwright.chromium.launch({ headless: true });
+    } catch (error) {
+      add("info", "browser-launch-skip", `Chromium could not launch; browser render checks skipped: ${error.message}`, rootDir);
+      return;
+    }
+  } catch (error) {
+    await new Promise((resolve) => server.instance.close(resolve));
+    const message = String(error?.message || error).split("\n")[0];
+    add("warn", "browser-launch-unavailable", `Playwright is installed but Chromium could not launch: ${message}. Static checks completed; install browsers with npx playwright install chromium.`, rootDir);
+    return;
+  }
 
   try {
     const viewports = [

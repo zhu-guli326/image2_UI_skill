@@ -83,6 +83,7 @@
     },
     "fufu-bakery": {
       "rules": {
+        "generated-ui-glyph-asset": "The file is a full-screen menu screenshot used for library preview, not a functional menu glyph.",
         "tiny-fonts": "Reference-scale secondary labels are confined to a fixed 9:16 bakery canvas; primary actions and navigation retain clear touch targets."
       }
     },

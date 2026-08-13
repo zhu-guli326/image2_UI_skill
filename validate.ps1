@@ -156,6 +156,9 @@ Assert-True ($openaiYaml.Contains("backend-contract")) "agents/openai.yaml shoul
 Assert-True ($openaiYaml.Contains("state-machine")) "agents/openai.yaml should mention the state machine role"
 Assert-True ($openaiYaml.Contains("accessibility")) "agents/openai.yaml should mention the accessibility role"
 Assert-True ($openaiYaml.Contains("release")) "agents/openai.yaml should mention the release role"
+Assert-True ($skill.Contains("探索并理解代码")) "SKILL.md should define the native task chooser options"
+Assert-True ($skill.Contains("launcher.html?start=1")) "SKILL.md should define the launcher task chooser fallback"
+Assert-True ($openaiYaml.Contains("launcher.html?start=1")) "agents/openai.yaml should point to the launcher task chooser fallback"
 
 $targets = Get-RelativeMarkdownTargets $readme
 foreach ($target in $targets) {

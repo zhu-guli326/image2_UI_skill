@@ -8,10 +8,11 @@ const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), ".."
 
 test("every library case has a video preview as the primary mode", () => {
   const script = fs.readFileSync(path.join(repoRoot, "library.js"), "utf8");
-  const caseLines = script.match(/^\s+id:\s*"[^"]+".*$/gm) || [];
-  const videos = caseLines.map((line) => line.match(/video:\s*"([^"]+)"/)?.[1]).filter(Boolean);
+  const casesDir = path.join(repoRoot, "catalog", "cases");
+  const cases = fs.readdirSync(casesDir).filter((file) => file.endsWith(".json")).map((file) => JSON.parse(fs.readFileSync(path.join(casesDir, file), "utf8")));
+  const videos = cases.map((item) => item.video).filter(Boolean);
 
-  assert.equal(caseLines.length, 23);
+  assert.equal(cases.length, 23);
   assert.equal(videos.length, 23);
   for (const video of videos) {
     assert.ok(fs.existsSync(path.join(repoRoot, video.replace(/^\.\//, "").replace(/\?.*/, ""))), video);

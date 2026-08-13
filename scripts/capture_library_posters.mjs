@@ -5,9 +5,9 @@ import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { getLibraryPreviewDevice, libraryPreviewProfiles } from "../library-preview-config.mjs";
+import { styleGuides } from "../catalog/index.js";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const librarySource = fs.readFileSync(path.join(repoRoot, "library.js"), "utf8");
 const chrome = [
   process.env.IMAGE2_CHROME,
   "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
@@ -20,9 +20,15 @@ if (!chrome) {
   process.exit(2);
 }
 
-const demos = [...librarySource.matchAll(/id:\s*"([^\"]+)"[^\n]*liveDemo:\s*"(\.\/demo\/[^\"]+\/index\.html)"/g)]
-  .map((match) => ({ id: match[1], url: match[2] }));
+const demos = styleGuides
+  .filter((guide) => guide.liveDemo)
+  .map((guide) => ({ id: guide.id, url: guide.liveDemo }));
 const outputName = "library-preview-2x.png";
+
+if (!demos.length) {
+  console.error("No live demos were found in catalog/index.js.");
+  process.exit(2);
+}
 
 function readPngSize(filePath) {
   const header = fs.readFileSync(filePath).subarray(0, 24);

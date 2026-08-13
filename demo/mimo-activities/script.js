@@ -10,7 +10,7 @@ let pointerStart = null;
 const params = new URLSearchParams(window.location.search);
 if (params.has("embed")) {
   document.documentElement.classList.add("embed-mode");
-  const fitEmbed = () => document.documentElement.style.setProperty("--embed-scale", String(Math.min(window.innerWidth / 390, window.innerHeight / 693.3333)));
+  const fitEmbed = () => document.documentElement.style.setProperty("--embed-scale", String(Math.min(window.innerWidth / 390, window.innerHeight / 844)));
   fitEmbed(); window.addEventListener("resize", fitEmbed);
 }
 

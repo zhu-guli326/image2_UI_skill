@@ -1,0 +1,36 @@
+{
+  "id": "minimal-tech",
+  "name": "极简科技",
+  "sourceType": "style-reference",
+  "sourceStatus": "风格参考",
+  "reviewedAt": "2026-08-13",
+  "platforms": ["web", "ios", "android"],
+  "industry": ["科技", "工具", "健康"],
+  "styles": ["功能主义", "极简"],
+  "completeness": "组件规范",
+  "foundations": {
+    "colors": { "canvas": "#F4F6F4", "ink": "#151716", "accent": "#C8FF3D", "signal": "#168143" },
+    "typography": { "display": "系统无衬线 700", "body": "系统无衬线 400", "scale": "32 / 24 / 16 / 14" },
+    "spacing": "4px 基线，16px 控件间距，32px 模块间距",
+    "radius": "6px 数据容器，22px 主操作",
+    "elevation": "一层低对比边框，不使用玻璃拟态",
+    "grid": "12 列 Web，8pt 移动端节奏",
+    "motion": "150ms 状态反馈，遵从 reduced-motion"
+  },
+  "components": {
+    "button": "高对比单一 accent，只用于主操作",
+    "card": "平整信息面，明确标题、数值和一个状态",
+    "navigation": "图标和文字均有可访问名称，选中态可见",
+    "form": "44px 最小触达区，错误不只依赖红色",
+    "dialog": "动作分级明确，危险动作需要二次确认"
+  },
+  "visualLanguage": {
+    "photography": "产品和环境图干净、无文字、无商标，留出数据和说明空间",
+    "illustration": "用于空状态和解释，避免伪 UI glyph",
+    "iconography": "统一代码图标库，20-24px，1.75-2px stroke"
+  },
+  "contentVoice": "直接、可扫描，以任务和状态为中心。",
+  "accessibility": "普通文本 4.5:1；所有图标按钮提供 aria-label；目标至少 44px。",
+  "dos": ["将色彩留给状态和行动", "让数值与任务先于装饰被读取"],
+  "donts": ["不要用位图承担导航或控制 glyph", "不要在单张卡片堆叠过多微型数据"]
+}

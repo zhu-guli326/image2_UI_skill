@@ -11,3 +11,6 @@ demo/*/dist/
 *.log
 .DS_Store
 coverage/
+/screenshots/
+/tmp/
+scripts/__pycache__/

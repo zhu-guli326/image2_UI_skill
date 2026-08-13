@@ -106,9 +106,16 @@ detail sheet, empty state, and bottom tab bar."
 
 Start here:
 
+- [`launcher.html`](./launcher.html) is the visual skill launcher: choose the
+  target format, style case, workflow depth, interaction scope, image2 channel,
+  and verification options, then copy the generated `$image-to-ui-skill`
+  instruction into Codex.
 - [`library.html`](./library.html) is a visual, browser-openable version of the
   UI knowledge library with filters, cards, screenshots, and an asset-split
   board.
+- [`vocabulary.html`](./vocabulary.html) is the illustrated UI vocabulary with
+  search, role filters, anatomy, variants, implementation boundaries, and
+  copyable Agent prompts.
 - [`skills.html`](./skills.html) is a separate design-skill radar page for
   browsing design methods, visual directions, and copyable first-turn prompts.
 - `analytics.config.js` configures the anonymous library event endpoint. Set

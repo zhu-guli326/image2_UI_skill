@@ -26,6 +26,13 @@ button {
   color: inherit;
 }
 
+.icon-sprite {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
 .hero {
   position: relative;
   min-height: 100vh;
@@ -783,13 +790,26 @@ button {
 }
 
 .dock button {
+  display: grid;
   width: 28px;
   height: 28px;
+  padding: 0;
+  place-items: center;
   border: 0;
   border-radius: 50%;
   color: #fff;
   background: transparent;
   cursor: pointer;
+}
+
+.dock button svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .dock button.active {
@@ -951,11 +971,11 @@ button {
 }
 
 .embed-mode { overflow: hidden; }
-.embed-mode body { width: 390px; min-width: 390px; height: 693.3333px; overflow: hidden; transform: scale(var(--embed-scale, 1)); transform-origin: top left; }
-.embed-mode .hero { display: block; width: 390px; min-height: 693.3333px; padding: 0; overflow: hidden; }
+.embed-mode body { width: 390px; min-width: 390px; height:844px; overflow: hidden; transform: scale(var(--embed-scale, 1)); transform-origin: top left; }
+.embed-mode .hero { display: block; width: 390px; min-height:844px; padding: 0; overflow: hidden; }
 .embed-mode .band, .embed-mode .phone:not(.phone-center) { display: none; }
-.embed-mode .phone-center { width: 390px; height: 693.3333px; transform: none; }
-.embed-mode .device { width: 390px; height: 693.3333px; aspect-ratio: 9 / 16; border-radius: 43px; }
+.embed-mode .phone-center { width: 390px; height:844px; transform: none; }
+.embed-mode .device { width: 390px; height:844px; aspect-ratio: 9 / 16; border-radius: 43px; }
 .embed-mode .screen { border-width: 7px; border-radius: 35px; }
 
 :root {

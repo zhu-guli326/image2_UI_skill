@@ -57,6 +57,57 @@ test("library search understands that 女装 means fashion and clothing", () => 
   assert.deepEqual(searchGuides(guides, "女装").map((guide) => guide.id), ["fashion", "still-form"]);
 });
 
+test("library search matches the real catalog across fields without broad fuzzy noise", async () => {
+  const { styleGuides } = await import("../catalog/index.js");
+  const expected = new Map([
+    ["女装", ["fashion", "still-form"]],
+    ["女装 app", ["fashion", "still-form"]],
+    ["营养 扫描", ["cleanbite"]],
+    ["营养扫描", ["cleanbite"]],
+    ["情绪 手绘", ["loy"]],
+    ["电商 背包", ["carry-bag"]],
+    ["EV charging", ["volt-route"]],
+    ["habit tracker", ["moe"]],
+    ["music player", ["relay-music"]],
+    ["Fit Hub", ["fithub"]],
+    ["FuFu-Bakery", ["fufu"]],
+    ["Now-Playing", ["relay-music"]],
+    ["纸张白/鼠尾草绿", ["museum"]],
+    ["volt-route", ["volt-route"]],
+    ["ArtMuze", ["museum"]],
+    ["CleanBte", ["cleanbite"]],
+    ["Vestrra", ["fashion"]],
+    ["伪手写", ["moe"]],
+    ["吸附式轮播", ["mimo"]],
+    ["Mara", ["softly-reflections"]],
+  ]);
+
+  for (const [query, ids] of expected) {
+    assert.deepEqual(searchGuides(styleGuides, query).slice(0, ids.length).map((guide) => guide.id), ids, query);
+  }
+});
+
+test("typing a library search clears browsing filters and ships its search module", () => {
+  const script = fs.readFileSync(path.join(repoRoot, "library.js"), "utf8");
+  const packageJson = JSON.parse(fs.readFileSync(path.join(repoRoot, "package.json"), "utf8"));
+
+  assert.match(script, /searchInput\.addEventListener\("input", \(\) => \{[\s\S]*activeCategory = "all";[\s\S]*activeTag = "";/);
+  assert.match(script, /window\.history\.replaceState\(\{ tag: "" \}, "", url\)/);
+  assert.ok(packageJson.files.includes("library-search.mjs"));
+});
+
+test("catalog exposes brand profiles, source states, and case associations", async () => {
+  const { styleGuides, brandProfiles } = await import("../catalog/index.js");
+  assert.equal(styleGuides.length, 23);
+  assert.equal(brandProfiles.length, 3);
+  assert.deepEqual(new Set(brandProfiles.map((brand) => brand.sourceStatus)), new Set(["风格参考"]));
+  for (const brand of brandProfiles) {
+    for (const key of ["foundations", "components", "visualLanguage", "contentVoice", "accessibility", "dos", "donts"]) assert.ok(brand[key], `${brand.id} missing ${key}`);
+    assert.ok(styleGuides.some((guide) => guide.brandProfileIds.includes(brand.id)), `${brand.id} has no related case`);
+  }
+  for (const guide of styleGuides) assert.ok(guide.brandProfileIds.length > 0, `${guide.id} has no brand association`);
+});
+
 test("validate returns structured warnings without browser checks", () => {
   const demoDir = fs.mkdtempSync(path.join(os.tmpdir(), "image2-ui-ok-demo-"));
   fs.cpSync(path.join(repoRoot, "tests/fixtures/ok-demo"), demoDir, { recursive: true });
@@ -211,6 +262,37 @@ test("doctor marks a missing IMAGE2_COMMAND executable unavailable", () => {
   assert.match(projectChannel.reason, /executable not found/);
 });
 
+test("catalog is the single source for cases and brand profiles", () => {
+  const cases = fs.readdirSync(path.join(repoRoot, "catalog", "cases")).filter((file) => file.endsWith(".json")).map((file) => JSON.parse(fs.readFileSync(path.join(repoRoot, "catalog", "cases", file), "utf8")));
+  const brands = fs.readdirSync(path.join(repoRoot, "catalog", "brands")).filter((file) => file.endsWith(".json")).map((file) => JSON.parse(fs.readFileSync(path.join(repoRoot, "catalog", "brands", file), "utf8")));
+  const brandIds = new Set(brands.map((brand) => brand.id));
+  const generated = fs.readFileSync(path.join(repoRoot, "catalog", "index.js"), "utf8");
+
+  assert.equal(cases.length, 23);
+  assert.equal(brands.length, 3);
+  assert.ok(cases.every((item) => item.brandProfileIds.length > 0 && item.brandProfileIds.every((id) => brandIds.has(id))));
+  assert.ok(brands.every((brand) => ["品牌提供", "基于公开设计规范", "风格参考", "自定义品牌"].includes(brand.sourceStatus)));
+  assert.match(generated, /export const styleGuides/);
+  assert.match(generated, /export const brandProfiles/);
+  execFileSync(node, ["scripts/build_catalog.mjs", "--check"], { cwd: repoRoot, encoding: "utf8" });
+});
+
+test("brand library exposes filters, source status, and all export actions", () => {
+  const markup = fs.readFileSync(path.join(repoRoot, "brands.html"), "utf8");
+  const script = fs.readFileSync(path.join(repoRoot, "brands.js"), "utf8");
+  const skill = fs.readFileSync(path.join(repoRoot, "SKILL.md"), "utf8");
+
+  for (const filter of ["platform", "industry", "style", "completeness"]) assert.match(markup, new RegExp(`name="${filter}"`));
+  assert.match(script, /应用到新项目/);
+  assert.match(script, /复制品牌 Prompt/);
+  assert.match(script, /生成 Design Tokens/);
+  assert.match(script, /assetPolicy/);
+  assert.match(script, /不得自动生成、仿制或添加品牌 Logo/);
+  assert.match(skill, /artifacts\/brand-profile\.json/);
+  assert.match(skill, /artifacts\/brand-tokens\.json/);
+  assert.match(skill, /artifacts\/brand-compliance\.md/);
+});
+
 test("npm package dry-run contains production entrypoints", () => {
   const stdout = execFileSync("npm", ["pack", "--dry-run", "--json"], {
     cwd: repoRoot,
@@ -257,6 +339,16 @@ test("visual launcher produces structured image-to-ui skill instructions", () =>
   assert.match(script, /localStorage\.setItem\("image2-ui-launcher"/);
   assert.match(script, /navigator\.clipboard\.writeText/);
   assert.match(script, /URL\.createObjectURL/);
+  assert.match(markup, /id="intentDialog"[^>]*aria-labelledby="intentDialogTitle"/);
+  assert.equal((markup.match(/data-intent=/g) || []).length, 4);
+  assert.match(markup, /探索并理解代码/);
+  assert.match(markup, /构建新功能、应用或工具/);
+  assert.match(markup, /审查代码并提出修改建议/);
+  assert.match(markup, /修复问题和失败/);
+  assert.match(script, /searchParams\.get\("start"\) === "1"\) openIntentDialog\(\)/);
+  assert.match(script, /localStorage\.setItem\("image2-ui-intent"/);
+  assert.match(script, /任务方向：/);
+  assert.match(stylesheet, /\.intent-choice-grid\s*\{[^}]*grid-template-columns:\s*repeat\(4,/s);
   assert.match(stylesheet, /\.launcher-grid\s*\{/);
   assert.match(stylesheet, /\.prompt-column\s*\{/);
   assert.match(stylesheet, /prefers-reduced-motion/);
@@ -295,12 +387,12 @@ test("library keeps one standard high-screen preview frame without stretching ca
   assert.match(markup, /id="previewDialogVideo" width="390" height="844" controls loop playsinline/);
   assert.match(markup, /id="previewDialogDemo" width="390" height="844"/);
   assert.match(markup, /id="previewCursor"/);
-  assert.match(stylesheet, /--card-preview-ratio:\s*697\s*\/\s*1094/);
+  assert.match(stylesheet, /--card-preview-ratio:\s*4\s*\/\s*5/);
   assert.match(stylesheet, /\.demo-card-preview\s*\{[^}]*min-height:\s*0[^}]*aspect-ratio:\s*var\(--card-preview-ratio\)/s);
   assert.match(stylesheet, /--device-ratio:\s*390\s*\/\s*844/);
-  assert.match(stylesheet, /--card-device-height:\s*384px/);
+  assert.match(stylesheet, /--card-device-height:\s*376px/);
   assert.match(stylesheet, /--modal-device-height:\s*649px/);
-  assert.match(stylesheet, /\.phone-preview-media\s*\{[^}]*width:\s*min\(calc\(var\(--card-device-height\) \* 390 \/ 844\),\s*60%\)[^}]*height:\s*min\(var\(--card-device-height\),\s*calc\(100% - 84px\)\)/s);
+  assert.match(stylesheet, /\.phone-preview-media\s*\{[^}]*width:\s*min\(calc\(var\(--card-device-height\) \* 390 \/ 844\),\s*60%\)[^}]*height:\s*min\(var\(--card-device-height\),\s*calc\(100% - 48px\)\)[^}]*border:\s*0/s);
   assert.match(stylesheet, /\.phone-preview-media video,\s*\.phone-preview-media img\s*\{[^}]*object-fit:\s*contain/s);
   assert.match(script, /getLibraryPreviewDisplayDevice\(\)/);
   assert.doesNotMatch(script, /getCardPreviewDevice/);
@@ -394,6 +486,18 @@ test("library effect capture regenerates low-resolution screens at 2x", () => {
   assert.match(captureManifest, /loy-welcome[\s\S]*action: '\[data-view-target="welcome"\]'/);
 });
 
+test("library browser audit verifies that every card is actually painted", () => {
+  const auditScript = fs.readFileSync(path.join(repoRoot, "scripts", "audit_library_browser.mjs"), "utf8");
+
+  assert.match(auditScript, /await image\.decode\(\)\.catch/);
+  assert.match(auditScript, /scrollIntoView\(\{ block: "center" \}\)/);
+  assert.match(auditScript, /const screenshot = await image\.screenshot\(\)/);
+  assert.match(auditScript, /card image rendered as blank/);
+  assert.match(auditScript, /cardImages: \{ total:/);
+  assert.match(auditScript, /preview image rendered as blank/);
+  assert.match(auditScript, /blank: imagePreviewResults\.filter/);
+});
+
 test("library audit keeps every video preview on the FitHub canvas", () => {
   const auditScript = fs.readFileSync(path.join(repoRoot, "scripts", "audit_library.mjs"), "utf8");
 
@@ -441,8 +545,10 @@ test("CleanBite and Plate Play use verified Youtoken-generated assets", () => {
 test("card snapshots stay current while effect dialogs prefer dedicated preview images", () => {
   const script = fs.readFileSync(path.join(repoRoot, "library.js"), "utf8");
   const previewConfig = fs.readFileSync(path.join(repoRoot, "library-preview-config.mjs"), "utf8");
+  const plateCase = JSON.parse(fs.readFileSync(path.join(repoRoot, "catalog", "cases", "plate-play.json"), "utf8"));
 
-  assert.match(script, /id: "plate-play"[^\n]*effectImage: "\.\/demo\/plate-play\/assets\/reference-overview\.png"/);
+  assert.equal(plateCase.id, "plate-play");
+  assert.equal(plateCase.effectImage, "./demo/plate-play/assets/reference-overview.png");
   assert.match(previewConfig, /libraryPreviewCaseIds[\s\S]*"plate-play"/);
   assert.match(previewConfig, /Object\.freeze\(Object\.fromEntries\(/);
   assert.match(previewConfig, /image:\s*standardPreviewDevice/);
@@ -451,17 +557,30 @@ test("card snapshots stay current while effect dialogs prefer dedicated preview 
   assert.match(script, /function getCardPoster\(guide\)\s*\{\s*if \(guide\.liveDemo\) return `\$\{guide\.liveDemo\.replace[^`]+libraryPreviewAssetVersion[^`]+`;/s);
   assert.match(script, /function getPreviewPoster\(guide\)\s*\{\s*if \(guide\.previewImage\) return guide\.previewImage;[\s\S]*if \(guide\.liveDemo\) return getCardPoster\(guide\);/s);
   assert.match(script, /const poster = getCardPoster\(guide\)/);
+  assert.match(script, /previewDialogVideo\.poster = getCardPoster\(guide\)/);
+  assert.doesNotMatch(script, /previewDialogVideo\.poster = guide\.poster/);
   assert.doesNotMatch(script, /guide\.effectImage \|\| getCardPoster/);
 });
 
-test("library opens the UI vocabulary in a rendered document page", () => {
+test("library opens the visual UI vocabulary and keeps the rendered reference document", () => {
   const libraryMarkup = fs.readFileSync(path.join(repoRoot, "library.html"), "utf8");
+  const vocabularyMarkup = fs.readFileSync(path.join(repoRoot, "vocabulary.html"), "utf8");
+  const vocabularyScript = fs.readFileSync(path.join(repoRoot, "vocabulary.js"), "utf8");
+  const vocabularyData = fs.readFileSync(path.join(repoRoot, "vocabulary-data.js"), "utf8");
   const readerMarkup = fs.readFileSync(path.join(repoRoot, "reference.html"), "utf8");
   const readerScript = fs.readFileSync(path.join(repoRoot, "reference.js"), "utf8");
   const markdownScript = fs.readFileSync(path.join(repoRoot, "markdown.js"), "utf8");
 
-  assert.match(libraryMarkup, /href="\.\/reference\.html\?doc=ui-section-vocabulary"[^>]*>UI 词典<\/a>/);
+  assert.match(libraryMarkup, /href="\.\/vocabulary\.html"[^>]*>UI 词典<\/a>/);
   assert.doesNotMatch(libraryMarkup, /href="[^"]*ui-section-vocabulary\.md"/);
+  assert.match(vocabularyMarkup, /id="vocabularySearch"/);
+  assert.match(vocabularyMarkup, /id="categoryChips"/);
+  assert.match(vocabularyMarkup, /id="termDialog"/);
+  assert.match(vocabularyMarkup, /href="\.\/reference\.html\?doc=ui-section-vocabulary"/);
+  assert.match(vocabularyScript, /function openTerm/);
+  assert.match(vocabularyScript, /data-copy-prompt/);
+  assert.match(vocabularyData, /export const vocabularyEntries/);
+  assert.ok((vocabularyData.match(/\bid:\s*"[^"]+"/g) || []).length >= 24);
   assert.match(readerMarkup, /id="documentContent"/);
   assert.match(readerMarkup, /id="documentNavigation"/);
   assert.match(readerMarkup, /id="languageSwitch"/);
@@ -482,9 +601,9 @@ test("library opens the UI vocabulary in a rendered document page", () => {
 test("library case metadata and live actions stay complete", () => {
   const markup = fs.readFileSync(path.join(repoRoot, "library.html"), "utf8");
   const script = fs.readFileSync(path.join(repoRoot, "library.js"), "utf8");
-  const guides = [...script.matchAll(/\bid:\s*"[^"]+",\s*category:\s*"([^"]+)"/g)];
-  const counts = guides.reduce((result, match) => {
-    result[match[1]] = (result[match[1]] || 0) + 1;
+  const guides = fs.readdirSync(path.join(repoRoot, "catalog", "cases")).filter((file) => file.endsWith(".json")).map((file) => JSON.parse(fs.readFileSync(path.join(repoRoot, "catalog", "cases", file), "utf8")));
+  const counts = guides.reduce((result, guide) => {
+    result[guide.category] = (result[guide.category] || 0) + 1;
     return result;
   }, {});
 
@@ -502,19 +621,19 @@ test("library case metadata and live actions stay complete", () => {
   assert.match(script, /const catalogHeading = document\.querySelector\("#catalogHeading"\)/);
   assert.match(script, /catalogHeading\.hidden = activeCategory !== "all" \|\| Boolean\(activeTag\)/);
   assert.match(script, /function renderDemoGallery\(\) \{\s*updateCatalogHeadingVisibility\(\)/);
-  assert.equal((script.match(/liveDemo:\s*"/g) || []).length, 20);
+  assert.equal(guides.filter((guide) => guide.liveDemo).length, 20);
   assert.match(script, /guide\.liveDemo \? `<button class="style-details-button"[^`]*data-preview-mode="live">可点击<\/button>`/);
 });
 
 test("RELAY case keeps effect generation before UI decomposition", () => {
-  const script = fs.readFileSync(path.join(repoRoot, "library.js"), "utf8");
+  const relayCase = JSON.parse(fs.readFileSync(path.join(repoRoot, "catalog", "cases", "relay-music.json"), "utf8"));
   const demoRoot = path.join(repoRoot, "demo", "relay-music");
   const decomposition = fs.readFileSync(path.join(demoRoot, "artifacts", "ui-deconstruction.md"), "utf8");
   const manifest = JSON.parse(fs.readFileSync(path.join(demoRoot, "artifacts", "asset-manifest.json"), "utf8"));
 
-  assert.match(script, /id: "relay-music"[^}]*poster: "\.\/demo\/relay-music\/assets\/relay-effect-board\.png"/s);
-  assert.match(script, /id: "relay-music"[^}]*referenceImage: "\.\/demo\/relay-music\/assets\/reference-overview\.png"/s);
-  assert.match(script, /id: "relay-music"[^}]*liveDemo: "\.\/demo\/relay-music\/index\.html"/s);
+  assert.equal(relayCase.poster, "./demo/relay-music/assets/relay-effect-board.png");
+  assert.equal(relayCase.referenceImage, "./demo/relay-music/assets/reference-overview.png");
+  assert.equal(relayCase.liveDemo, "./demo/relay-music/index.html");
   assert.ok(fs.existsSync(path.join(demoRoot, "assets", "relay-effect-board.png")));
   assert.ok(fs.existsSync(path.join(demoRoot, "index.html")));
   assert.equal(manifest.workflow.effectImageReviewed, true);
@@ -524,14 +643,14 @@ test("RELAY case keeps effect generation before UI decomposition", () => {
 });
 
 test("SOFTLY case uses its generated effect image as the decomposition source", () => {
-  const script = fs.readFileSync(path.join(repoRoot, "library.js"), "utf8");
+  const softlyCase = JSON.parse(fs.readFileSync(path.join(repoRoot, "catalog", "cases", "softly-reflections.json"), "utf8"));
   const demoRoot = path.join(repoRoot, "demo", "softly-reflections");
   const decomposition = fs.readFileSync(path.join(demoRoot, "artifacts", "ui-deconstruction.md"), "utf8");
   const manifest = JSON.parse(fs.readFileSync(path.join(demoRoot, "artifacts", "asset-manifest.json"), "utf8"));
 
-  assert.match(script, /id: "softly-reflections"[^}]*poster: "\.\/demo\/softly-reflections\/assets\/softly-effect-board\.png"/s);
-  assert.match(script, /id: "softly-reflections"[^}]*referenceImage: "\.\/demo\/softly-reflections\/assets\/reference-overview\.png"/s);
-  assert.match(script, /id: "softly-reflections"[^}]*liveDemo: "\.\/demo\/softly-reflections\/index\.html"/s);
+  assert.equal(softlyCase.poster, "./demo/softly-reflections/assets/softly-effect-board.png");
+  assert.equal(softlyCase.referenceImage, "./demo/softly-reflections/assets/reference-overview.png");
+  assert.equal(softlyCase.liveDemo, "./demo/softly-reflections/index.html");
   assert.ok(fs.existsSync(path.join(demoRoot, "assets", "softly-effect-board.png")));
   assert.ok(fs.existsSync(path.join(demoRoot, "assets", "softly-mascot.png")));
   assert.ok(fs.existsSync(path.join(demoRoot, "index.html")));
@@ -553,11 +672,11 @@ test("library opens video demos from the primary preview action when available",
 
 test("every library case has a video preview as its primary mode", () => {
   const script = fs.readFileSync(path.join(repoRoot, "library.js"), "utf8");
-  const caseBlocks = [...script.matchAll(/\{\n    id: "([^"]+)"[\s\S]*?\n  \}/g)].map((match) => ({ id: match[1], source: match[0] }));
+  const caseBlocks = fs.readdirSync(path.join(repoRoot, "catalog", "cases")).filter((file) => file.endsWith(".json")).map((file) => JSON.parse(fs.readFileSync(path.join(repoRoot, "catalog", "cases", file), "utf8")));
 
   assert.equal(caseBlocks.length, 23);
   for (const block of caseBlocks) {
-    const video = block.source.match(/video:\s*"([^"]+)"/)?.[1];
+    const video = block.video;
     assert.ok(video, `${block.id} should have a video preview`);
     assert.ok(fs.existsSync(path.join(repoRoot, video.replace(/^\.\//, "").replace(/\?.*/, ""))), video);
   }
@@ -738,23 +857,27 @@ test("bundled demos use semantic motion instead of a uniform hover template", ()
   assert.doesNotMatch(smartHomeStyles, /\.device-card:hover[\s\S]{0,120}translateY/);
 });
 
-test("beginner guide teaches through real case studies", () => {
+test("beginner guide onboards non-technical users into a first clickable demo", () => {
   const markup = fs.readFileSync(path.join(repoRoot, "learn.html"), "utf8");
   const script = fs.readFileSync(path.join(repoRoot, "learn.js"), "utf8");
   const stylesheet = fs.readFileSync(path.join(repoRoot, "learn.css"), "utf8");
 
   assert.match(markup, /id="case-study"/);
-  assert.match(markup, /data-case="buddy"/);
+  assert.match(markup, /data-case="fufu"/);
   assert.match(markup, /data-case="plate"/);
   assert.match(markup, /data-case="relay"/);
   assert.match(markup, /class="learning-map"/);
-  assert.match(markup, /data-learn-section="learning-path"/);
+  assert.match(markup, /data-learn-section="quick-start"/);
+  assert.match(markup, /data-learn-section="input-output"/);
   assert.match(markup, /data-learn-section="case-study"/);
   assert.match(markup, /data-learn-section="playground"/);
   assert.match(markup, /class="hero-line hero-line-accent"/);
-  assert.match(markup, /新手最常问的 4 个问题/);
-  assert.match(markup, /前端到底是什么/);
-  assert.match(markup, /UI 和 UX 听起来很像，有什么区别/);
+  assert.match(markup, /不会前端，也能把参考图/);
+  assert.match(markup, /四步完成第一个界面/);
+  assert.match(markup, /复制这段 Prompt/);
+  assert.match(markup, /品牌 Design Token 实验室|BRAND DESIGN TOKEN LAB/);
+  assert.match(markup, /完全不会写代码可以使用吗/);
+  assert.match(markup, /每个页面都必须调用 Image2 吗/);
   assert.match(markup, /class="screen-anatomy"/);
   assert.match(markup, /Plate Play 食谱首页完整页面/);
   assert.match(markup, /demo\/plate-play\/mobile-preview\.png/);
@@ -764,13 +887,15 @@ test("beginner guide teaches through real case studies", () => {
   assert.match(markup, /developer\.mozilla\.org\/en-US\/docs\/Learn_web_development\/Getting_started\/Your_first_website/);
   assert.match(markup, /web\.dev\/learn/);
   assert.match(markup, /nngroup\.com\/articles\/what-is-user-experience/);
-  assert.match(markup, /reddit\.com\/r\/learnprogramming/);
+  assert.doesNotMatch(markup, /reddit\.com\/r\/learnprogramming/);
   assert.match(script, /caseStudies = \{/);
-  assert.match(script, /buddy-travel\/mobile-preview\.png/);
+  assert.match(script, /fufu-bakery\/mobile-preview\.png/);
   assert.match(script, /plate-play\/mobile-preview\.png/);
   assert.match(script, /relay-music\/assets\/relay-effect-board\.png/);
-  assert.match(script, /caseTask\.textContent = item\.task/);
-  assert.match(script, /caseTags\.innerHTML/);
+  assert.match(script, /caseStructure.*textContent = item\.structure/);
+  assert.match(script, /caseControls.*innerHTML/);
+  assert.match(script, /tokensAsCss/);
+  assert.match(script, /localStorage\.setItem\("image2-custom-brand-tokens"/);
   assert.match(script, /vocabName\.textContent = button\.dataset\.vocab/);
   assert.match(script, /item\.dataset\.vocab === button\.dataset\.vocab/);
   assert.match(script, /IntersectionObserver/);
@@ -778,8 +903,9 @@ test("beginner guide teaches through real case studies", () => {
   assert.match(stylesheet, /\.case-board\s*\{/);
   assert.match(stylesheet, /\.case-tab\.is-selected/);
   assert.match(stylesheet, /\.learning-map\s*\{/);
-  assert.match(stylesheet, /\.answer-row\s*\{/);
-  assert.match(stylesheet, /\.research-note\s*\{/);
+  assert.match(stylesheet, /\.prompt-tool\s*\{/);
+  assert.match(stylesheet, /\.token-lab\s*\{/);
+  assert.match(stylesheet, /\.faq-list\s*\{/);
   assert.match(stylesheet, /\.anatomy-marker\s*\{/);
   assert.match(markup, /https:\/\/x\.com\/JGuli49724/);
   assert.match(markup, /xiaohongshu\.com\/user\/profile\/57b3456c82ec3947f79496e9/);

@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Image2 UI brand profile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "name", "sourceType", "sourceStatus", "reviewedAt", "platforms", "industry", "styles", "completeness", "foundations", "components", "visualLanguage", "contentVoice", "accessibility", "dos", "donts"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+    "name": { "type": "string", "minLength": 1 },
+    "sourceType": { "enum": ["brand-provided", "public-guideline", "style-reference", "custom-brand"] },
+    "sourceStatus": { "enum": ["品牌提供", "基于公开设计规范", "风格参考", "自定义品牌"] },
+    "sourceUrl": { "type": "string", "format": "uri" },
+    "reviewedAt": { "type": "string", "format": "date" },
+    "platforms": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "enum": ["web", "ios", "android"] } },
+    "industry": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+    "styles": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+    "completeness": { "enum": ["基础规范", "组件规范", "完整系统"] },
+    "foundations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["colors", "typography", "spacing", "radius", "elevation", "grid", "motion"],
+      "properties": {
+        "colors": { "type": "object", "minProperties": 1, "additionalProperties": { "type": "string" } },
+        "typography": { "type": "object", "minProperties": 1, "additionalProperties": { "type": "string" } },
+        "spacing": { "type": "string" },
+        "radius": { "type": "string" },
+        "elevation": { "type": "string" },
+        "grid": { "type": "string" },
+        "motion": { "type": "string" }
+      }
+    },
+    "components": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["button", "card", "navigation", "form", "dialog"],
+      "properties": {
+        "button": { "type": "string" },
+        "card": { "type": "string" },
+        "navigation": { "type": "string" },
+        "form": { "type": "string" },
+        "dialog": { "type": "string" }
+      }
+    },
+    "visualLanguage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["photography", "illustration", "iconography"],
+      "properties": {
+        "photography": { "type": "string" },
+        "illustration": { "type": "string" },
+        "iconography": { "type": "string" }
+      }
+    },
+    "contentVoice": { "type": "string" },
+    "accessibility": { "type": "string" },
+    "dos": { "type": "array", "items": { "type": "string" } },
+    "donts": { "type": "array", "items": { "type": "string" } }
+  }
+}

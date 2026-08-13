@@ -117,11 +117,11 @@ button { cursor: pointer; }
 .icon-sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
 
 .embed-mode { overflow: hidden; }
-.embed-mode body { width: 390px; min-width: 390px; height: 693.3333px; overflow: hidden; transform: scale(var(--embed-scale, 1)); transform-origin: top left; }
-.embed-mode .stage { display: block; width: 390px; min-height: 693.3333px; padding: 0; }
+.embed-mode body { width: 390px; min-width: 390px; height:844px; overflow: hidden; transform: scale(var(--embed-scale, 1)); transform-origin: top left; }
+.embed-mode .stage { display: block; width: 390px; min-height:844px; padding: 0; }
 .embed-mode .context, .embed-mode .device-caption { display: none; }
 .embed-mode .phone { width: 390px; }
-.embed-mode .device-shell { width: 390px; max-width: none; height: 693.3333px; min-height: 693.3333px; margin: 0; padding: 7px; border-radius: var(--compact-device-radius); }
+.embed-mode .device-shell { width: 390px; max-width: none; height:844px; min-height:844px; margin: 0; padding: 7px; border-radius: var(--compact-device-radius); }
 .embed-mode .screen { border-radius: var(--compact-screen-radius); }
 .embed-mode .island { top: 11px; width: 94px; height: 24px; border-radius: 16px; }
 

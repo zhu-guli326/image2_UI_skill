@@ -647,7 +647,7 @@ button:focus-visible {
   left: 0;
   display: block;
   width: 390px;
-  height: 693.333px;
+  height:844px;
   min-height: 0;
   padding: 0;
   transform: scale(var(--embed-scale, 1));
@@ -658,7 +658,7 @@ button:focus-visible {
 }
 .embed-mode .phone {
   width: 390px;
-  height: 693.333px;
+  height:844px;
 }
 @media (max-width: 760px) {
   .stage {

@@ -1,0 +1,33 @@
+{
+  "id": "softly-reflections",
+  "category": "wellness",
+  "name": "SOFTLY",
+  "style": "柔和反思与情绪签到",
+  "video": "./demo/softly-reflections/softly-reflections-demo.mp4",
+  "liveDemo": "./demo/softly-reflections/index.html",
+  "poster": "./demo/softly-reflections/assets/softly-effect-board.png",
+  "preview": "#e5e0fb",
+  "reference": "深靛网格展板上的三屏情绪产品，用纸卡、编辑式衬线与淡紫 3D 角色组织一次安静的自我对话",
+  "referenceImage": "./demo/softly-reflections/assets/reference-overview.png",
+  "prompt": "情绪反思 App 视觉参考：先根据参考图生成完整三屏 SOFTLY 效果图并审查，再以生成效果图作为 UI 拆分依据；深靛网格展板、珍珠白与暖象牙页面、淡紫角色、黄油黄纸卡和少量薄荷细节。角色与头像使用独立无文字 image2 位图，所有问题、按钮、状态栏、轮播箭头、标签、波形、完成环和底部导航由代码呈现；不在图片中生成文字、logo、水印、手机或 UI glyph。",
+  "summary": "先用完整效果图确定欢迎、反思轮播和情绪签到三屏关系，再将原创角色与真实可点击的纸卡界面重新组合。",
+  "bestFor": "情绪记录、心理健康、反思日记、学生陪伴",
+  "tags": [
+    "三屏效果图",
+    "纸卡轮播",
+    "淡紫角色"
+  ],
+  "palette": "深靛 / 象牙白 / 淡紫 / 黄油黄 / 薄荷",
+  "layout": "欢迎页 + Reflection 轮播 + Mood Check-In",
+  "recipe": {
+    "principle": "每一屏只推进一个温和动作：进入、回答、命名感受。",
+    "image": "透明 3D 角色和 Mara 头像均从已审查效果图派生，保持无文字、无 UI 并作为独立本地资源接入。",
+    "type": "衬线问题承担情绪焦点，正文、标签与操作保持清楚的系统无衬线层级。",
+    "components": "390×844 iOS 机身、浮动纸卡、反思轮播、搜索、收藏、四项导航、情绪波形与完成状态。",
+    "motion": "轮播、导航、情绪选择和保存使用 180-220ms 状态变化，并支持 reduced-motion。",
+    "avoid": "直接从原参考图拆 UI、把角色做成 CSS 近似、在图片中保留功能文字，或把所有内容堆进圆角卡片。"
+  },
+  "brandProfileIds": [
+    "soft-lifestyle"
+  ]
+}

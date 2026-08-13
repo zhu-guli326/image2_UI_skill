@@ -7,7 +7,7 @@ if (q.has("embed")) {
   const f = () =>
     document.documentElement.style.setProperty(
       "--embed-scale",
-      Math.min(innerWidth / 390, innerHeight / 693.3333),
+      Math.min(innerWidth / 390, innerHeight / 844),
     );
   f();
   addEventListener("resize", f);

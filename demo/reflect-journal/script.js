@@ -4,7 +4,7 @@ const feedback=document.querySelector("#feedback");
 const params=new URLSearchParams(window.location.search);
 let returnView="home";
 
-if(params.has("embed")){document.documentElement.classList.add("embed-mode");const fit=()=>document.documentElement.style.setProperty("--embed-scale",String(Math.min(window.innerWidth/390,window.innerHeight/693.3333)));fit();window.addEventListener("resize",fit)}
+if(params.has("embed")){document.documentElement.classList.add("embed-mode");const fit=()=>document.documentElement.style.setProperty("--embed-scale",String(Math.min(window.innerWidth/390,window.innerHeight / 844)));fit();window.addEventListener("resize",fit)}
 
 function show(name){
   views.forEach((view)=>{const active=view.dataset.view===name;view.hidden=!active;view.classList.toggle("is-active",active)});

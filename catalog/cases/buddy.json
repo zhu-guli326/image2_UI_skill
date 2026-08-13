@@ -1,0 +1,33 @@
+{
+  "id": "buddy",
+  "category": "travel",
+  "name": "Buddy",
+  "style": "轻盈旅行计划",
+  "video": "./demo/buddy-travel/buddy-travel-demo.mp4",
+  "liveDemo": "./demo/buddy-travel/index.html",
+  "poster": "./demo/buddy-travel/mobile-preview.png",
+  "preview": "#e4ff83",
+  "reference": "荧光黄背景中的浅杏色手机，圆形旅行标签像轻轻散落的贴纸",
+  "referenceImage": "./demo/buddy-travel/assets/reference-welcome.png",
+  "prompt": "轻盈旅行计划 App 视觉参考：荧光黄外部背景，浅杏色 9:16 手机屏幕，黑色细边 iOS 机身；四个小型彩色旅行标签围绕无文字旅行贴纸，给中央标题留白；所有文字、按钮、状态栏、底部导航与功能图标由代码呈现，不生成文字、logo、水印、UI glyph 或伪文字。",
+  "summary": "用散落的旅行标签和一张温和的贴纸，让用户从一个目的地开始慢慢组织下一趟旅程。",
+  "bestFor": "旅行计划、城市灵感、周末行程、轻量收藏",
+  "tags": [
+    "贴纸标签",
+    "荧光黄",
+    "轻量入口"
+  ],
+  "palette": "荧光黄 / 浅杏 / 蜜桃粉 / 湖蓝",
+  "layout": "欢迎页 + 目的地清单 + 底部导航",
+  "recipe": {
+    "principle": "首页只传递一次出发的冲动，把具体行程留到下一屏。",
+    "image": "旅行贴纸是唯一的位图情绪点，标签和其余 UI 都要保持清晰可点。",
+    "type": "品牌、标题与说明按一条居中轴组织，文字短而松。",
+    "components": "9:16 iOS 机身、可点旅行标签、目的地列表、主操作和底部标签导航。",
+    "motion": "标签按压、进入目的地和底部标签切换都提供短暂、直接的反馈。",
+    "avoid": "在欢迎页塞进地图、筛选、评分、价格或成排的大卡片。"
+  },
+  "brandProfileIds": [
+    "soft-lifestyle"
+  ]
+}

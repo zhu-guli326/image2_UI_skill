@@ -1,0 +1,33 @@
+{
+  "id": "mimo",
+  "category": "wellness",
+  "name": "Mimo",
+  "style": "透视日程卡片",
+  "video": "./demo/mimo-activities/mimo-activities-demo.mp4",
+  "liveDemo": "./demo/mimo-activities/index.html",
+  "poster": "./demo/mimo-activities/mobile-preview.png",
+  "preview": "#878ae0",
+  "reference": "紫雾背景里的日程卡片轮播，中心任务聚焦，两侧任务带透视退场",
+  "referenceImage": "./demo/mimo-activities/assets/reference-carousel.png",
+  "prompt": "健康日程 App 视觉参考：薰衣草紫到深靛蓝的柔和背景，中心白色任务卡最大，两侧任务卡有透视旋转、透明度和尺度递减；重点实现真实可滑动卡片轮播，所有文字、日期、状态栏、导航、按钮与图标由代码呈现；中心药片使用独立无文字视觉资产，不生成 UI、logo、水印或伪文字。",
+  "summary": "把一天的待办做成可拖动的透视卡组，始终用一张居中的任务卡明确下一步。",
+  "bestFor": "用药提醒、日程安排、康复计划、习惯陪伴",
+  "tags": [
+    "透视轮播",
+    "中心聚焦",
+    "手势切换"
+  ],
+  "palette": "薰衣草紫 / 靛蓝 / 雾白",
+  "layout": "日期选择 + 透视任务卡组 + 底部导航",
+  "recipe": {
+    "principle": "中心卡只表达当前下一步，两侧卡负责提供时间上下文而不抢注意力。",
+    "image": "中心任务可使用一张无文字的药片或主题物件插画，其他 UI 全由代码保持清晰可点。",
+    "type": "时间和任务标题在中心卡有足够对比与留白，侧卡信息只保留必要摘要。",
+    "components": "吸附式轮播、左右卡面点击区、日期胶囊、焦点反馈和底部 tab。",
+    "motion": "拖动结束时卡片在 220ms 内吸附到最近项目，透视、透明度和尺度同步变化。",
+    "avoid": "让每一张卡都同等突出，或将侧卡做成无法点击的纯装饰。"
+  },
+  "brandProfileIds": [
+    "soft-lifestyle"
+  ]
+}

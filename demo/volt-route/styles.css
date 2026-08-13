@@ -85,7 +85,7 @@ button:focus-visible {
   position: relative;
   z-index: 3;
   width: 390px;
-  height: 693.333px;
+  height:844px;
 }
 .screen,
 .static-screen {
@@ -769,7 +769,7 @@ button:focus-visible {
 .embed-mode body {
   width: 390px;
   min-width: 390px;
-  height: 693.333px;
+  height:844px;
   overflow: hidden;
   transform: scale(var(--embed-scale, 1));
   transform-origin: top left;
@@ -777,7 +777,7 @@ button:focus-visible {
 .embed-mode .stage {
   display: block;
   width: 390px;
-  min-height: 693.333px;
+  min-height:844px;
   padding: 0;
 }
 .embed-mode .showcase-bar,
@@ -786,7 +786,7 @@ button:focus-visible {
 }
 .embed-mode .phone {
   width: 390px;
-  height: 693.333px;
+  height:844px;
 }
 @media (min-width: 1000px) {
   .phone {

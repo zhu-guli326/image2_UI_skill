@@ -1,0 +1,33 @@
+{
+  "id": "carry-bag",
+  "category": "commerce",
+  "name": "Carry Bag",
+  "style": "高亮背包电商",
+  "video": "./demo/carry-bag/carry-bag-demo.mp4",
+  "liveDemo": "./demo/carry-bag/index.html",
+  "poster": "./demo/carry-bag/mobile-preview.png",
+  "preview": "#b4becb",
+  "reference": "冰灰蓝展板上的三台背包电商手机，户外摄影、极简货架与皮革产品详情由一抹亮绿串联",
+  "referenceImage": "./demo/carry-bag/assets/reference-overview.png",
+  "prompt": "背包电商 App 视觉参考：冰灰蓝桌面背景上并列三台 9:16 黑色 iPhone；一张无文字的冰川户外背包摄影和一张无文字的暖棕皮革背包棚拍作为独立 image2 位图，荧光绿只用于明确的行动按钮。所有品牌文字、状态栏、价格、商品信息、按钮、tab、底部导航、箭头与图标均由代码呈现；不在图片中生成文字、logo、水印、手机或 UI glyph。",
+  "summary": "用户外主视觉、清爽货架和皮革单品详情组织一条可点击的背包购物路径，让亮绿只为下一步行动服务。",
+  "bestFor": "户外产品、箱包零售、生活方式品牌、精品电商",
+  "tags": [
+    "户外产品",
+    "亮绿操作",
+    "极简货架"
+  ],
+  "palette": "冰灰蓝 / 云白 / 荧光绿 / 深墨",
+  "layout": "户外主视觉 + 商品货架 + 商品详情",
+  "recipe": {
+    "principle": "把产品摄影与购买动作拆开：照片负责质感，代码界面负责阅读与决策。",
+    "image": "户外和棚拍背包使用独立且无文字的生成图，背景、按钮、价格和可交互控件保持在代码层。",
+    "type": "衬线标题提供精品零售感，价格、标签和导航用紧凑无衬线保持扫描效率。",
+    "components": "9:16 iOS 机身、商品 tab、两层商品卡、产品详情、色彩选择、下单按钮与可点底部导航。",
+    "motion": "商品、色彩、tab、下单和导航切换都有即时且可见的反馈。",
+    "avoid": "把折扣贴纸、复杂筛选、长规格表和高饱和颜色同时堆到一个商品屏。"
+  },
+  "brandProfileIds": [
+    "editorial-commerce"
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "id": "signal-grid",
+  "category": "creative",
+  "name": "Signal Grid",
+  "style": "热成像网络匹配",
+  "video": "./demo/signal-grid/signal-grid-demo.mp4",
+  "liveDemo": "./demo/signal-grid/index.html",
+  "poster": "./demo/signal-grid/mobile-preview.png",
+  "preview": "#f4a078",
+  "reference": "深青与热橙渐变覆盖极简网络界面，扫描、设置和套餐组成一套完整连接流程",
+  "referenceImage": "./demo/signal-grid/assets/signal-grid-effect-board.png",
+  "prompt": "Signal Grid 网络匹配 App 视觉参考：深青、暖灰和热橙构成热成像式连续背景，三台完整黑色 iPhone 分别展示网络扫描、参数设置与套餐选择；线框球只存在于扫描页手机内部。所有真实标题、状态栏、菜单、设置行、开关、套餐 tab、价格、购买和底部导航均由代码呈现。",
+  "summary": "用完整三屏效果图展示扫描、设置与套餐决策，让线框网络球回到扫描页内部承担视觉焦点。",
+  "bestFor": "网络服务、设备连接、套餐配置、科技品牌、数据匹配",
+  "tags": [
+    "热成像渐变",
+    "三屏流程",
+    "严格排版"
+  ],
+  "palette": "深青 / 热橙 / 暖灰 / 信号白",
+  "layout": "网络扫描 + 参数设置 + 套餐选择 + 确认页",
+  "recipe": {
+    "principle": "保持内容表格般清晰，再用单一线框视觉赋予连接过程以记忆点。",
+    "image": "案例档案使用完整三屏生成效果图；线框球作为独立生成资产，仅接入扫描页内部。",
+    "type": "大标题低字重且紧凑；参数、标签和价格使用更小但明确的无衬线信息层级。",
+    "components": "iOS 9:16 机身、网络扫描、设置行与开关、套餐 tab、购买确认和底部 tab。",
+    "motion": "扫描、开关、套餐和购买全部有即时状态变化，不添加装饰性长动效。",
+    "avoid": "把局部资产单独当作完整案例配图，或把图表、营销卖点和多重按钮堆入同一屏。"
+  },
+  "brandProfileIds": [
+    "minimal-tech"
+  ]
+}

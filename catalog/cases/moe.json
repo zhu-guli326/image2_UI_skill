@@ -1,0 +1,34 @@
+{
+  "id": "moe",
+  "category": "wellness",
+  "name": "Moe",
+  "style": "插画式习惯养成",
+  "video": "./demo/moe-habits/moe-habits-demo.mp4?v=sharp-3x",
+  "liveDemo": "./demo/moe-habits/index.html",
+  "poster": "./demo/moe-habits/screenshots/video-2x/01-intro.png?v=sharp-3x",
+  "previewImage": "./demo/moe-habits/screenshots/video-2x/01-intro.png?v=sharp-3x",
+  "preview": "#d5efd0",
+  "reference": "友好角色、温和提醒和单一下一步，让习惯养成没有压力",
+  "referenceImage": "./demo/moe-habits/assets/reference-overview.png",
+  "prompt": "插画式习惯养成 App 视觉参考：浅薄荷绿与暖白底，绿色角色和淡蓝水杯承担陪伴感，页面只突出一个下一步行动；日期、习惯列表和完成状态要清楚克制，所有文字、按钮、导航和图标由代码呈现；不要密集数据看板、复杂渐变、商业化奖励墙或伪手写 UI 文案。",
+  "summary": "用一个可爱的陪伴角色把每日习惯拆成温和而具体的一步，完成时给轻量、真诚的庆祝。",
+  "bestFor": "习惯养成、健康提醒、亲子任务、轻量自我管理",
+  "tags": [
+    "陪伴角色",
+    "温和激励",
+    "单一下一步"
+  ],
+  "palette": "薄荷绿 / 暖白 / 淡蓝 / 柔黄 / 炭黑",
+  "layout": "日期轨道 + 鼓励主视觉 + 习惯列表 + 完成状态",
+  "recipe": {
+    "principle": "不要让用户面对一整面待办，而是让下一件小事显得足够容易开始。",
+    "image": "角色插画只承担情绪与陪伴，文本和状态绝不烘焙进图片。",
+    "type": "欢迎语和下一步行动优先，辅助说明退到第二层。",
+    "components": "日期轨道、鼓励卡、习惯列表、任务详情、完成庆祝、底部 tab 和短反馈。",
+    "motion": "打开任务与完成动作需要清晰的状态转换，庆祝保持短暂而不过量。",
+    "avoid": "任务列表、连续天数、成就和统计图同时争抢注意力。"
+  },
+  "brandProfileIds": [
+    "soft-lifestyle"
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "id": "volt-route",
+  "category": "creative",
+  "name": "Volt Route",
+  "style": "暗色电车充电导航",
+  "video": "./demo/volt-route/volt-route-demo.mp4",
+  "liveDemo": "./demo/volt-route/index.html",
+  "poster": "./demo/volt-route/mobile-preview.png",
+  "preview": "#b5c0b2",
+  "reference": "雾灰绿展板上的三台深色手机，银灰车身、荧光绿充电状态和夜间路线形成克制的高科技感",
+  "referenceImage": "./demo/volt-route/assets/reference-overview.png",
+  "prompt": "电动车充电导航 App 视觉参考：雾灰绿桌面背景上并列三台深黑 iPhone，银灰电动车尾部摄影与无标签夜间街区地图作为两个独立 image2 位图；荧光绿只用于充电进度、路线与选中状态。所有百分比、文字、状态栏、地图路线、地点节点、底部导航和控制图标均由代码呈现；不在图片中生成文字、logo、水印、路线、pin、手机或 UI glyph。",
+  "summary": "将车辆状态、充电控制与最近的快充路线收进同一套深色仪表盘，让绿色状态只在需要行动的地方出现。",
+  "bestFor": "新能源出行、充电网络、车辆管理、城市导航",
+  "tags": [
+    "暗色仪表盘",
+    "电车摄影",
+    "路线状态"
+  ],
+  "palette": "雾灰绿 / 炭黑 / 银灰 / 充电绿",
+  "layout": "车辆仪表盘 + 充电状态 + 路线抽屉",
+  "recipe": {
+    "principle": "把车辆摄影和路线纹理作为环境层，数值、选择与动作保持高对比的代码界面。",
+    "image": "车辆和地图各自独立生成且无文字，路线、绿色节点与所有 UI 在代码层叠加，保证可读可点。",
+    "type": "大号电量数字先建立状态，指标和路线说明随后以小而清楚的层级出现。",
+    "components": "9:16 iOS 机身、充电百分比、车辆状态卡、路线节点、底部导航、暂停控制和路线抽屉。",
+    "motion": "tab、暂停/继续和地点选择只提供明确、即时的状态反馈。",
+    "avoid": "不要在首屏堆放车辆参数表、营销卖点、密集地图标签或拟真的假按钮。"
+  },
+  "brandProfileIds": [
+    "minimal-tech"
+  ]
+}

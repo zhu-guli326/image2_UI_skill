@@ -51,7 +51,7 @@ button {
 }
 .phone {
   width: 390px;
-  height: 693.333px;
+  height:844px;
   padding: 7px;
   border: 1px solid #eee;
   border-radius: 43px;
@@ -393,7 +393,7 @@ button {
 .embed-mode body {
   width: 390px;
   min-width: 390px;
-  height: 693.333px;
+  height:844px;
   overflow: hidden;
   transform: scale(var(--embed-scale, 1));
   transform-origin: top left;
@@ -401,7 +401,7 @@ button {
 .embed-mode .stage {
   display: block;
   width: 390px;
-  min-height: 693.333px;
+  min-height:844px;
 }
 .embed-mode .label,
 .embed-mode .note {

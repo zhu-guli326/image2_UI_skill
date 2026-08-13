@@ -8,7 +8,7 @@ const previewParams = new URLSearchParams(window.location.search);
 if (previewParams.has('embed')) {
   document.documentElement.classList.add('embed-mode');
   const fitEmbeddedPreview = () => {
-    const scale = Math.min(window.innerWidth / 402, window.innerHeight / 840);
+    const scale = Math.min(window.innerWidth / 390, window.innerHeight / 844);
     document.documentElement.style.setProperty('--embed-scale', String(scale));
   };
   fitEmbeddedPreview();

@@ -21,11 +21,11 @@ button { font:inherit; cursor:pointer; } button:focus-visible { outline:3px soli
 .capture-mode .phone-wrap { height:672px; }
 .capture-mode .feedback { margin-top:-153px; }
 .embed-mode { overflow:hidden; }
-.embed-mode body { width:390px; min-width:390px; height:693.3333px; overflow:hidden; transform:scale(var(--embed-scale,1)); transform-origin:top left; }
-.embed-mode .stage { display:block; width:390px; min-width:390px; min-height:693.3333px; padding:0; }
+.embed-mode body { width:390px; min-width:390px; height:844px; overflow:hidden; transform:scale(var(--embed-scale,1)); transform-origin:top left; }
+.embed-mode .stage { display:block; width:390px; min-width:390px; min-height:844px; padding:0; }
 .embed-mode .brief { display:none; }
-.embed-mode .phone-wrap { width:390px; height:693.3333px; }
-.embed-mode .phone { width:390px; height:693.3333px; min-height:693.3333px; max-width:none; padding:7px; border-radius:43px; }
+.embed-mode .phone-wrap { width:390px; height:844px; }
+.embed-mode .phone { width:390px; height:844px; min-height:844px; max-width:none; padding:7px; border-radius:43px; }
 .embed-mode .screen { border-radius:35px; }
 .embed-mode .island { top:11px; width:94px; height:24px; }
 .embed-mode .feedback { display:none; }

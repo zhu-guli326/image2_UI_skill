@@ -4,6 +4,9 @@ Use this reference when turning screenshots, mockups, or app references into
 clickable demos. The main job is to name what is on the screen before deciding
 whether it belongs in code or in `image2`.
 
+For a searchable version with local screenshots, anatomy, variants, related
+terms, and copyable Agent prompts, open the [illustrated UI vocabulary](../vocabulary.html).
+
 ## Core Rule
 
 Describe UI by role, not by vague appearance.

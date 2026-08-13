@@ -8,7 +8,7 @@ if (isEmbedded) {
   const fit = () =>
     document.documentElement.style.setProperty(
       "--embed-scale",
-      String(Math.min(window.innerWidth / 390, window.innerHeight / 693.3333)),
+      String(Math.min(window.innerWidth / 390, window.innerHeight / 844)),
   );
   fit();
   window.addEventListener("resize", fit);

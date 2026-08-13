@@ -1,0 +1,34 @@
+{
+  "id": "loy",
+  "category": "wellness",
+  "name": "Loy",
+  "style": "手绘情绪仪表盘",
+  "video": "./demo/loy-wellness/loy-wellness-demo.mp4",
+  "liveDemo": "./demo/loy-wellness/index.html",
+  "poster": "./demo/loy-wellness/mobile-preview.png",
+  "previewImage": "./demo/loy-wellness/screenshots/03-welcome.png",
+  "preview": "#b9eeee",
+  "reference": "粗黑描边角色、明亮色块和轻快的健康数据节奏",
+  "referenceImage": "./demo/loy-wellness/assets/reference-overview.png",
+  "prompt": "手绘情绪与睡眠 App 视觉参考：白色手机界面搭配浅青背景，柠檬黄、橙色、蜜桃粉和亮绿构成拼贴指标卡；角色插画承担情绪，不把文字、控件或状态图标绘入图片；所有按钮、日期、播放控制和系统状态栏都用代码呈现。",
+  "summary": "用高能量手绘角色和四张颜色明确的指标卡，让情绪与睡眠记录像一张轻松的日常海报。",
+  "bestFor": "情绪记录、睡眠习惯、运动陪伴、亲子健康",
+  "tags": [
+    "手绘角色",
+    "高饱和色块",
+    "轻量仪表盘"
+  ],
+  "palette": "薄荷青 / 柠檬黄 / 橙色 / 蜜桃粉 / 亮绿",
+  "layout": "问候头部 + 四格指标 + 日期选择 + 播放列表",
+  "recipe": {
+    "principle": "把数据控制在一眼读完的四格内，让角色把健康提醒变得更有人味。",
+    "image": "手绘角色只放在指标卡与播放封面，保留粗线条和高对比色。",
+    "type": "标题粗、短、直接；卡片标签退到第二层。",
+    "components": "四色指标卡、日期胶囊、情绪播放列表和轻量反馈。",
+    "motion": "页面切换和播放键只保留即时按压反馈。",
+    "avoid": "密集图表、暗色科技感、复杂奖励系统和图片里的 UI 文本。"
+  },
+  "brandProfileIds": [
+    "soft-lifestyle"
+  ]
+}

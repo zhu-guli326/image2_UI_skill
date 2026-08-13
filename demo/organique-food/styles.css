@@ -251,7 +251,7 @@ button:focus-visible {
   position: relative;
   z-index: 2;
   width: 390px;
-  height: 693.333px;
+  height:844px;
   padding: 7px;
   border: 1px solid #e5e0cc;
   border-radius: 43px;
@@ -682,7 +682,7 @@ button:focus-visible {
 .embed-mode body {
   width: 390px;
   min-width: 390px;
-  height: 693.333px;
+  height:844px;
   overflow: hidden;
   transform: scale(var(--embed-scale, 1));
   transform-origin: top left;
@@ -690,7 +690,7 @@ button:focus-visible {
 .embed-mode .stage {
   display: block;
   width: 390px;
-  min-height: 693.333px;
+  min-height:844px;
   padding: 0;
 }
 .embed-mode .ticker,
@@ -703,7 +703,7 @@ button:focus-visible {
 }
 .embed-mode .phone {
   width: 390px;
-  height: 693.333px;
+  height:844px;
 }
 @media (max-width: 760px) {
   .stage {

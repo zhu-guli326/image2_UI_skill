@@ -599,7 +599,7 @@ button:focus-visible {
 .embed-mode body {
   width: 390px;
   min-width: 390px;
-  height: 693.333px;
+  height:844px;
   overflow: hidden;
   transform: scale(var(--embed-scale, 1));
   transform-origin: top left;
@@ -607,7 +607,7 @@ button:focus-visible {
 .embed-mode .stage {
   display: block;
   width: 390px;
-  min-height: 693.333px;
+  min-height:844px;
   padding: 0;
 }
 .embed-mode .brief {
@@ -615,7 +615,7 @@ button:focus-visible {
 }
 .embed-mode .phone {
   width: 390px;
-  height: 693.333px;
+  height:844px;
 }
 @media (max-width: 800px) {
   .stage {

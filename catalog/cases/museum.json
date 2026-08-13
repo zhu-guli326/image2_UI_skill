@@ -1,0 +1,33 @@
+{
+  "id": "museum",
+  "category": "culture",
+  "name": "ArtMuse",
+  "style": "当代美术馆导览",
+  "video": "./assets/cases/museum-app/museum-app-demo.mp4",
+  "poster": "./assets/cases/museum-app/museum-app-preview.gif",
+  "previewImage": "./assets/cases/museum-app/library-preview-2x.png",
+  "preview": "#dce3d6",
+  "reference": "画廊导视与展览画册的安静秩序",
+  "referenceImage": "./assets/style-references/artmuse-reference.png",
+  "prompt": "当代美术馆导览 App 视觉参考：纸张白、低饱和展签色、细线、大量留白，像展览画册和展墙导视；内容优先，图片保留白边，排版克制清晰；无高饱和主色、无厚重阴影、无密集信息流、无复杂装饰。",
+  "summary": "纸张白、低饱和展签色、细线和大量留白，让内容先于界面被看见。",
+  "bestFor": "展览、文化内容、精品零售、品牌故事",
+  "tags": [
+    "策展留白",
+    "细线结构",
+    "低饱和"
+  ],
+  "palette": "纸张白 / 鼠尾草绿 / 展签棕",
+  "layout": "单列导览 + 精选内容卡",
+  "recipe": {
+    "principle": "让内容像在展墙上被观看，而不是被一堆控件包围。",
+    "image": "图片当作被策展的作品：留出白边，少裁切，不叠加复杂 UI。",
+    "type": "标题用正常字重和宽松行距；正文小而清楚。",
+    "components": "细边框卡片、轻量 tab、低调箭头和节制的圆角。",
+    "motion": "只在切换和选中态提供轻柔反馈。",
+    "avoid": "高饱和主色、厚阴影、密集信息流。"
+  },
+  "brandProfileIds": [
+    "soft-lifestyle"
+  ]
+}

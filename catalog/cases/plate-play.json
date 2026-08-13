@@ -1,0 +1,34 @@
+{
+  "id": "plate-play",
+  "category": "commerce",
+  "name": "Plate Play",
+  "style": "高彩插画食谱",
+  "video": "./demo/plate-play/plate-play-demo.mp4",
+  "liveDemo": "./demo/plate-play/index.html",
+  "poster": "./demo/plate-play/mobile-preview.png",
+  "effectImage": "./demo/plate-play/assets/reference-overview.png",
+  "preview": "#f2b9d1",
+  "reference": "浅粉展板、荧光黄绿手机界面与番茄红厨师插画，像一本活泼的厨房图画书",
+  "referenceImage": "./demo/plate-play/assets/reference-overview.png",
+  "prompt": "高彩插画食谱 App 视觉参考：浅粉色展板，荧光黄绿色与浅粉色手机界面，番茄红、杏橙、淡紫和天蓝作为拼贴式强调色；用粗黑线描与扁平色块绘制一位正在搅拌面糊的厨师和厨房器具，插画无文字、无 logo、无系统状态栏、无按钮、无导航、无 UI glyph。所有标题、食谱名称、营养信息、按钮、标签、状态栏与底部导航均由代码呈现。",
+  "summary": "用番茄红厨师插画和荧光黄绿底色打开食谱体验，再用柔粉、杏橙和淡紫把浏览与详情串起来。",
+  "bestFor": "食谱、儿童餐食、烹饪课程、生活方式内容",
+  "tags": [
+    "厨师插画",
+    "高彩色块",
+    "轻松食谱"
+  ],
+  "palette": "浅粉 / 荧光黄绿 / 番茄红 / 杏橙 / 淡紫",
+  "layout": "插画欢迎页 + 食谱列表 + 餐食详情",
+  "recipe": {
+    "principle": "让插画负责食欲与亲和力，让真实文字和控件继续保持清楚、可点和可修改。",
+    "image": "欢迎页只放一张无文字的粗线条厨师插画，食谱卡使用同色板的扁平餐食图形，避免风格漂移。",
+    "type": "标题粗大直接，红色斜体词形成节奏；说明和操作使用紧凑无衬线。",
+    "components": "9:16 iOS 机身、厨师主视觉、分类标签、食谱卡、营养数据、收藏和底部导航。",
+    "motion": "页面切换、分类、收藏和加入计划都用短促明确的状态反馈。",
+    "avoid": "把插画做成整页不可编辑截图，或在高彩背景上继续叠加大量渐变与装饰。"
+  },
+  "brandProfileIds": [
+    "soft-lifestyle"
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "id": "organique",
+  "category": "commerce",
+  "name": "Organique Food",
+  "style": "编辑式有机餐食",
+  "video": "./demo/organique-food/organique-food-demo.mp4",
+  "liveDemo": "./demo/organique-food/index.html",
+  "poster": "./demo/organique-food/mobile-preview.png",
+  "preview": "#ede8d5",
+  "reference": "暗黑展陈、香槟金排版与奶油色餐食 App 的编辑感构图",
+  "referenceImage": "./demo/organique-food/assets/chicken-fattoush-salad.png",
+  "prompt": "编辑式有机餐食 App 视觉参考：深炭黑展陈背景配香槟金与橄榄绿大字，奶油色 9:16 iPhone 屏幕里以大号衬线餐品标题和克制无衬线操作组织内容；食物摄影作为唯一生成位图，所有品牌文字、状态栏、菜单、选择、日期和确认操作均由代码呈现；不生成可读文字、logo、水印、手机界面或 UI glyph。",
+  "summary": "用一张真实生成的餐食摄影和编辑式排版，把选餐、安排配送和确认计划收进一条安静而明确的路径。",
+  "bestFor": "有机餐食、健康配送、营养订阅、生活方式零售",
+  "tags": [
+    "编辑式排版",
+    "餐食摄影",
+    "奶油黑金"
+  ],
+  "palette": "炭黑 / 香槟金 / 奶油白 / 橄榄绿",
+  "layout": "选餐主视觉 + 配送日选择 + 确认页",
+  "recipe": {
+    "principle": "用一张餐食主视觉承担食欲与品质，其他动作保持低干扰且一眼可读。",
+    "image": "真实餐食图固定在浅灰工作台中，避免把文字、菜单或功能图标烘焙到摄影里。",
+    "type": "产品名采用高对比编辑式衬线，说明和操作保持清楚的无衬线节奏。",
+    "components": "9:16 iOS 机身、餐食主图、菜单、配送日选择、计划确认和短反馈。",
+    "motion": "选餐、日期切换、菜单和确认仅以即时状态转换回应。",
+    "avoid": "把营养明细、促销标语、长表单和多张商品卡同时塞进首屏。"
+  },
+  "brandProfileIds": [
+    "editorial-commerce"
+  ]
+}

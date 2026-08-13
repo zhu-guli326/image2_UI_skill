@@ -2,34 +2,24 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import { getLibraryPreviewDevice, libraryPreviewProfiles } from "../library-preview-config.mjs";
+import { getLibraryPreviewDevice } from "../library-preview-config.mjs";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const jsSource = fs.readFileSync(path.join(repoRoot, "library.js"), "utf8");
 const htmlSource = fs.readFileSync(path.join(repoRoot, "library.html"), "utf8");
 const cssSource = fs.readFileSync(path.join(repoRoot, "library.css"), "utf8");
+const catalogCasesDir = path.join(repoRoot, "catalog", "cases");
 const failures = [];
 const warnings = [];
 
-const guideArraySource = jsSource.slice(jsSource.indexOf("const styleGuides = ["), jsSource.indexOf("\n];", jsSource.indexOf("const styleGuides = [")) + 3);
-const guideStarts = [...guideArraySource.matchAll(/^\s*\{\s*\n?\s*id:\s*"([^"]+)"/gm)];
-const caseBlocks = guideStarts.map((match, index) => {
-  const source = guideArraySource.slice(match.index, guideStarts[index + 1]?.index ?? guideArraySource.length);
-  return {
-    id: match[1],
-    source,
-    category: source.match(/category:\s*"([^"]+)"/)?.[1],
-    name: source.match(/name:\s*"([^"]+)"/)?.[1],
-    style: source.match(/style:\s*"([^"]+)"/)?.[1],
-    video: source.match(/video:\s*"([^"]+)"/)?.[1],
-    liveDemo: source.match(/liveDemo:\s*"([^"]+)"/)?.[1],
-    previewImage: source.match(/previewImage:\s*"([^"]+)"/)?.[1],
-    poster: source.match(/poster:\s*"([^"]+)"/)?.[1],
-    referenceImage: source.match(/referenceImage:\s*"([^"]+)"/)?.[1],
-    tags: source.match(/tags:\s*\[([^\]]+)\]/)?.[1].match(/"([^"]+)"/g)?.map((tag) => tag.slice(1, -1)) || [],
-  };
+const caseBlocks = fs.readdirSync(catalogCasesDir).filter((file) => file.endsWith(".json")).sort().map((file) => {
+  const data = JSON.parse(fs.readFileSync(path.join(catalogCasesDir, file), "utf8"));
+  return { ...data, source: JSON.stringify(data) };
 });
+const previewImageSetSource = jsSource.match(/const previewImageSets = Object\.freeze\(\{([\s\S]*?)\n\}\);/)?.[1] || "";
+const previewImagePaths = [...previewImageSetSource.matchAll(/src:\s*"(\.\/[^\"]+)"/g)].map((match) => match[1]);
 
 function localPath(url) {
   return path.resolve(repoRoot, url.replace(/^\.\//, "").split("?")[0]);
@@ -41,6 +31,24 @@ function readPngSize(filePath) {
     throw new Error("not a PNG with an IHDR header");
   }
   return { width: header.readUInt32BE(16), height: header.readUInt32BE(20) };
+}
+
+function readVideoSize(filePath) {
+  const result = spawnSync("ffprobe", [
+    "-v", "error",
+    "-select_streams", "v:0",
+    "-show_entries", "stream=width,height",
+    "-of", "csv=s=x:p=0",
+    filePath,
+  ], { encoding: "utf8" });
+  if (result.status !== 0) throw new Error(result.stderr.trim() || "ffprobe failed");
+  const [width, height] = result.stdout.trim().split("x").map((value) => Number(value));
+  if (!width || !height) throw new Error("ffprobe did not return video dimensions");
+  return { width, height };
+}
+
+function fittedPixelDensity(size, frame = { width: 390, height: 844 }) {
+  return 1 / Math.min(frame.width / size.width, frame.height / size.height);
 }
 
 function requireContract(condition, message) {
@@ -60,6 +68,19 @@ const tagEntries = caseBlocks.flatMap((item) => item.tags.map((tag) => ({ id: it
 const uniqueTags = new Set(tagEntries.map((item) => item.tag.toLocaleLowerCase()));
 requireContract(tagEntries.length === 69, `tag model contains ${tagEntries.length} tags; expected 69`);
 requireContract(uniqueTags.size > 0, "tag model is empty");
+requireContract(previewImagePaths.length >= 40, `preview image collection contains ${previewImagePaths.length} images; expected at least 40`);
+for (const imageUrl of previewImagePaths) {
+  const imagePath = localPath(imageUrl);
+  requireContract(fs.existsSync(imagePath), `missing preview image ${imageUrl}`);
+  if (!fs.existsSync(imagePath)) continue;
+  try {
+    const size = readPngSize(imagePath);
+    const density = fittedPixelDensity(size);
+    requireContract(density >= 1.99, `${imageUrl}: effective density is ${density.toFixed(2)}x in the 390x844 preview; expected at least 2x`);
+  } catch (error) {
+    failures.push(`${imageUrl}: cannot inspect preview image (${error.message})`);
+  }
+}
 requireContract(/<a class="style-tag/.test(jsSource) && /href="\.\/library\.html\?tag=/.test(jsSource), "visible tags are not semantic links");
 requireContract(/window\.history\.pushState/.test(jsSource) && /window\.addEventListener\("popstate"/.test(jsSource), "tag filters do not preserve browser history");
 requireContract(/readTagFromUrl\(\)/.test(jsSource) && /searchParams\.get\("tag"\)/.test(jsSource), "tag filters are not restored from the URL");
@@ -76,11 +97,22 @@ for (const item of caseBlocks) {
   if (item.video) {
     const videoDevice = getLibraryPreviewDevice(item.id, "video");
     requireContract(videoDevice.width === 390 && videoDevice.height === 844, `${item.id}: video preview is ${videoDevice.width}x${videoDevice.height}; expected 390x844`);
+    try {
+      const actual = readVideoSize(localPath(item.video));
+      const expected = { width: videoDevice.width * 2, height: videoDevice.height * 2 };
+      requireContract(
+        actual.width === expected.width && actual.height === expected.height,
+        `${item.id}: video file is ${actual.width}x${actual.height}; expected ${expected.width}x${expected.height}`,
+      );
+    } catch (error) {
+      failures.push(`${item.id}: cannot inspect video (${error.message})`);
+    }
   }
 
   if (item.liveDemo) {
     liveDemoCount += 1;
-    requireContract(Boolean(libraryPreviewProfiles[item.id]?.live), `${item.id}: missing live preview device profile`);
+    const liveDevice = getLibraryPreviewDevice(item.id, "live");
+    requireContract(liveDevice.width === 390 && liveDevice.height === 844, `${item.id}: live preview is ${liveDevice.width}x${liveDevice.height}; expected 390x844`);
     const demoEntry = localPath(item.liveDemo);
     const demoDir = path.dirname(demoEntry);
     const embedSource = [demoEntry, path.join(demoDir, "script.js")].filter(fs.existsSync).map((file) => fs.readFileSync(file, "utf8")).join("\n");

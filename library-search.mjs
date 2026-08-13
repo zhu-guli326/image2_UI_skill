@@ -14,6 +14,11 @@ const FIELD_WEIGHTS = Object.freeze({
   recipe: 2,
 });
 
+const SEARCH_STOPWORDS = new Set([
+  "app", "apps", "ui", "ux", "demo", "style", "case", "cases", "example", "examples",
+  "案例", "应用", "界面", "页面", "风格", "设计案例",
+]);
+
 // Search terms are deliberately curated. They describe user intent without
 // making every commerce or wellness case match every broad category word.
 const TERM_GROUPS = [
@@ -49,7 +54,7 @@ const CATEGORY_LABELS = Object.freeze({
 // specific product description. Keep them attached to a case so they remain
 // explainable and easy to extend as the library grows.
 const GUIDE_ALIASES = Object.freeze({
-  fashion: ["女装购物", "女装电商", "women's fashion", "fashion shopping"],
+  fashion: ["女装", "女装购物", "女装电商", "women's fashion", "fashion shopping"],
   "still-form": ["女装", "女装购物", "服装设计", "衣服", "穿搭", "clothing store", "apparel", "fashion clothing"],
   fufu: ["咖啡店", "咖啡馆", "coffee shop", "cafe", "baking"],
   organique: ["健康餐", "营养餐", "meal plan", "healthy food"],
@@ -64,6 +69,16 @@ const GUIDE_ALIASES = Object.freeze({
   loy: ["情绪仪表盘", "睡眠记录", "mood tracker", "sleep tracker"],
   "softly-reflections": ["情绪反思", "心理签到", "reflection journal", "mood check-in"],
 });
+
+const ALIAS_PHRASE_INDEX = new Map();
+for (const [guideId, aliases] of Object.entries(GUIDE_ALIASES)) {
+  for (const alias of aliases) {
+    const key = compactSearchText(alias);
+    const guideIds = ALIAS_PHRASE_INDEX.get(key) || [];
+    if (!guideIds.includes(guideId)) guideIds.push(guideId);
+    ALIAS_PHRASE_INDEX.set(key, guideIds);
+  }
+}
 
 const synonymIndex = new Map();
 for (const group of TERM_GROUPS) {
@@ -87,6 +102,10 @@ function compactSearchText(value) {
 
 function tokenizeSearchText(value) {
   return normalizeSearchText(value).match(/[a-z0-9]+|[\u3400-\u9fff]+/g) || [];
+}
+
+function queryTokens(value) {
+  return tokenizeSearchText(value).filter((token) => !SEARCH_STOPWORDS.has(token));
 }
 
 function flattenValues(value) {
@@ -193,12 +212,14 @@ function matchTerm(document, term) {
 
 function scoreGuide(document, query) {
   const normalizedQuery = normalizeSearchText(query);
-  const tokens = tokenizeSearchText(normalizedQuery);
+  const tokens = queryTokens(normalizedQuery);
   if (!tokens.length) return null;
 
   const phraseHit = phraseVariants(normalizedQuery).some((variant) => document.compact.includes(variant));
+  const aliasPhraseGuides = ALIAS_PHRASE_INDEX.get(compactSearchText(normalizedQuery));
+  if (aliasPhraseGuides?.length && !aliasPhraseGuides.includes(document.guide.id)) return null;
   const matches = tokens.map((token) => matchTerm(document, token));
-  const meaningfulPhraseHit = phraseHit && (tokens.length === 1 || matches.every(Boolean));
+  const meaningfulPhraseHit = phraseHit && (tokens.length === 1 || matches.every((match) => match?.exact));
   if (!meaningfulPhraseHit && matches.some((match) => !match)) return null;
 
   const score = matches.reduce((total, match) => total + (match?.score || 0), 0) + (meaningfulPhraseHit ? 42 : 0);

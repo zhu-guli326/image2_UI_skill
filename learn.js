@@ -1,67 +1,130 @@
 const vocabDetails = {
-  页头: "页头在页面最上方。这里放品牌名，让用户一眼知道自己正在使用哪个产品。",
-  主视觉: "主视觉是最先吸引注意的画面。Buddy 用彩色目的地和旅行插画，让用户马上联想到旅行计划。",
-  标题区: "标题区用一句主标题和一小段说明，直接告诉用户这个页面能帮助他做什么。",
-  主按钮: "主按钮代表页面最希望用户执行的动作。这里的 Get started 就是在邀请用户开始规划。",
-  底部导航: "底部导航把几个最常用的页面放在一起。用户可以从探索切换到行程或个人页面。"
+  页头: { english: "Header / App Bar", detail: "页头位于页面最上方。这里用品牌标志和个人入口告诉用户“我在哪”，也提供常用操作。" },
+  标题区: { english: "Value Proposition", detail: "标题区先给出核心价值，再用短说明告诉用户这个页面能帮他完成什么。" },
+  主视觉: { english: "Hero Visual", detail: "主视觉用核心照片或插画快速传达主题，不读文字也能大致理解页面内容。" },
+  主按钮: { english: "Primary CTA", detail: "主按钮代表页面最希望用户执行的动作，应该使用清楚、直接的行动文案。" },
+  底部导航: { english: "Bottom Navigation", detail: "底部导航固定放置几个主要页面入口，让用户能在核心功能之间快速切换。" }
 };
 
 const caseStudies = {
-  buddy: {
-    image: "./demo/buddy-travel/mobile-preview.png",
-    alt: "Buddy 旅行计划案例预览",
-    caption: "案例库 · Buddy / 轻盈旅行计划",
-    task: "帮助用户从一个目的地开始安排旅行",
-    structure: "顶部品牌名，中间主视觉和目的地标签，底部是三项主导航。",
-    tags: ["HTML：标题与导航", "CSS：荧光黄背景与圆形标签", "JS：目的地点击反馈"],
-    question: "你可以先问自己：如果删掉图片，这个页面的任务还说得清吗？"
+  fufu: {
+    reference: "./demo/fufu-bakery/assets/reference-overview.png",
+    referenceAlt: "FuFu Bakery 烘焙会员应用原始参考图",
+    image: "./demo/fufu-bakery/mobile-preview.png",
+    alt: "FuFu Bakery 手绘烘焙会员最终可点击页面",
+    structure: "欢迎页、烘焙首页、今日菜单和会员卡组成轻量门店流程。",
+    assets: "狗狗烘焙师插画和烘焙氛围参考图。",
+    controls: ["进入按钮", "菜单切换", "会员卡", "底部导航"],
+    demo: "./demo/fufu-bakery/index.html",
+    prompt: "使用 image-to-ui-skill，参考我上传的手绘烘焙会员应用图片，保留狗狗烘焙师、纸白留白、黄色按钮和底部导航结构，生成欢迎页、烘焙首页、今日菜单和会员卡可点击手机页面，并检查进入按钮、菜单切换与底部导航交互。"
   },
   plate: {
+    reference: "./demo/plate-play/assets/reference-overview.png",
+    referenceAlt: "Plate Play 食谱应用原始参考图",
     image: "./demo/plate-play/mobile-preview.png",
-    alt: "Plate Play 食谱案例预览",
-    caption: "案例库 · Plate Play / 高彩插画食谱",
-    task: "让用户快速找到一个想做的食谱并开始烹饪",
-    structure: "顶部标题和说明，中间厨师插画与主按钮，底部用导航切换首页、食谱和收藏。",
-    tags: ["HTML：食谱标题与列表", "CSS：色块、圆角和响应式布局", "JS：分类与收藏状态"],
-    question: "你可以先问自己：哪个元素最应该先被看到？为什么？"
+    alt: "Plate Play 食谱最终可点击页面",
+    structure: "首页介绍、食谱列表和食谱详情形成从发现到烹饪的流程。",
+    assets: "厨师主插画和食物照片。",
+    controls: ["食谱分类", "收藏按钮", "底部导航"],
+    demo: "./demo/plate-play/index.html",
+    prompt: "使用 image-to-ui-skill，参考我上传的食谱应用图片，保留高彩插画、主行动按钮和食谱卡片结构，生成首页、食谱列表和详情三个可点击手机页面，并检查收藏与导航交互。"
   },
   relay: {
+    reference: "./demo/relay-music/assets/reference-overview.png",
+    referenceAlt: "RELAY 音乐应用原始参考图",
     image: "./demo/relay-music/assets/relay-effect-board.png",
-    alt: "RELAY 音乐发现案例预览",
-    caption: "案例库 · RELAY / 编辑式音乐发现",
-    task: "让用户发现一位艺人、播放音乐并继续探索",
-    structure: "三屏分别承担艺人主页、播放页和发现流，摄影负责吸引注意，播放器负责行动。",
-    tags: ["HTML：艺人信息与播放控制", "CSS：冷灰展板和深色内容面", "JS：播放、收藏与页面切换"],
-    question: "你可以先问自己：这三个页面为什么要拆开，而不是塞在一屏？"
+    alt: "RELAY 音乐发现最终可点击页面",
+    structure: "艺人主页、正在播放和音乐发现流分别承担介绍、播放和继续探索。",
+    assets: "艺人摄影、专辑封面和内容缩略图。",
+    controls: ["播放控制", "收藏按钮", "页面切换"],
+    demo: "./demo/relay-music/index.html",
+    prompt: "使用 image-to-ui-skill，参考我上传的音乐应用图片，保留编辑式摄影、深色播放器和发现流结构，生成艺人主页、播放页和发现页三个可点击手机页面，并检查播放与收藏状态。"
   }
 };
 
-const caseImage = document.querySelector("#caseImage");
-const caseCaption = document.querySelector("#caseCaption");
-const caseTask = document.querySelector("#caseTask");
-const caseStructure = document.querySelector("#caseStructure");
-const caseTags = document.querySelector("#caseTags");
-const caseQuestion = document.querySelector("#caseQuestion");
-document.querySelectorAll("[data-case]").forEach((button) => {
+const tokenPresets = {
+  image2: { color: "#b8f36b", font: "system", radius: 14, space: 8 },
+  signal: { color: "#91d8ee", font: "mono", radius: 4, space: 6 },
+  editorial: { color: "#ff9f8f", font: "serif", radius: 0, space: 12 },
+  friendly: { color: "#f3cf55", font: "rounded", radius: 24, space: 10 }
+};
+
+const fontStacks = {
+  system: 'ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+  rounded: 'ui-rounded, "Arial Rounded MT Bold", ui-sans-serif, sans-serif',
+  mono: 'ui-monospace, "SFMono-Regular", Menlo, monospace',
+  serif: 'Georgia, "Times New Roman", serif'
+};
+
+function copyText(text, statusElement, message) {
+  const fallback = () => {
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    textarea.style.position = "fixed";
+    textarea.style.opacity = "0";
+    document.body.append(textarea);
+    textarea.select();
+    document.execCommand("copy");
+    textarea.remove();
+  };
+
+  const task = navigator.clipboard?.writeText ? navigator.clipboard.writeText(text) : Promise.resolve(fallback());
+  task.then(() => { statusElement.textContent = message; }).catch(() => {
+    fallback();
+    statusElement.textContent = message;
+  });
+}
+
+const quickPrompt = document.querySelector("#quickPrompt");
+document.querySelector("#copyQuickPrompt")?.addEventListener("click", () => {
+  copyText(quickPrompt.textContent.trim(), document.querySelector("#copyStatus"), "Prompt 已复制，可以和参考图一起发送。" );
+  window.image2Analytics?.track("beginner_prompt_copy", { source: "quick_start" });
+});
+
+const casePanel = document.querySelector("#casePanel");
+let activeCase = "fufu";
+function renderCase(id) {
+  const item = caseStudies[id];
+  activeCase = id;
+  document.querySelector("#caseReferenceImage").src = item.reference;
+  document.querySelector("#caseReferenceImage").alt = item.referenceAlt;
+  document.querySelector("#caseImage").src = item.image;
+  document.querySelector("#caseImage").alt = item.alt;
+  document.querySelector("#caseStructure").textContent = item.structure;
+  document.querySelector("#caseAssets").textContent = item.assets;
+  document.querySelector("#caseControls").innerHTML = item.controls.map((control) => `<span>${control}</span>`).join("");
+  document.querySelector("#caseDemoLink").href = item.demo;
+}
+
+const caseTabs = [...document.querySelectorAll("[data-case]")];
+caseTabs.forEach((button, index) => {
   button.addEventListener("click", () => {
-    const item = caseStudies[button.dataset.case];
-    document.querySelectorAll("[data-case]").forEach((tab) => {
+    caseTabs.forEach((tab) => {
       const selected = tab === button;
       tab.classList.toggle("is-selected", selected);
       tab.setAttribute("aria-selected", String(selected));
+      tab.tabIndex = selected ? 0 : -1;
     });
-    caseImage.src = item.image;
-    caseImage.alt = item.alt;
-    caseCaption.textContent = item.caption;
-    caseTask.textContent = item.task;
-    caseStructure.textContent = item.structure;
-    caseTags.innerHTML = item.tags.map((tag) => `<span>${tag}</span>`).join("");
-    caseQuestion.textContent = item.question;
+    casePanel.setAttribute("aria-labelledby", button.id);
+    renderCase(button.dataset.case);
   });
+  button.addEventListener("keydown", (event) => {
+    if (!["ArrowLeft", "ArrowRight"].includes(event.key)) return;
+    event.preventDefault();
+    const direction = event.key === "ArrowRight" ? 1 : -1;
+    caseTabs[(index + direction + caseTabs.length) % caseTabs.length].click();
+    caseTabs[(index + direction + caseTabs.length) % caseTabs.length].focus();
+  });
+});
+
+document.querySelector("#copyCasePrompt")?.addEventListener("click", () => {
+  copyText(caseStudies[activeCase].prompt, document.querySelector("#caseCopyStatus"), "同款结构 Prompt 已复制。" );
+  window.image2Analytics?.track("beginner_prompt_copy", { source: "case_study", case: activeCase });
 });
 
 const vocabDetail = document.querySelector("#vocabDetail");
 const vocabName = document.querySelector("#vocabName");
+const vocabEnglish = document.querySelector("#vocabEnglish");
 document.querySelectorAll("[data-vocab]").forEach((button) => {
   button.addEventListener("click", () => {
     document.querySelectorAll("[data-vocab]").forEach((item) => {
@@ -69,38 +132,82 @@ document.querySelectorAll("[data-vocab]").forEach((button) => {
       item.classList.toggle("is-selected", selected);
       item.setAttribute("aria-pressed", String(selected));
     });
+    const item = vocabDetails[button.dataset.vocab];
     vocabName.textContent = button.dataset.vocab;
-    vocabDetail.textContent = vocabDetails[button.dataset.vocab];
+    vocabEnglish.textContent = item.english;
+    vocabDetail.textContent = item.detail;
   });
 });
 
-const learningCard = document.querySelector("#learningCard");
-const codeColor = document.querySelector("#codeColor");
-const previewFeedback = document.querySelector("#previewFeedback");
-const colorNames = { "#b8f36b": "绿色", "#91d8ee": "蓝色", "#ff9f8f": "珊瑚色" };
-document.querySelectorAll("[data-color]").forEach((button) => {
-  button.addEventListener("click", () => {
-    const color = button.dataset.color;
-    learningCard.style.background = color;
-    codeColor.textContent = color;
-    document.querySelectorAll("[data-color]").forEach((item) => item.classList.toggle("is-active", item === button));
-    learningCard.classList.remove("is-changing");
-    requestAnimationFrame(() => learningCard.classList.add("is-changing"));
-    previewFeedback.textContent = `你把卡片改成了${colorNames[color]}。这就是一次 CSS 调整。`;
-  });
+const brandPreset = document.querySelector("#brandPreset");
+const brandColor = document.querySelector("#brandColor");
+const brandColorValue = document.querySelector("#brandColorValue");
+const displayFont = document.querySelector("#displayFont");
+const cardRadius = document.querySelector("#cardRadius");
+const radiusValue = document.querySelector("#radiusValue");
+const spaceUnit = document.querySelector("#spaceUnit");
+const spacingValue = document.querySelector("#spacingValue");
+const brandPreview = document.querySelector("#brandPreview");
+const tokenStatus = document.querySelector("#tokenStatus");
+
+function currentTokens() {
+  return {
+    "--brand-primary": brandColor.value,
+    "--font-display": displayFont.value,
+    "--card-radius": `${cardRadius.value}px`,
+    "--space-unit": `${spaceUnit.value}px`
+  };
+}
+
+function tokensAsCss() {
+  const tokens = currentTokens();
+  return `:root {\n${Object.entries(tokens).map(([name, value]) => `  ${name}: ${name === "--font-display" ? `"${value}"` : value};`).join("\n")}\n}`;
+}
+
+function renderTokens() {
+  brandColorValue.textContent = brandColor.value.toLowerCase();
+  radiusValue.textContent = `${cardRadius.value}px`;
+  spacingValue.textContent = `${spaceUnit.value}px`;
+  brandPreview.style.setProperty("--preview-primary", brandColor.value);
+  brandPreview.style.setProperty("--preview-font", fontStacks[displayFont.value]);
+  brandPreview.style.setProperty("--preview-radius", `${cardRadius.value}px`);
+  brandPreview.style.setProperty("--preview-space", `${spaceUnit.value}px`);
+}
+
+function applyPreset(name) {
+  const preset = tokenPresets[name] || tokenPresets.image2;
+  brandColor.value = preset.color;
+  displayFont.value = preset.font;
+  cardRadius.value = preset.radius;
+  spaceUnit.value = preset.space;
+  renderTokens();
+}
+
+brandPreset?.addEventListener("change", () => { applyPreset(brandPreset.value); tokenStatus.textContent = "品牌规范已应用到预览。"; });
+[brandColor, displayFont, cardRadius, spaceUnit].forEach((control) => control?.addEventListener("input", () => { brandPreset.value = "image2"; renderTokens(); tokenStatus.textContent = ""; }));
+document.querySelector("#resetTokens")?.addEventListener("click", () => { brandPreset.value = "image2"; applyPreset("image2"); tokenStatus.textContent = "已恢复默认规范。"; });
+document.querySelector("#copyTokens")?.addEventListener("click", () => copyText(tokensAsCss(), tokenStatus, "Design Tokens 已复制。"));
+document.querySelector("#saveBrand")?.addEventListener("click", () => {
+  localStorage.setItem("image2-custom-brand-tokens", JSON.stringify(currentTokens()));
+  tokenStatus.textContent = "自定义品牌已保存在此浏览器。";
 });
+
+try {
+  const savedTokens = JSON.parse(localStorage.getItem("image2-custom-brand-tokens"));
+  if (savedTokens) {
+    brandColor.value = savedTokens["--brand-primary"] || brandColor.value;
+    displayFont.value = savedTokens["--font-display"] || displayFont.value;
+    cardRadius.value = Number.parseInt(savedTokens["--card-radius"], 10) || cardRadius.value;
+    spaceUnit.value = Number.parseInt(savedTokens["--space-unit"], 10) || spaceUnit.value;
+  }
+} catch {}
+renderTokens();
 
 const learningMapLinks = [...document.querySelectorAll("[data-learn-section]")];
-const learningSections = learningMapLinks
-  .map((link) => document.querySelector(`#${link.dataset.learnSection}`))
-  .filter(Boolean);
-
+const learningSections = learningMapLinks.map((link) => document.querySelector(`#${link.dataset.learnSection}`)).filter(Boolean);
 if ("IntersectionObserver" in window) {
   const sectionObserver = new IntersectionObserver((entries) => {
-    const visibleEntry = entries
-      .filter((entry) => entry.isIntersecting)
-      .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-
+    const visibleEntry = entries.filter((entry) => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
     if (!visibleEntry) return;
     learningMapLinks.forEach((link) => {
       const isCurrent = link.dataset.learnSection === visibleEntry.target.id;
@@ -108,9 +215,16 @@ if ("IntersectionObserver" in window) {
       if (isCurrent) link.setAttribute("aria-current", "location");
       else link.removeAttribute("aria-current");
     });
-  }, { rootMargin: "-28% 0px -58%", threshold: [0, 0.2, 0.5] });
-
+  }, { rootMargin: "-28% 0px -58%", threshold: [0, .2, .5] });
   learningSections.forEach((section) => sectionObserver.observe(section));
 }
+
+const progressBar = document.querySelector("#pageProgressBar");
+function updateProgress() {
+  const available = document.documentElement.scrollHeight - window.innerHeight;
+  progressBar.style.width = `${available > 0 ? Math.min(100, (window.scrollY / available) * 100) : 0}%`;
+}
+window.addEventListener("scroll", updateProgress, { passive: true });
+updateProgress();
 
 window.image2Analytics?.track("beginner_guide_view");

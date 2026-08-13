@@ -11,7 +11,7 @@ if (previewParams.has("capture")) document.documentElement.classList.add("captur
 if (previewParams.has("embed")) {
   document.documentElement.classList.add("embed-mode");
   const fitEmbedPreview = () => {
-    const scale = Math.min(window.innerWidth / 390, window.innerHeight / 693.3333);
+    const scale = Math.min(window.innerWidth / 390, window.innerHeight / 844);
     document.documentElement.style.setProperty("--embed-scale", String(scale));
   };
   fitEmbedPreview();

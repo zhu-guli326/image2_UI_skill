@@ -1,0 +1,33 @@
+{
+  "id": "still-form",
+  "category": "commerce",
+  "name": "Still Form",
+  "style": "可持续服饰电商",
+  "video": "./demo/still-form/still-form-demo.mp4",
+  "liveDemo": "./demo/still-form/index.html",
+  "poster": "./demo/still-form/mobile-preview.png",
+  "preview": "#b6b5a0",
+  "reference": "灰绿展板、深棕中性色与大幅天然面料摄影，让可持续服饰体验安静而明确",
+  "referenceImage": "./demo/still-form/assets/reference-overview.png",
+  "prompt": "可持续服饰电商 App 视觉参考：灰绿色展板与白色 9:16 iPhone，天然棕色、象牙白和深巧克力色构成安静的成衣编辑感；亚麻衬衫和再生羊毛围巾使用独立无文字 image2 时尚摄影。所有文案、价格、分类、收藏、按钮、状态栏、返回和图标均由代码呈现；不在图片中生成文字、logo、水印、手机或 UI glyph。",
+  "summary": "以沉浸入口、系列列表和单品详情串起可持续服饰浏览，让图片质感与购买操作各自清楚。",
+  "bestFor": "服饰零售、生活方式品牌、可持续产品、编辑式电商",
+  "tags": [
+    "天然面料",
+    "编辑式商品",
+    "深棕操作"
+  ],
+  "palette": "灰绿 / 象牙白 / 深巧克力 / 亚麻棕",
+  "layout": "品牌入口 + 分类商品页 + 单品详情",
+  "recipe": {
+    "principle": "让摄影建立材料触感，让代码界面承担价格、分类、收藏和加购决策。",
+    "image": "两张无文字服饰摄影分别用于系列主视觉、商品卡和详情图，保持统一自然光与中性色。",
+    "type": "清晰无衬线标题与紧凑价格层级，避免过度促销式信息。",
+    "components": "9:16 iOS 机身、沉浸入口、分类 tab、商品卡、收藏、色彩选择、返回和加购。",
+    "motion": "入口、分类、收藏、颜色和加购都有即时可见反馈。",
+    "avoid": "大面积折扣标识、图片中的文字 UI、复杂筛选栏和无法返回的商品详情。"
+  },
+  "brandProfileIds": [
+    "editorial-commerce"
+  ]
+}

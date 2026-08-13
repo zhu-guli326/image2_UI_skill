@@ -282,7 +282,12 @@ async function captureScreenshot({ rootDir, entryFile, actualPath, viewport, cap
 
   const browserTarget = resolveBrowserTarget(rootDir, entryFile);
   const server = await startServer(browserTarget.rootDir);
-  const browser = await playwright.chromium.launch({ headless: true });
+  let browser;
+  try {
+    browser = await playwright.chromium.launch({ headless: true });
+  } catch (error) {
+    fail(`Chromium could not launch: ${error.message}. Install the Playwright browser or pass --actual with a supplied screenshot.`);
+  }
   const urlPath = path.relative(browserTarget.rootDir, browserTarget.entryFile).split(path.sep).map(encodeURIComponent).join("/");
   const url = `${server.url}/${urlPath}`;
   commands.push({ name: "capture", command: `playwright screenshot ${url} ${actualPath}`, cwd: rootDir });

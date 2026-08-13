@@ -11,9 +11,12 @@ const auditScript = path.join(repoRoot, "scripts", "ui_output_audit.mjs");
 const jsonMode = process.argv.includes("--json");
 const noBrowser = process.argv.includes("--no-browser");
 const baseline = JSON.parse(fs.readFileSync(path.join(repoRoot, "quality-baseline.json"), "utf8"));
-const demos = fs.readdirSync(demoRoot, { withFileTypes: true })
-  .filter((entry) => entry.isDirectory() && !entry.name.startsWith("."))
-  .map((entry) => entry.name)
+const catalogCases = fs.readdirSync(path.join(repoRoot, "catalog", "cases"))
+  .filter((file) => file.endsWith(".json"))
+  .map((file) => JSON.parse(fs.readFileSync(path.join(repoRoot, "catalog", "cases", file), "utf8")));
+const demos = [...new Set(catalogCases
+  .filter((item) => item.liveDemo?.startsWith("./demo/"))
+  .map((item) => item.liveDemo.split("/")[2]))]
   .sort();
 
 function prepareBuild(name) {

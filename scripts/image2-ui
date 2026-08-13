@@ -59,10 +59,19 @@ if (command === "doctor") {
   const image2Script = path.join(__dirname, "image2_asset.py");
   const python = process.env.PYTHON || (process.platform === "win32" ? "python" : "python3");
   const result = spawnSync(python, [image2Script, "doctor"], {
-    stdio: "inherit",
+    stdio: "pipe",
     cwd: process.cwd(),
+    encoding: "utf8",
   });
-  process.exit(result.status ?? 1);
+  const checks = spawnSync(process.execPath, [path.join(__dirname, "doctor.mjs")], { cwd: process.cwd(), encoding: "utf8" });
+  let imageReport;
+  try { imageReport = JSON.parse(result.stdout || "{}"); } catch { imageReport = { status: "unavailable", raw: result.stdout || "" }; }
+  let runtimeReport;
+  try { runtimeReport = JSON.parse(checks.stdout || "{}"); } catch { runtimeReport = { status: "unavailable", raw: checks.stdout || "" }; }
+  console.log(JSON.stringify({ ...runtimeReport, image2: imageReport, status: runtimeReport.status === "ready" && imageReport.status !== "unavailable" ? "ready" : "needs-attention" }, null, 2));
+  if (result.stderr) process.stderr.write(result.stderr);
+  if (checks.stderr) process.stderr.write(checks.stderr);
+  process.exit(Math.max(result.status ?? 1, checks.status ?? 1));
 }
 
 console.error(`Unknown image2-ui command: ${command}`);
@@ -83,7 +92,7 @@ Commands:
   compare    Build a side-by-side reference/output board, with an overlay and manual review checklist.
   loop       Run build, screenshot capture, validate, compare, and write a fix-queue report for iterative restoration.
   orchestrate Run the multi-agent image-to-UI workflow with artifact handoffs and phase-aware parallelism.
-  doctor     Show system imagegen, native image2, and API fallback channel availability.`);
+  doctor     Show image channels, runtime versions, browser capture, fonts/media, and output permissions.`);
 }
 
 function printVersion() {

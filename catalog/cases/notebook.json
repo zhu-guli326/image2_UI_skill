@@ -1,0 +1,33 @@
+{
+  "id": "notebook",
+  "category": "creative",
+  "name": "Marble Note",
+  "style": "手账式创意工作台",
+  "video": "./demo/marble-note/marble-note-demo.mp4",
+  "liveDemo": "./demo/marble-note/index.html",
+  "poster": "./demo/marble-note/screenshots/marble-note-mobile.png",
+  "preview": "#f0eac6",
+  "reference": "手绘线条、彩色贴纸和真实纸张节奏，让工作台更像创作空间",
+  "referenceImage": "./demo/marble-note/screenshots/marble-note-mobile.png",
+  "prompt": "创意笔记 App 视觉参考：柔和纸色底、手绘线稿、糖果色标签和文件夹形状，信息结构依然清楚可读；让插画性细节限定在封面与少量空白区域，不用每张卡片都铺满 emoji、渐变和厚重阴影。",
+  "summary": "把笔记、文件夹和日程放进一套有手感的创作语言，保留清晰的任务和内容层级。",
+  "bestFor": "创意笔记、学生工具、家庭规划、轻量项目整理",
+  "tags": [
+    "纸张手感",
+    "手绘线稿",
+    "彩色标签"
+  ],
+  "palette": "暖纸白 / 薄荷绿 / 天蓝 / 柔粉 / 墨黑",
+  "layout": "欢迎封面 + 文件夹分组 + 卡片式笔记工作台",
+  "recipe": {
+    "principle": "装饰让人愿意停留，结构让人马上能开始记录。",
+    "image": "手绘元素集中在封面或空白区域，内容卡保持平整易读。",
+    "type": "标题可以有一点手写气质，正文和表单必须稳定、清楚。",
+    "components": "文件夹 chip、项目文件夹、便签卡、简化编辑器、色彩标签和切换视图。",
+    "motion": "页面切换和保存提示带有轻微纸张般的位移，但不影响阅读。",
+    "avoid": "用 emoji 或伪图标承担搜索、返回、保存等功能操作。"
+  },
+  "brandProfileIds": [
+    "soft-lifestyle"
+  ]
+}
