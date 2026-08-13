@@ -97,6 +97,12 @@ entrances, Toasts, hover/press feedback, and reduced-motion behavior. See
 
 ## UI Knowledge Library
 
+Open the standalone case gallery at
+[zhu-guli326.github.io/ui_case](https://zhu-guli326.github.io/ui_case/). Its
+source, demos, screenshots, GIFs, and videos live in the separate
+[`ui_case`](https://github.com/zhu-guli326/ui_case) repository, so installing
+this Skill does not require cloning the gallery media.
+
 Inspired by the browsable recipe-library format in
 [video-shotcraft](https://vincentwei1021.github.io/video-shotcraft/library.html),
 this project now treats UI patterns as named things you can recognize, request,
@@ -104,19 +110,22 @@ and rebuild. The goal is simple: when Codex looks at a screen, it should not say
 "some cards here." It should say "top app bar, filter rail, content cards,
 detail sheet, empty state, and bottom tab bar."
 
-Start here:
+Gallery source files may still exist in development checkouts during the
+migration, but the public entry points are:
 
-- [`launcher.html`](./launcher.html) is the visual skill launcher: choose the
+- [Visual launcher](https://zhu-guli326.github.io/ui_case/launcher.html?start=1)
+  lets you choose the
   target format, style case, workflow depth, interaction scope, image2 channel,
   and verification options, then copy the generated `$image-to-ui-skill`
   instruction into Codex.
-- [`library.html`](./library.html) is a visual, browser-openable version of the
+- [Case library](https://zhu-guli326.github.io/ui_case/) is a visual,
+  browser-openable version of the
   UI knowledge library with filters, cards, screenshots, and an asset-split
   board.
-- [`vocabulary.html`](./vocabulary.html) is the illustrated UI vocabulary with
+- [UI vocabulary](https://zhu-guli326.github.io/ui_case/vocabulary.html) is the illustrated UI vocabulary with
   search, role filters, anatomy, variants, implementation boundaries, and
   copyable Agent prompts.
-- [`skills.html`](./skills.html) is a separate design-skill radar page for
+- [Design skills](https://zhu-guli326.github.io/ui_case/skills.html) is a separate design-skill radar page for
   browsing design methods, visual directions, and copyable first-turn prompts.
 - `analytics.config.js` configures the anonymous library event endpoint. Set
   `endpoint` to your deployed collector URL; the included default is
@@ -167,9 +176,9 @@ icons, filters, and states in code. Use image2 only for covers, product photos,
 textures, and object cutouts.
 ```
 
-The npm package keeps only the core skill, scripts, references, and README hero.
-Clone the GitHub repository when you need the full demo media archive and
-case-study videos.
+The npm package keeps only the installable Skill surface. Browse or clone the
+separate [`ui_case`](https://github.com/zhu-guli326/ui_case) repository when you
+need the full demo media archive and case-study videos.
 
 ## &#23427;&#20250;&#24590;&#20040;&#20570; / Workflow
 

@@ -29,9 +29,10 @@ npm link
 image2-ui doctor
 ```
 
-The npm package intentionally contains the skill, scripts, references, and README
-hero only. Clone the GitHub repository when you need the full demo media archive
-and case-study videos.
+The npm package intentionally contains the Skill, scripts, references, and
+README hero only. The full demo media archive and case-study videos live in the
+separate [`ui_case`](https://github.com/zhu-guli326/ui_case) repository and are
+published at <https://zhu-guli326.github.io/ui_case/>.
 
 ## Quality Gates
 

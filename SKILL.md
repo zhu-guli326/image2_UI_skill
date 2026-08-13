@@ -15,7 +15,7 @@ structured choice UI, ask these exact four choices: `探索并理解代码`, `�
 `审查代码并提出修改建议`, and `修复问题和失败`. Do not claim that the skill
 controls the host UI. If that native UI is unavailable, open the launcher:
 
-`file:///Users/zzhu/Documents/image2%20ui/launcher.html?start=1`
+`https://zhu-guli326.github.io/ui_case/launcher.html?start=1`
 
 Use this concise fallback wording: `先选择这次的任务方向，再配置交付形式、风格和制作深度；复制生成的调用指令给我。`
 
@@ -24,9 +24,10 @@ selected format, local style case, effect-image workflow choice, interaction
 depth, device-frame choice, image2 channel preference, and verification
 requirements unless the user overrides them. When the launcher says a local
 reference file will be attached, use the image attached in the conversation;
-the browser preview itself never uploads that file. Use `library.html` when the
-user wants more cases. If the local file URL is unavailable, provide the
-repository-relative `launcher.html` path instead.
+the browser preview itself never uploads that file. Use
+`https://zhu-guli326.github.io/ui_case/` when the user wants more cases. The
+gallery is maintained separately from the installable Skill so users do not
+need to clone its demos, screenshots, GIFs, or videos.
 
 ## 对外表达 / User-facing language
 
