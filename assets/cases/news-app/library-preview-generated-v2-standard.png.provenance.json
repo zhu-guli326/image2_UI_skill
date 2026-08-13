@@ -1,0 +1,15 @@
+{
+  "generated_at": "2026-08-13T12:49:13Z",
+  "channel": "youtoken-gpt-image-2",
+  "source": "youtoken-image",
+  "action": "edit",
+  "output": "assets/cases/news-app/library-preview-generated-v2-standard.png",
+  "reference": "assets/cases/news-app/library-preview-2x.png",
+  "model": "gpt-image-2",
+  "requested_size": "768x1664",
+  "generated_size": "853x1844",
+  "final_size": "780x1688",
+  "postprocess": "High-quality proportional resize with sips to the library 2x preview contract.",
+  "purpose": "Regenerated Today case-library preview with a centered device, balanced whitespace, and no cursor artifact.",
+  "prompt": "Redraw the referenced Today newspaper-style mobile news app as a clean portrait preview. Preserve warm newsprint, ink-black serif hierarchy, coral breaking-news card, Top Stories photography, and bottom navigation. Center one complete upright phone at about 82% canvas height with balanced whitespace. Keep key headlines accurate. No cursor, crop, watermark, warped phone, clipped bar, or pseudo-text."
+}

@@ -5,7 +5,7 @@
   "style": "当代美术馆导览",
   "video": "./assets/cases/museum-app/museum-app-demo.mp4",
   "poster": "./assets/cases/museum-app/museum-app-preview.gif",
-  "previewImage": "./assets/cases/museum-app/library-preview-2x.png",
+  "previewImage": "./assets/cases/museum-app/library-preview-generated-v2-standard.png",
   "preview": "#dce3d6",
   "reference": "画廊导视与展览画册的安静秩序",
   "referenceImage": "./assets/style-references/artmuse-reference.png",

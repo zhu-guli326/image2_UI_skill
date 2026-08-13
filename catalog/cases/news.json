@@ -5,7 +5,7 @@
   "style": "报刊感新闻阅读",
   "video": "./assets/cases/news-app/news-app-demo.mp4",
   "poster": "./assets/cases/news-app/news-app-preview.gif",
-  "previewImage": "./assets/cases/news-app/library-preview-2x.png",
+  "previewImage": "./assets/cases/news-app/library-preview-generated-v2-standard.png",
   "preview": "#e1e0d7",
   "reference": "传统报刊标题层级，结合移动端卡片式资讯浏览",
   "referenceImage": "./assets/style-references/today-reference.png",

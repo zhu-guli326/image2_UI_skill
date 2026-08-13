@@ -1,0 +1,15 @@
+{
+  "generated_at": "2026-08-13T12:49:13Z",
+  "channel": "youtoken-gpt-image-2",
+  "source": "youtoken-image",
+  "action": "edit",
+  "output": "assets/cases/museum-app/library-preview-generated-v2-standard.png",
+  "reference": "assets/cases/museum-app/library-preview-2x.png",
+  "model": "gpt-image-2",
+  "requested_size": "768x1664",
+  "generated_size": "853x1844",
+  "final_size": "780x1688",
+  "postprocess": "High-quality proportional resize with sips to the library 2x preview contract.",
+  "purpose": "Regenerated ArtMuse case-library preview with a larger, centered device and balanced whitespace.",
+  "prompt": "Redraw the referenced ArtMuse museum-guide mobile app as a clean portrait preview. Preserve the paper-white gallery aesthetic, sage and pale lavender accents, fine brown linework, Modern Visions card, Visit shortcuts, artwork thumbnails, and bottom navigation. Center one complete upright phone at about 82% canvas height with balanced whitespace. Keep key UI text accurate. No cursor, crop, watermark, warped phone, or pseudo-text."
+}
