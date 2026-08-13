@@ -23,6 +23,8 @@
     "CONTRIBUTING.md",
     "CHANGELOG.md",
     "LICENSE",
+    "validate.ps1",
+    "agents/",
     "references/",
     "scripts/doctor.mjs",
     "scripts/image2-ui",

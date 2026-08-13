@@ -67,6 +67,12 @@ npm run doctor
 npm run pack:check
 ```
 
+Windows PowerShell 可运行完整的 Skill 仓库自检：
+
+```powershell
+.\validate.ps1
+```
+
 ## Key Rules
 
 - 需要生图时必须调用项目指定的 `image2`；没有可用通道时明确说明缺口。

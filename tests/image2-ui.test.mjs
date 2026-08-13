@@ -8,6 +8,27 @@ import { fileURLToPath } from "node:url";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const node = process.execPath;
+const pythonCandidates = process.env.PYTHON
+  ? [{ command: process.env.PYTHON, prefixArgs: [] }]
+  : process.platform === "win32"
+    ? [
+        { command: "python", prefixArgs: [] },
+        { command: "py", prefixArgs: ["-3"] },
+        { command: "python3", prefixArgs: [] },
+      ]
+    : [{ command: "python3", prefixArgs: [] }, { command: "python", prefixArgs: [] }];
+const python = pythonCandidates.find(({ command, prefixArgs }) =>
+  spawnSync(command, [...prefixArgs, "--version"], { encoding: "utf8" }).status === 0,
+);
+
+if (!python) {
+  throw new Error("Python 3.10 or newer is required to run the test suite");
+}
+
+function execPython(args, options = {}) {
+  return execFileSync(python.command, [...python.prefixArgs, ...args], options);
+}
+
 const tinyPng = Buffer.from(
   "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAFgwJ/luzcswAAAABJRU5ErkJggg==",
   "base64",
@@ -57,7 +78,7 @@ test("compare writes an HTML review board", () => {
 });
 
 test("image2 wrapper prefers the configured project command", () => {
-  const stdout = execFileSync("python3", ["scripts/image2_asset.py", "generate", "--prompt", "test prompt", "--output", "tmp/generated/test.png", "--prefer", "image2", "--dry-run"], {
+  const stdout = execPython(["scripts/image2_asset.py", "generate", "--prompt", "test prompt", "--output", "tmp/generated/test.png", "--prefer", "image2", "--dry-run"], {
     cwd: repoRoot,
     encoding: "utf8",
     env: { ...process.env, IMAGE2_COMMAND: "image2-custom" },
@@ -68,7 +89,7 @@ test("image2 wrapper prefers the configured project command", () => {
 });
 
 test("doctor reports a missing configured image2 executable", () => {
-  const stdout = execFileSync("python3", ["scripts/image2_asset.py", "doctor"], {
+  const stdout = execPython(["scripts/image2_asset.py", "doctor"], {
     cwd: repoRoot,
     encoding: "utf8",
     env: { ...process.env, IMAGE2_COMMAND: "missing-image2-command-for-test" },
@@ -99,7 +120,7 @@ test("multi-agent orchestrator exposes its production DAG", () => {
 test("npm package contains Skill tooling and excludes gallery sources", () => {
   const stdout = execFileSync("npm", ["pack", "--dry-run", "--json"], { cwd: repoRoot, encoding: "utf8" });
   const files = new Set(JSON.parse(stdout)[0].files.map((file) => file.path));
-  for (const required of ["SKILL.md", "README.md", "PRODUCTION.md", "scripts/image2-ui", "scripts/image2_asset.py", "scripts/image2_orchestrate.mjs", "assets/readme/hero.png"]) {
+  for (const required of ["SKILL.md", "README.md", "PRODUCTION.md", "validate.ps1", "agents/openai.yaml", "scripts/image2-ui", "scripts/image2_asset.py", "scripts/image2_orchestrate.mjs", "scripts/ui_compare.mjs", "scripts/ui_loop.mjs", "scripts/ui_output_audit.mjs", "assets/readme/hero.png"]) {
     assert.ok(files.has(required), required);
   }
   assert.ok([...files].some((file) => file.startsWith("references/")));
