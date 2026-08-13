@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="description" content="用可视化选项配置并调用 image2 UI skill。">
+  <title>可视化启动器 · IMAGE2 UI</title>
+  <link rel="stylesheet" href="./launcher.css">
+  <script src="./analytics.config.js"></script>
+  <script src="./analytics.js" defer></script>
+  <script src="./launcher.js" defer></script>
+</head>
+<body>
+  <header class="launcher-topbar">
+    <a class="brand" href="./library.html" aria-label="打开 image2 UI 案例库">
+      <span class="brand-mark" aria-hidden="true"><i></i></span>
+      <span>IMAGE2 UI</span>
+      <small>VISUAL LAUNCHER</small>
+    </a>
+    <nav aria-label="主导航">
+      <a href="./library.html">案例库</a>
+      <a href="./brands.html">品牌规范</a>
+      <a href="./skills.html">设计 Skill</a>
+      <a href="./vocabulary.html">UI 词典</a>
+    </nav>
+  </header>
+
+  <main class="launcher-shell">
+    <header class="page-heading">
+      <div>
+        <p class="kicker">CONFIGURE BEFORE YOU CREATE</p>
+        <h1>先选，再调用。</h1>
+      </div>
+      <p>把模糊的想法整理成一条可直接执行的指令。选择会实时写入右侧，复制后回到 Codex 开始制作。</p>
+    </header>
+
+    <form class="launcher-grid" id="launcherForm">
+      <div class="configuration-column">
+        <section class="config-section" aria-labelledby="sourceTitle">
+          <div class="section-heading">
+            <span>01</span>
+            <div><h2 id="sourceTitle">你想做什么</h2><p>一句话就够，后续仍可继续补充。</p></div>
+          </div>
+          <label class="brief-field" for="projectBrief">
+            <span>项目描述</span>
+            <textarea id="projectBrief" name="brief" rows="3" maxlength="280" placeholder="例如：做一个适合独立咖啡店的会员 App，包含首页、菜单和集点卡。"></textarea>
+            <small><b id="briefCount">0</b> / 280</small>
+          </label>
+
+          <div class="reference-layout">
+            <label class="upload-zone" id="uploadZone" for="referenceFile">
+              <input id="referenceFile" type="file" accept="image/png,image/jpeg,image/webp,image/gif">
+              <span class="upload-symbol" aria-hidden="true">+</span>
+              <strong>添加参考图</strong>
+              <small>拖到这里，或选择 PNG / JPG / WebP</small>
+            </label>
+            <div class="reference-preview" id="referencePreview" hidden>
+              <img id="referenceImage" alt="已选择的本地参考图预览">
+              <div><strong id="referenceName"></strong><small id="referenceSize"></small></div>
+              <button type="button" id="removeReference">移除</button>
+            </div>
+          </div>
+          <p class="privacy-note">图片只在当前浏览器预览，不会由此页面上传。</p>
+        </section>
+
+        <section class="config-section" aria-labelledby="formatTitle">
+          <div class="section-heading">
+            <span>02</span>
+            <div><h2 id="formatTitle">选择交付形式</h2><p>尺寸、设备框和交互会随之调整。</p></div>
+          </div>
+          <div class="option-grid format-grid" role="radiogroup" aria-label="交付形式">
+            <label class="option-card"><input type="radio" name="format" value="mobile" checked><span class="format-visual phone-visual" aria-hidden="true"><i></i></span><strong>手机 App</strong><small>iOS 预览与触控路径</small></label>
+            <label class="option-card"><input type="radio" name="format" value="web"><span class="format-visual browser-visual" aria-hidden="true"><i></i></span><strong>响应式网页</strong><small>桌面与移动布局</small></label>
+            <label class="option-card"><input type="radio" name="format" value="dashboard"><span class="format-visual dashboard-visual" aria-hidden="true"><i></i></span><strong>产品后台</strong><small>高密度工作界面</small></label>
+            <label class="option-card"><input type="radio" name="format" value="desktop"><span class="format-visual desktop-visual" aria-hidden="true"><i></i></span><strong>桌面应用</strong><small>窗口与多面板结构</small></label>
+          </div>
+        </section>
+
+        <section class="config-section" aria-labelledby="styleTitle">
+          <div class="section-heading style-heading">
+            <span>03</span>
+            <div><h2 id="styleTitle">选择视觉方向</h2><p>先选一个接近的气质，执行时仍会结合你的内容。</p></div>
+            <a href="./library.html">查看 23 个案例</a>
+          </div>
+          <div class="style-grid" role="radiogroup" aria-label="视觉方向">
+            <label class="style-card">
+              <input type="radio" name="style" value="museum">
+              <span class="style-image"><img src="./assets/cases/museum-app/library-preview-2x.png" alt="ArtMuse 当代美术馆导览界面"></span>
+              <span class="style-meta"><strong>画册式留白</strong><small>克制 / 文化 / 内容优先</small></span>
+            </label>
+            <label class="style-card">
+              <input type="radio" name="style" value="fashion">
+              <span class="style-image"><img src="./assets/cases/fashion-shopping-app/library-preview-2x.png" alt="Vestra 编辑式时尚电商界面"></span>
+              <span class="style-meta"><strong>编辑式电商</strong><small>大图 / 柔和 / 产品主角</small></span>
+            </label>
+            <label class="style-card">
+              <input type="radio" name="style" value="plate" checked>
+              <span class="style-image"><img src="./demo/plate-play/screenshots/library-preview-2x.png" alt="Plate Play 高彩插画食谱界面"></span>
+              <span class="style-meta"><strong>高彩插画</strong><small>活泼 / 粗线 / 强对比</small></span>
+            </label>
+            <label class="style-card">
+              <input type="radio" name="style" value="carry">
+              <span class="style-image"><img src="./demo/carry-bag/screenshots/library-preview-2x.png" alt="Carry Bag 高亮背包电商界面"></span>
+              <span class="style-meta"><strong>冷感产品陈列</strong><small>摄影 / 极简 / 荧光操作</small></span>
+            </label>
+            <label class="style-card">
+              <input type="radio" name="style" value="fithub">
+              <span class="style-image"><img src="./demo/fithub/screenshots/library-preview-2x.png" alt="FitHub 运动训练界面"></span>
+              <span class="style-meta"><strong>动感运动</strong><small>高对比 / 节奏 / 数据清晰</small></span>
+            </label>
+            <label class="style-card custom-style-card">
+              <input type="radio" name="style" value="custom">
+              <span class="custom-style-visual" aria-hidden="true"><i></i><i></i><i></i></span>
+              <span class="style-meta"><strong>跟随参考图</strong><small>不套用预设风格</small></span>
+            </label>
+          </div>
+        </section>
+
+        <section class="config-section" aria-labelledby="depthTitle">
+          <div class="section-heading">
+            <span>04</span>
+            <div><h2 id="depthTitle">决定制作深度</h2><p>这些选项会成为明确的执行约束。</p></div>
+          </div>
+
+          <fieldset class="control-group">
+            <legend>制作流程</legend>
+            <div class="segmented-control">
+              <label><input type="radio" name="workflow" value="full" checked><span>完整效果图流程</span></label>
+              <label><input type="radio" name="workflow" value="fast"><span>跳过效果图</span></label>
+            </div>
+          </fieldset>
+
+          <fieldset class="control-group">
+            <legend>交互深度</legend>
+            <div class="segmented-control three-way">
+              <label><input type="radio" name="interaction" value="single"><span>单屏状态</span></label>
+              <label><input type="radio" name="interaction" value="path" checked><span>关键路径</span></label>
+              <label><input type="radio" name="interaction" value="complete"><span>完整流程</span></label>
+            </div>
+          </fieldset>
+
+          <div class="switch-list">
+            <label class="switch-row" id="deviceFrameRow"><span><strong>展示设备外框</strong><small>手机模式包含状态栏、安全区和机身</small></span><input type="checkbox" name="deviceFrame" checked><i aria-hidden="true"></i></label>
+            <label class="switch-row"><span><strong>生成复杂位图资产</strong><small>照片、插画、商品图由 image2 生成并接回页面</small></span><input type="checkbox" name="generateAssets" checked><i aria-hidden="true"></i></label>
+            <label class="switch-row"><span><strong>包含验收截图</strong><small>在桌面与移动尺寸验证布局和主要交互</small></span><input type="checkbox" name="screenshots" checked><i aria-hidden="true"></i></label>
+          </div>
+
+          <label class="select-row" for="channelSelect"><span><strong>生图通道</strong><small>通常保持自动选择</small></span><select id="channelSelect" name="channel"><option value="auto">自动选择可用通道</option><option value="native">仅原生 image2</option><option value="fallback">允许备案通道</option></select></label>
+        </section>
+      </div>
+
+      <aside class="prompt-column" aria-labelledby="promptTitle">
+        <div class="prompt-panel">
+          <div class="prompt-heading">
+            <div><p class="kicker">READY FOR CODEX</p><h2 id="promptTitle">调用指令</h2></div>
+            <span class="ready-state"><i></i>实时生成</span>
+          </div>
+
+          <div class="selection-summary" id="selectionSummary" aria-live="polite"></div>
+          <pre class="prompt-output" id="promptOutput" tabindex="0"></pre>
+
+          <div class="prompt-actions">
+            <button class="copy-button" id="copyPrompt" type="button">复制调用指令</button>
+            <button class="reset-button" id="resetForm" type="button">恢复默认</button>
+          </div>
+          <p class="handoff-note" id="handoffNote">复制后回到 Codex 直接粘贴即可。</p>
+        </div>
+      </aside>
+    </form>
+  </main>
+
+  <dialog class="intent-dialog" id="intentDialog" aria-labelledby="intentDialogTitle" aria-describedby="intentDialogDescription">
+    <form method="dialog" class="intent-dialog-close"><button type="submit" aria-label="关闭任务选择">&#215;</button></form>
+    <div class="intent-dialog-content">
+      <div class="intent-dialog-mark" aria-hidden="true"><span></span></div>
+      <h2 id="intentDialogTitle">要在 image2 UI 内开发什么？</h2>
+      <p id="intentDialogDescription">先选任务方向，再配置视觉与交互细节。</p>
+      <div class="intent-choice-grid" role="list">
+        <button class="intent-choice" type="button" data-intent="explore" role="listitem"><span class="intent-icon intent-icon-explore" aria-hidden="true"></span><strong>探索并理解代码</strong></button>
+        <button class="intent-choice" type="button" data-intent="build" role="listitem"><span class="intent-icon intent-icon-build" aria-hidden="true"></span><strong>构建新功能、应用或工具</strong></button>
+        <button class="intent-choice" type="button" data-intent="review" role="listitem"><span class="intent-icon intent-icon-review" aria-hidden="true"></span><strong>审查代码并提出修改建议</strong></button>
+        <button class="intent-choice" type="button" data-intent="fix" role="listitem"><span class="intent-icon intent-icon-fix" aria-hidden="true"></span><strong>修复问题和失败</strong></button>
+      </div>
+      <p class="intent-dialog-status" id="intentDialogStatus" role="status" aria-live="polite">选择后会把任务方向写入调用指令。</p>
+    </div>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden>已复制调用指令</div>
+</body>
+</html>
