@@ -119,6 +119,7 @@ const styleGuides = [
 ];
 
 const githubApiUrl = "https://api.github.com/repos/zhu-guli326/image2_UI_skill";
+const githubStarsFallbackUrl = "https://img.shields.io/github/stars/zhu-guli326/image2_UI_skill.json";
 const gallery = document.querySelector("#demoGallery");
 const searchInput = document.querySelector("#styleSearch");
 const categoryNav = document.querySelector("#categoryNav");
@@ -547,10 +548,32 @@ window.addEventListener("popstate", () => {
   renderDemoGallery();
 });
 
-function formatStars(count) { return typeof count === "number" ? (count >= 1000 ? `${(count / 1000).toFixed(count >= 10000 ? 0 : 1)}k` : String(count)) : "GitHub"; }
+function updateGitHubStars(count) {
+  if (!Number.isFinite(count)) return false;
+  const stars = new Intl.NumberFormat("zh-CN").format(count);
+  githubStars.textContent = stars;
+  githubStarsNav.textContent = stars;
+  return true;
+}
+
 async function loadGitHubStars() {
-  try { const response = await fetch(githubApiUrl, { headers: { Accept: "application/vnd.github+json" }, cache: "no-store" }); if (!response.ok) throw new Error(); const stars = formatStars((await response.json()).stargazers_count); githubStars.textContent = stars; githubStarsNav.textContent = stars; }
-  catch { githubStars.textContent = "GitHub"; githubStarsNav.textContent = "repo"; }
+  try {
+    const response = await fetch(githubApiUrl, {
+      headers: { Accept: "application/vnd.github+json" },
+      cache: "no-store"
+    });
+    if (!response.ok) throw new Error(`GitHub API returned ${response.status}`);
+    if (!updateGitHubStars(Number((await response.json()).stargazers_count))) throw new Error("Missing star count");
+  } catch {
+    try {
+      const response = await fetch(githubStarsFallbackUrl, { cache: "no-store" });
+      if (!response.ok) throw new Error(`Star fallback returned ${response.status}`);
+      if (!updateGitHubStars(Number((await response.json()).value))) throw new Error("Missing fallback star count");
+    } catch {
+      githubStars.textContent = "--";
+      githubStarsNav.textContent = "--";
+    }
+  }
 }
 
 activeTag = readTagFromUrl();
