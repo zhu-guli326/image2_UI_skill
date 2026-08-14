@@ -49,6 +49,22 @@ git clone https://github.com/zhu-guli326/image2_UI_skill.git "${CODEX_HOME:-$HOM
 
 安装本 Skill 不再下载案例站点的大型媒体资源。
 
+### 精选视频预览
+
+仓库另外附带 5 个轻量视频案例，打开 GitHub 项目即可查看并点击播放：
+
+| 案例 | 适合观察的内容 | 预览 |
+| --- | --- | --- |
+| Mimo Activities | 活动流、卡片层级与移动端浏览节奏 | [播放视频](./assets/video-cases/mimo-activities-demo.mp4) |
+| Softly Reflections | 日记记录、柔和过渡与空状态 | [播放视频](./assets/video-cases/softly-reflections-demo.mp4) |
+| Cleanbite Scanner | 扫码识别流程、结果状态与操作反馈 | [播放视频](./assets/video-cases/cleanbite-scanner-demo.mp4) |
+| Museum App | 多屏导航、作品缩略图与详情页串联 | [播放视频](./assets/video-cases/museum-app-demo.mp4) |
+| Fashion Shopping App | 商品视觉资产、筛选流程与详情展示 | [播放视频](./assets/video-cases/fashion-shopping-app-demo.mp4) |
+
+完整说明见[视频案例预览索引](./references/video-case-previews.md)。
+
+完整视频和案例媒体仍由独立的 [UI Case Gallery](https://zhu-guli326.github.io/ui_case/library.html?lang=zh) 维护。
+
 ## CLI
 
 ```bash
