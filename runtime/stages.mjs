@@ -1,0 +1,237 @@
+export const STAGES = [
+  "init",
+  "preflight",
+  "analyze-reference",
+  "generate-effect",
+  "review-effect",
+  "decompose",
+  "implement",
+  "verify",
+  "fix",
+  "finalize",
+];
+
+export const STAGE_TOOLS = {
+  preflight: "env.doctor",
+  "generate-effect": "image.generate",
+  implement: "agent.execute",
+  verify: "ui.validate",
+  fix: "agent.execute",
+};
+
+export const stageTool = (stage) => STAGE_TOOLS[stage] || null;
+
+export async function executeStage({ state, tools, signal, target, operation, stageHandlers = {} } = {}) {
+  const stage = state?.stage;
+  if (!stage) throw new TypeError("executeStage requires state.stage");
+  if (stageHandlers[stage]) return normalize(await stageHandlers[stage]({ state, tools, signal, target, operation }));
+  if (["init", "analyze-reference", "review-effect", "decompose", "finalize"].includes(stage)) return executeNonIoStage(state);
+  if (stage === "verify") return executeVerify({ state, tools, signal, target, operation });
+
+  if (["implement", "fix"].includes(stage) && state.policy?.allowWorkspaceMutation === false) {
+    return {
+      ok: false,
+      data: {
+        code: "workspace-mutation-not-allowed",
+        message: "Workspace mutation is disabled",
+        blocked: true,
+      },
+    };
+  }
+  if (stage === "implement" && state.policy?.requireEffectImage && !effectArtifact(state)) {
+    return {
+      ok: false,
+      data: {
+        code: "effect-image-required",
+        message: "Effect image is required",
+        blocked: true,
+      },
+    };
+  }
+
+  const name = STAGE_TOOLS[stage];
+  if (!has(tools, name)) {
+    const required = (stage === "preflight" && state.runtime?.requirePreflight)
+      || ["implement", "fix"].includes(stage)
+      || (stage === "generate-effect" && state.policy?.requireEffectImage);
+    if (required) {
+      throw blocked(
+        stage === "generate-effect" ? "effect-image-required" : "capability-unavailable",
+        `Required Runtime tool is unavailable: ${name}`,
+      );
+    }
+    return { ok: true, data: { skipped: true } };
+  }
+
+  const effectiveTarget = target || state.task.target;
+  const input = stage === "fix"
+    ? buildFixRequest(state, effectiveTarget)
+    : stage === "implement"
+      ? buildImplementRequest(state, effectiveTarget)
+      : stage === "generate-effect"
+        ? {
+            target: effectiveTarget,
+            runId: state.runId,
+            effectRevision: state.effectRevision,
+            prompt: buildImagePrompt(state),
+            task: state.task,
+            access: "write",
+          }
+        : { target: effectiveTarget, task: state.task, policy: state.policy };
+
+  const result = await tools.invoke(name, input, {
+    state,
+    target: effectiveTarget,
+    signal,
+    operation,
+    timeoutMs: operation?.timeoutMs,
+  });
+
+  if (stage === "preflight") {
+    validatePreflightResult(state, result);
+    await probeRequiredCapabilities({ state, tools, signal, operation });
+  }
+  if (stage === "generate-effect" && state.policy?.requireEffectImage) {
+    const artifact = (result?.artifacts || []).find((item) => item?.kind === "effect-image" && item?.path);
+    if (!artifact) throw blocked("effect-image-required", "Image generation did not produce an effect-image artifact");
+  }
+  return normalize(result);
+}
+
+export async function executeVerify({ state, tools, signal, target, operation } = {}) {
+  if (!has(tools, "ui.validate")) throw blocked("capability-unavailable", "Required Runtime tool is unavailable: ui.validate");
+  const effectiveTarget = target || state.task.target;
+  const context = { state, signal, operation, timeoutMs: operation?.timeoutMs };
+  const results = [];
+  if (has(tools, "ui.build") && state.runtime?.verifyBuild !== false) {
+    results.push(await tools.invoke("ui.build", { target: effectiveTarget, command: state.task.buildCommand }, context));
+  }
+  results.push(await tools.invoke("ui.validate", {
+    target: effectiveTarget,
+    reference: state.task.reference,
+    noBrowser: state.runtime?.noBrowser === true,
+  }, context));
+
+  const all = results.map(unwrap);
+  const validation = all.find((item) => item.mustFix || item.fixQueue?.mustFix || item.findings) || {};
+  const mustFix = all.flatMap((item) => {
+    const source = item.fixQueue || item;
+    return source.mustFix || (source.findings || []).filter((finding) => finding.level === "fail");
+  });
+  const shouldFix = all.flatMap((item) => {
+    const source = item.fixQueue || item;
+    return source.shouldFix || (source.findings || []).filter((finding) => finding.level === "warn");
+  });
+  return {
+    ok: true,
+    data: {
+      status: mustFix.length ? "needs-fix" : shouldFix.length ? "needs-review" : "pass",
+      mustFix,
+      shouldFix,
+      audit: validation.audit?.counts || validation.audit || validation.counts || {},
+      visual: { score: null, method: "unavailable" },
+      lastVerifiedAt: new Date().toISOString(),
+    },
+    artifacts: results.flatMap((item) => item.artifacts || []),
+  };
+}
+
+export const verifyStage = executeVerify;
+
+export function executeNonIoStage(state) {
+  return { ok: true, data: { stage: state?.stage || null, skipped: true } };
+}
+
+export function buildImagePrompt(state) {
+  return `${state.task.prompt}\n\nReference: ${state.task.reference || "none"}\nGenerate a complete effect image without readable UI text.`;
+}
+
+export function buildImplementRequest(state, target = state.task.target) {
+  const effect = effectArtifact(state);
+  return {
+    stage: "implement",
+    access: "write",
+    target,
+    task: state.task,
+    prompt: [
+      state.task.prompt,
+      "",
+      `Original reference: ${state.task.reference || "none"}`,
+      `Approved effect image: ${effect?.path || "none"}`,
+      "Use the effect image as the implementation source of truth and keep the result clickable.",
+    ].join("\n"),
+    policy: state.policy,
+    artifacts: state.artifacts,
+  };
+}
+
+export function buildFixRequest(state, target = state.task.target) {
+  const effect = effectArtifact(state);
+  return {
+    stage: "fix",
+    access: "write",
+    target,
+    task: state.task,
+    findings: state.verification.mustFix,
+    artifacts: state.artifacts,
+    prompt: [
+      state.task.prompt,
+      "",
+      `Approved effect image: ${effect?.path || "none"}`,
+      "Fix every Must Fix finding:",
+      ...state.verification.mustFix.map((finding) => `${finding.rule}: ${finding.message}`),
+    ].join("\n"),
+  };
+}
+
+async function probeRequiredCapabilities({ state, tools, signal, operation }) {
+  if (typeof tools?.probe !== "function") return;
+  const required = ["agent.execute", "ui.validate"];
+  if (state.policy?.requireEffectImage) required.push("image.generate");
+  for (const name of required) {
+    if (!has(tools, name)) throw blocked("capability-unavailable", `Required Runtime tool is unavailable: ${name}`);
+    const result = await tools.probe(name, { state, signal, timeoutMs: operation?.timeoutMs });
+    if (result?.available === false) {
+      const code = name === "image.generate" ? "effect-image-required" : "capability-unavailable";
+      throw blocked(code, result.reason || `Required Runtime capability is unavailable: ${name}`);
+    }
+  }
+}
+
+function validatePreflightResult(state, result) {
+  const data = unwrap(result);
+  const browserOnly = state.runtime?.noBrowser
+    && data.checks?.browser?.ready === false
+    && Object.entries(data.checks)
+      .filter(([key]) => key !== "browser")
+      .every(([, check]) => check.nodeOk !== false && check.pythonOk !== false && check.ready !== false && check.writable !== false);
+  if (data.status && !["ready", "ok"].includes(data.status) && !browserOnly) {
+    throw blocked("capability-unavailable", "Runtime preflight capabilities are not ready");
+  }
+}
+
+function effectArtifact(state) {
+  return Object.values(state.artifacts || {}).find((artifact) => artifact?.kind === "effect-image" && artifact?.path);
+}
+
+function has(tools, name) {
+  try { return Boolean(name && tools && (tools.has ? tools.has(name) : tools.get(name))); } catch { return false; }
+}
+
+function unwrap(result) {
+  return result?.ok === true ? result.data || {} : result || {};
+}
+
+function normalize(result) {
+  return result && typeof result.ok === "boolean" ? result : { ok: true, data: result || {} };
+}
+
+function blocked(code, message) {
+  const error = new Error(message);
+  error.code = code;
+  error.blocked = true;
+  error.retryable = true;
+  return error;
+}
+
+export default executeStage;

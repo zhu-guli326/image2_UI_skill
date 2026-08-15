@@ -55,6 +55,20 @@ if (command === "orchestrate") {
   process.exit(result.status ?? 1);
 }
 
+if (command === "state") {
+  const stateScript = path.join(__dirname, "workflow_state_machine.mjs");
+  const result = spawnSync(process.execPath, [stateScript, ...args.slice(1)], {
+    stdio: "inherit",
+    cwd: process.cwd(),
+  });
+  process.exit(result.status ?? 1);
+}
+
+if (["run", "resume", "inspect"].includes(command)) {
+  const { runRuntimeCli } = await import("../runtime/cli.mjs");
+  process.exit(await runRuntimeCli(command, args.slice(1), { repoRoot: path.resolve(__dirname, "..") }));
+}
+
 if (command === "doctor") {
   const image2Script = path.join(__dirname, "image2_asset.py");
   const python = process.env.PYTHON || (process.platform === "win32" ? "python" : "python3");
@@ -84,6 +98,10 @@ function printHelp() {
   image2-ui compare --reference reference.png --actual output.png [--out comparison.png]
   image2-ui loop <demo-dir-or-html> --reference reference.png [--build "npm run build"]
   image2-ui orchestrate <project-dir> --task "..." [--reference reference.png]
+  image2-ui state <run.json> [--json]
+  image2-ui run <project-dir> --task "..." [--reference reference.png] [--require-effect-review]
+  image2-ui resume <project-dir> (--run RUN_ID | --latest) [--decision approved|rejected]
+  image2-ui inspect <project-dir> (--run RUN_ID | --latest) [--json]
   image2-ui doctor
   image2-ui version
 
@@ -92,6 +110,10 @@ Commands:
   compare    Build a side-by-side reference/output board, with an overlay and manual review checklist.
   loop       Run build, screenshot capture, validate, compare, and write a fix-queue report for iterative restoration.
   orchestrate Run the multi-agent image-to-UI workflow with artifact handoffs and phase-aware parallelism.
+  state      Inspect and validate a persisted orchestrator state-machine snapshot.
+  run        Start a durable UI Harness Runtime run.
+  resume     Resume a saved Runtime run with interruption reconciliation.
+  inspect    Inspect a Runtime state snapshot and event history.
   doctor     Show image channels, runtime versions, browser capture, fonts/media, and output permissions.`);
 }
 

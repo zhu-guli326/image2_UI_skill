@@ -1,0 +1,7 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+import { createState } from "../runtime/state-store.mjs";
+import { transition } from "../runtime/machine.mjs";
+const fixture = (x = {}) => createState({ runId: "machine", target: ".", prompt: "test", status: "running", stage: "verify", limits: { maxIterations: 2 }, ...x });
+test("Runtime machine bounds Verify/Fix", () => { const fix = transition(fixture(), { type: "STAGE_SUCCEEDED", result: { mustFix: [{ rule: "x", message: "x" }] } }); assert.equal(fix.stage, "fix"); assert.equal(fix.iteration, 0); assert.equal(transition(fixture({ stage: "fix" }), { type: "STAGE_SUCCEEDED", result: {} }).iteration, 1); assert.equal(transition(fixture({ iteration: 2 }), { type: "STAGE_SUCCEEDED", result: { mustFix: [{ rule: "x", message: "x" }] } }).status, "blocked"); });
+test("Effect review and no-effect policy route deterministically", () => { const review = fixture({ stage: "review-effect", policy: { requireEffectImage: true } }); assert.equal(transition(review, { type: "STAGE_SUCCEEDED", result: { decision: "approved" } }).stage, "decompose"); const rejected = transition(review, { type: "STAGE_SUCCEEDED", result: { status: "rejected" } }); assert.equal(rejected.stage, "generate-effect"); assert.equal(rejected.effectRevision, 1); assert.equal(transition(fixture({ stage: "analyze-reference", policy: { requireEffectImage: false } }), { type: "STAGE_SUCCEEDED", result: {} }).stage, "decompose"); });

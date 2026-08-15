@@ -4,6 +4,12 @@ import fs from "node:fs";
 import path from "node:path";
 import { spawn } from "node:child_process";
 import { fileURLToPath } from "node:url";
+import {
+  ORCHESTRATOR_ROLE_ORDER,
+  createRoleStateMachine,
+  createWorkflowStateMachine,
+  workflowStatusForState,
+} from "./workflow_state_machine.mjs";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const args = process.argv.slice(2);
@@ -18,18 +24,7 @@ const maxParallel = Number.parseInt(readOption("--max-parallel") || "2", 10);
 const dryRun = args.includes("--dry-run");
 const jsonMode = args.includes("--json");
 
-const ROLE_ORDER = [
-  "visual-analyst",
-  "asset-engineer",
-  "ui-architect",
-  "backend-contract",
-  "state-machine",
-  "ui-implementer",
-  "code-reviewer",
-  "accessibility",
-  "qa-auditor",
-  "release",
-];
+const ROLE_ORDER = ORCHESTRATOR_ROLE_ORDER;
 
 const ROLES = {
   "visual-analyst": {
@@ -111,7 +106,10 @@ const runDir = path.join(targetPath, ".image2-ui", "agents", runId);
 const artifactsDir = path.join(runDir, "artifacts");
 fs.mkdirSync(artifactsDir, { recursive: true });
 
+const workflowMachine = createWorkflowStateMachine();
+const roleMachines = new Map(ROLE_ORDER.map((role) => [role, createRoleStateMachine(role)]));
 const manifest = {
+  schemaVersion: 1,
   runId,
   target: targetPath,
   task: task || "dry-run",
@@ -121,12 +119,32 @@ const manifest = {
   agentCommand,
   model: model || null,
   startedAt: new Date().toISOString(),
-  roles: Object.fromEntries(ROLE_ORDER.map((role) => [role, { status: "pending", phase: ROLES[role].phase }])),
+  updatedAt: null,
+  revision: 0,
+  currentPhase: null,
+  state: workflowMachine.state,
+  status: "pending",
+  stateMachine: workflowMachine.snapshot(),
+  transitions: [],
+  roles: Object.fromEntries(ROLE_ORDER.map((role) => {
+    const machine = roleMachines.get(role);
+    return [role, {
+      phase: ROLES[role].phase,
+      attempts: 0,
+      state: machine.state,
+      status: machine.state,
+      stateMachine: machine.snapshot(),
+    }];
+  })),
 };
-writeManifest();
+const plan = buildPlan();
+manifest.plan = plan;
+transitionWorkflow("plan", {
+  phaseCount: plan.length,
+  roleCount: ROLE_ORDER.length,
+});
 
 if (dryRun) {
-  const plan = buildPlan();
   if (jsonMode) console.log(JSON.stringify({ manifest, plan }, null, 2));
   else {
     console.log(`Image2 UI multi-agent plan: ${targetPath}`);
@@ -136,23 +154,39 @@ if (dryRun) {
   process.exit(0);
 }
 
+transitionWorkflow("start");
 const executable = resolveExecutable(agentCommand);
-if (!executable) fail(`Agent command not found: ${agentCommand}. Install Codex CLI or pass --agent-command.`);
+if (!executable) {
+  manifest.finishedAt = new Date().toISOString();
+  transitionWorkflow("fail", { reason: "agent-command-not-found", agentCommand });
+  if (jsonMode) console.log(JSON.stringify(manifest, null, 2));
+  fail(`Agent command not found: ${agentCommand}. Install Codex CLI or pass --agent-command.`);
+}
 
-for (const phase of buildPlan()) {
+for (const phase of plan) {
+  manifest.currentPhase = phase.name;
+  writeManifest();
   const results = await runPhase(phase.roles);
   if (results.some((result) => result.status !== "complete")) {
-    manifest.status = "blocked";
+    blockPendingRoles("Workflow stopped after an incomplete " + phase.name + " phase");
+    const failedRoles = ROLE_ORDER.filter((role) => manifest.roles[role].state === "failed");
+    const blockedRoles = ROLE_ORDER.filter((role) => manifest.roles[role].state === "blocked");
     manifest.finishedAt = new Date().toISOString();
-    writeManifest();
-    printResults(results);
+    const event = failedRoles.length > 0 ? "fail" : "block";
+    transitionWorkflow(event, {
+      phase: phase.name,
+      failedRoles,
+      blockedRoles,
+    });
+    if (jsonMode) console.log(JSON.stringify({ manifest, results }, null, 2));
+    else printResults(results);
     process.exit(2);
   }
 }
 
-manifest.status = "complete";
+manifest.currentPhase = null;
 manifest.finishedAt = new Date().toISOString();
-writeManifest();
+transitionWorkflow("complete");
 if (jsonMode) console.log(JSON.stringify(manifest, null, 2));
 else {
   console.log(`Image2 UI multi-agent run complete: ${runDir}`);
@@ -191,14 +225,16 @@ async function runPhase(roles) {
   while (pending.size > 0) {
     const ready = [...pending].filter((role) => ROLES[role].deps.every((dependency) => manifest.roles[dependency]?.status === "complete"));
     if (ready.length === 0) {
-      results.push(...[...pending].map((role) => ({ role, status: "failed", exitCode: 2, error: "Dependency cycle or failed prerequisite" })));
+      results.push(...[...pending].map((role) => blockRole(role, "Dependency cycle or failed prerequisite")));
+      pending.clear();
       break;
     }
     const batch = mode === "sequential" ? ready.slice(0, 1) : ready.slice(0, maxParallel);
     batch.forEach((role) => pending.delete(role));
     results.push(...await Promise.all(batch.map((role) => runRole(role))));
     if (batch.some((role) => manifest.roles[role].status !== "complete")) {
-      results.push(...[...pending].map((role) => ({ role, status: "failed", exitCode: 2, error: "Prerequisite agent failed" })));
+      results.push(...[...pending].map((role) => blockRole(role, "Prerequisite agent failed")));
+      pending.clear();
       break;
     }
   }
@@ -212,16 +248,27 @@ function runRole(role) {
   const outputFile = path.join(roleDir, "final-message.md");
   const logFile = path.join(roleDir, "agent.jsonl");
   const prompt = buildPrompt(role, spec);
-  manifest.roles[role] = { status: "running", phase: spec.phase, startedAt: new Date().toISOString(), outputFile, logFile };
-  writeManifest();
+  transitionRole(role, "start", {
+    startedAt: new Date().toISOString(),
+    outputFile,
+    logFile,
+    attempts: manifest.roles[role].attempts + 1,
+    error: null,
+  }, { phase: spec.phase });
 
   return new Promise((resolve) => {
     const commandArgs = ["exec", "--ephemeral", "--json", "--skip-git-repo-check", "--sandbox", "workspace-write", "--ask-for-approval", "never", "-C", targetPath, "-o", outputFile];
     if (model) commandArgs.push("--model", model);
     commandArgs.push(prompt);
-    const child = spawn(executable, commandArgs, { cwd: targetPath, stdio: ["ignore", "pipe", "pipe"] });
     const log = fs.createWriteStream(logFile, { encoding: "utf8" });
     let finished = false;
+    let child;
+    try {
+      child = spawn(executable, commandArgs, { cwd: targetPath, stdio: ["ignore", "pipe", "pipe"] });
+    } catch (error) {
+      finish(1, error.message);
+      return;
+    }
     child.stdout.pipe(log);
     child.stderr.pipe(log);
     child.on("error", (error) => finish(1, error.message));
@@ -231,11 +278,19 @@ function runRole(role) {
       if (finished) return;
       finished = true;
       log.end();
-      const contract = code === 0 ? validateHandoff(spec, outputFile) : { ok: false, error: null };
-      const status = code === 0 && contract.ok ? "complete" : "failed";
+      const contract = code === 0 ? validateHandoff(spec, outputFile) : { ok: false, status: null, error: null };
+      const status = code === 0 && contract.ok
+        ? "complete"
+        : code === 0 && contract.status === "blocked"
+          ? "blocked"
+          : "failed";
       const finalError = error || contract.error;
-      manifest.roles[role] = { ...manifest.roles[role], status, exitCode: code, finishedAt: new Date().toISOString(), error: finalError };
-      writeManifest();
+      const event = status === "complete" ? "complete" : status === "blocked" ? "block" : "fail";
+      transitionRole(role, event, {
+        exitCode: code,
+        finishedAt: new Date().toISOString(),
+        error: finalError,
+      }, { exitCode: code, error: finalError });
       resolve({ role, status, exitCode: code, error: finalError });
     }
   });
@@ -277,33 +332,129 @@ Do not commit, push, delete unrelated files, or claim checks you did not run.`;
 }
 
 function resolveExecutable(command) {
-  if (path.isAbsolute(command) || command.includes(path.sep)) return fs.existsSync(command) ? command : null;
+  const value = String(command || "");
+  if (!value) return null;
+  if (path.isAbsolute(value) || /[\\/]/.test(value)) {
+    const candidate = path.isAbsolute(value) ? path.normalize(value) : path.resolve(process.cwd(), value);
+    return isExecutableFile(candidate) ? candidate : null;
+  }
+  const extensions = process.platform === "win32" && !path.extname(value)
+    ? ["", ...String(process.env.PATHEXT || ".COM;.EXE;.BAT;.CMD").split(";").filter(Boolean)]
+    : [""];
   const paths = String(process.env.PATH || "").split(path.delimiter);
   for (const directory of paths) {
-    const candidate = path.join(directory, command);
-    if (fs.existsSync(candidate)) return candidate;
+    for (const extension of extensions) {
+      const candidate = path.join(directory, value + extension);
+      if (isExecutableFile(candidate)) return candidate;
+    }
   }
   return null;
 }
 
+function isExecutableFile(file) {
+  try {
+    return fs.statSync(file).isFile();
+  } catch {
+    return false;
+  }
+}
+
 function validateHandoff(spec, outputFile) {
+  if (!fs.existsSync(outputFile) || fs.statSync(outputFile).size === 0) {
+    return { ok: false, status: null, error: "Handoff contract failed: final agent message is missing or empty" };
+  }
+  const handoff = fs.readFileSync(outputFile, "utf8");
+  const statusMatch = /^- Status:\s*(complete|blocked|needs-input)\s*$/mi.exec(handoff);
+  if (!statusMatch) {
+    return {
+      ok: false,
+      status: null,
+      error: "Handoff contract failed: final message must declare complete, blocked, or needs-input status",
+    };
+  }
+  if (statusMatch[1].toLowerCase() !== "complete") {
+    return {
+      ok: false,
+      status: "blocked",
+      error: "Agent declared handoff status " + statusMatch[1].toLowerCase(),
+    };
+  }
   const missing = spec.outputs.filter((file) => {
     const output = path.join(artifactsDir, file);
     return !fs.existsSync(output) || !fs.statSync(output).isFile() || fs.statSync(output).size === 0;
   });
-  if (missing.length > 0) return { ok: false, error: `Handoff contract failed: missing or empty artifact(s): ${missing.join(", ")}` };
-  if (!fs.existsSync(outputFile) || fs.statSync(outputFile).size === 0) {
-    return { ok: false, error: "Handoff contract failed: final agent message is missing or empty" };
+  if (missing.length > 0) {
+    return {
+      ok: false,
+      status: null,
+      error: "Handoff contract failed: missing or empty artifact(s): " + missing.join(", "),
+    };
   }
-  const handoff = fs.readFileSync(outputFile, "utf8");
-  if (!/^- Status:\s*complete\s*$/mi.test(handoff)) {
-    return { ok: false, error: "Handoff contract failed: final message must declare '- Status: complete'" };
+  return { ok: true, status: "complete", error: null };
+}
+
+function blockRole(role, error) {
+  transitionRole(role, "block", {
+    exitCode: 2,
+    finishedAt: new Date().toISOString(),
+    error,
+  }, { reason: error });
+  return { role, status: "blocked", exitCode: 2, error };
+}
+
+function blockPendingRoles(error) {
+  for (const role of ROLE_ORDER) {
+    if (roleMachines.get(role).state === "pending") blockRole(role, error);
   }
-  return { ok: true };
+}
+
+function transitionWorkflow(event, metadata = {}) {
+  const record = workflowMachine.transition(event, metadata);
+  manifest.transitions.push({
+    sequence: manifest.transitions.length + 1,
+    scope: "workflow",
+    subject: runId,
+    ...record,
+  });
+  writeManifest();
+  return record;
+}
+
+function transitionRole(role, event, patch = {}, metadata = {}) {
+  const machine = roleMachines.get(role);
+  if (!machine) throw new Error("Unknown orchestrator role: " + role);
+  const record = machine.transition(event, metadata);
+  manifest.roles[role] = { ...manifest.roles[role], ...patch };
+  manifest.transitions.push({
+    sequence: manifest.transitions.length + 1,
+    scope: "role",
+    subject: role,
+    ...record,
+  });
+  writeManifest();
+  return record;
+}
+
+function syncManifestState() {
+  manifest.state = workflowMachine.state;
+  manifest.status = workflowStatusForState(workflowMachine.state);
+  manifest.stateMachine = workflowMachine.snapshot();
+  for (const role of ROLE_ORDER) {
+    const machine = roleMachines.get(role);
+    manifest.roles[role].state = machine.state;
+    manifest.roles[role].status = machine.state;
+    manifest.roles[role].stateMachine = machine.snapshot();
+  }
 }
 
 function writeManifest() {
-  fs.writeFileSync(path.join(runDir, "run.json"), `${JSON.stringify(manifest, null, 2)}\n`);
+  syncManifestState();
+  manifest.revision += 1;
+  manifest.updatedAt = new Date().toISOString();
+  const outputFile = path.join(runDir, "run.json");
+  const temporaryFile = outputFile + "." + process.pid + ".tmp";
+  fs.writeFileSync(temporaryFile, JSON.stringify(manifest, null, 2) + "\n");
+  fs.renameSync(temporaryFile, outputFile);
 }
 
 function printResults(results) {

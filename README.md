@@ -73,7 +73,23 @@ image2-ui validate <demo-dir> --reference <reference-image>
 image2-ui compare --reference <reference-image> --actual <output-image>
 image2-ui loop <demo-dir> --reference <reference-image>
 image2-ui orchestrate <project-dir> --task "Build a clickable UI"
+image2-ui state <run.json> --json
+image2-ui run <project-dir> --task "Build a clickable UI" --reference reference.png
+image2-ui inspect <project-dir> --latest --json
+image2-ui resume <project-dir> --latest
 ```
+
+Use `--require-effect-review` only when an explicit user checkpoint is needed;
+continue that checkpoint with `resume --decision approved|rejected`.
+
+`orchestrate` 使用显式状态机管理运行与各 Agent 角色。运行状态为
+`created -> planned -> running -> complete|failed|blocked`，角色状态为
+`pending -> running -> complete|failed`，前置依赖失败时进入 `blocked`。每次迁移都会原子写入
+`<project>/.image2-ui/agents/<run-id>/run.json`；可用 `image2-ui state` 校验和查看快照。
+
+`run` 会在 `<project>/.image2-ui/runs/<run-id>/` 持久化 `state.json` 和
+`events.jsonl`，并强制执行有界的 `verify -> fix -> verify` 闭环。`inspect`
+查看快照，`resume` 恢复执行；写入型操作中断后会先验证当前工作区，不会盲目重复修改。
 
 开发检查：
 

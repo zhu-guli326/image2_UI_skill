@@ -118,9 +118,15 @@ test("multi-agent orchestrator exposes its production DAG", () => {
 });
 
 test("npm package contains Skill tooling and excludes gallery sources", () => {
-  const stdout = execFileSync("npm", ["pack", "--dry-run", "--json"], { cwd: repoRoot, encoding: "utf8" });
+  const npmArgs = ["pack", "--dry-run", "--json"];
+  const npmExecPath = process.env.npm_execpath;
+  const stdout = execFileSync(
+    npmExecPath ? process.execPath : process.platform === "win32" ? "npm.cmd" : "npm",
+    npmExecPath ? [npmExecPath, ...npmArgs] : npmArgs,
+    { cwd: repoRoot, encoding: "utf8" },
+  );
   const files = new Set(JSON.parse(stdout)[0].files.map((file) => file.path));
-  for (const required of ["SKILL.md", "README.md", "PRODUCTION.md", "validate.ps1", "agents/openai.yaml", "scripts/image2-ui", "scripts/image2_asset.py", "scripts/image2_orchestrate.mjs", "scripts/ui_compare.mjs", "scripts/ui_loop.mjs", "scripts/ui_output_audit.mjs", "assets/readme/hero.png"]) {
+  for (const required of ["SKILL.md", "README.md", "PRODUCTION.md", "validate.ps1", "agents/openai.yaml", "scripts/image2-ui", "scripts/image2_asset.py", "scripts/image2_orchestrate.mjs", "scripts/workflow_state_machine.mjs", "scripts/ui_compare.mjs", "scripts/ui_loop.mjs", "scripts/ui_output_audit.mjs", "runtime/runner.mjs", "runtime/state-store.mjs", "runtime/tools/registry.mjs", "schemas/state.schema.json", "assets/readme/hero.png"]) {
     assert.ok(files.has(required), required);
   }
   assert.ok([...files].some((file) => file.startsWith("references/")));

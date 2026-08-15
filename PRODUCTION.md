@@ -69,6 +69,47 @@ Each run writes isolated logs and handoffs under
 `<project>/.image2-ui/agents/<run-id>/`. Agents never commit or push. The lead
 agent remains responsible for scope, merge decisions, and final validation.
 
+### UI Harness Runtime
+
+```bash
+image2-ui run ./my-output --task "Build the reference UI" --reference ./reference.png --max-iterations 3
+image2-ui inspect ./my-output --latest --json
+image2-ui resume ./my-output --latest
+```
+
+Reference runs review the generated effect image internally by default. Add
+`--require-effect-review` to create an explicit approval checkpoint, then resume
+it with `--decision approved` or `--decision rejected`.
+
+Runtime snapshots live under `<project>/.image2-ui/runs/<run-id>/`. `state.json`
+stores the current durable state; `events.jsonl` records the ordered event trail.
+Unresolved Must Fix findings become `blocked` after the iteration budget, and an
+interrupted workspace mutation is reconciled by verification before another
+write-capable Agent may run. Existing CLI commands remain backward compatible.
+
+### Runtime State Machine
+
+The orchestrator persists a dependency-free state machine in each `run.json`.
+Workflow states are `created`, `planned`, `running`, `complete`, `failed`,
+and `blocked`. Role states are `pending`, `running`, `complete`, `failed`,
+and `blocked`. Invalid transitions
+throw instead of silently overwriting status.
+
+Every transition records its event, source state, target state, timestamp, scope,
+and subject. Manifest writes use a temporary file plus atomic rename, and include
+`schemaVersion`, `revision`, `updatedAt`, `currentPhase`, and `attempts`.
+The legacy top-level `status` remains for compatibility: `created` and `planned`
+map to `pending`, while `failed` maps to `blocked`. The `state` field is the
+canonical lifecycle value.
+
+```bash
+image2-ui state ./my-output/.image2-ui/agents/<run-id>/run.json
+image2-ui state ./my-output/.image2-ui/agents/<run-id>/run.json --json
+```
+
+The state command replays every persisted snapshot and exits with status `2`
+when a state alias, transition, or history entry is invalid.
+
 The workflow includes a dedicated analysis-only `code-reviewer` phase between
 implementation and QA. It produces `code-review-report.md` with severity,
 file/line references, regression risks, and missing-test findings. QA waits for

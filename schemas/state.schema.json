@@ -1,0 +1,187 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:image2-ui:state:v1",
+  "title": "Image2 UI Runtime State",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "runId",
+    "status",
+    "stage",
+    "task",
+    "policy",
+    "iteration",
+    "limits",
+    "artifacts",
+    "verification",
+    "runtime",
+    "currentOperation",
+    "errors",
+    "blockers",
+    "timestamps"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "1.0" },
+    "runId": { "type": "string", "minLength": 1 },
+    "status": { "enum": ["created", "running", "waiting-input", "blocked", "failed", "completed", "cancelled"] },
+    "stage": { "enum": ["init", "preflight", "analyze-reference", "generate-effect", "review-effect", "decompose", "implement", "verify", "fix", "finalize"] },
+    "task": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["intent", "target", "prompt", "reference"],
+      "properties": {
+        "intent": { "enum": ["reference-recreation", "create", "optimize", "switch-design-system", "explore"] },
+        "target": { "type": "string", "minLength": 1 },
+        "prompt": { "type": "string", "minLength": 1 },
+        "reference": { "type": ["string", "null"] }
+      }
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["requireEffectImage", "requireEffectReview", "requireHumanFinalReview", "allowWorkspaceMutation"],
+      "properties": {
+        "requireEffectImage": { "type": "boolean" },
+        "requireEffectReview": { "type": "boolean" },
+        "requireHumanFinalReview": { "type": "boolean" },
+        "allowWorkspaceMutation": { "type": "boolean" }
+      }
+    },
+    "iteration": { "type": "integer", "minimum": 0 },
+    "effectRevision": { "type": "integer", "minimum": 0 },
+    "limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["maxIterations", "maxStageRetries", "maxParallel", "toolTimeoutMs", "agentTimeoutMs"],
+      "properties": {
+        "maxIterations": { "type": "integer", "minimum": 1 },
+        "maxStageRetries": { "type": "integer", "minimum": 0 },
+        "maxParallel": { "type": "integer", "minimum": 1 },
+        "toolTimeoutMs": { "type": "integer", "minimum": 1000 },
+        "agentTimeoutMs": { "type": "integer", "minimum": 1000 }
+      }
+    },
+    "artifacts": {
+      "type": "object",
+      "additionalProperties": { "$ref": "#/$defs/artifact" }
+    },
+    "verification": { "$ref": "#/$defs/verification" },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["agentProvider", "executionMode"],
+      "properties": {
+        "agentProvider": { "type": "string" },
+        "agentCommand": { "type": ["string", "null"] },
+        "model": { "type": ["string", "null"] },
+        "executionMode": { "enum": ["single-agent", "multi-agent"] },
+        "verifyBuild": { "type": "boolean" },
+        "verifyCapture": { "type": "boolean" },
+        "verifyCompare": { "type": "boolean" },
+        "requirePreflight": { "type": "boolean" },
+        "noBrowser": { "type": "boolean" },
+        "viewport": { "type": ["string", "object", "null"] }
+      }
+    },
+    "currentOperation": {
+      "anyOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["operationId", "stage", "tool", "attempt", "startedAt"],
+          "properties": {
+            "operationId": { "type": "string", "minLength": 1 },
+            "stage": { "type": "string" },
+            "tool": { "type": "string" },
+            "attempt": { "type": "integer", "minimum": 1 },
+            "startedAt": { "type": "string", "format": "date-time" },
+            "mutationPossible": { "type": "boolean" },
+            "timeoutMs": { "type": "integer", "minimum": 1 }
+          }
+        }
+      ]
+    },
+    "errors": { "type": "array", "items": { "$ref": "#/$defs/problem" } },
+    "blockers": { "type": "array", "items": { "$ref": "#/$defs/problem" } },
+    "timestamps": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["createdAt", "updatedAt"],
+      "properties": {
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" },
+        "finishedAt": { "type": ["string", "null"], "format": "date-time" }
+      }
+    }
+  },
+  "$defs": {
+    "artifact": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["path", "kind", "producer"],
+      "properties": {
+        "path": { "type": "string" },
+        "kind": { "type": "string" },
+        "producer": { "type": "string" },
+        "operationId": { "type": ["string", "null"] }
+      }
+    },
+    "finding": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["rule", "message"],
+      "properties": {
+        "rule": { "type": "string" },
+        "message": { "type": "string" },
+        "location": { "type": ["string", "null"] }
+      }
+    },
+    "verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "mustFix", "shouldFix", "audit", "visual"],
+      "properties": {
+        "status": { "enum": ["unknown", "pass", "needs-fix", "needs-review", "fail"] },
+        "mustFix": { "type": "array", "items": { "$ref": "#/$defs/finding" } },
+        "shouldFix": { "type": "array", "items": { "$ref": "#/$defs/finding" } },
+        "accepted": { "type": "array" },
+        "audit": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["fail", "warn", "info"],
+          "properties": {
+            "fail": { "type": "integer", "minimum": 0 },
+            "warn": { "type": "integer", "minimum": 0 },
+            "info": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "visual": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["score", "method"],
+          "properties": {
+            "score": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+            "method": { "type": "string" }
+          }
+        },
+        "lastVerifiedAt": { "type": ["string", "null"], "format": "date-time" },
+        "raw": {}
+      }
+    },
+    "problem": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["code", "message", "at"],
+      "properties": {
+        "code": { "type": "string" },
+        "message": { "type": "string" },
+        "at": { "type": "string", "format": "date-time" },
+        "retryable": { "type": "boolean" },
+        "blocked": { "type": "boolean" },
+        "cancelled": { "type": "boolean" }
+      }
+    }
+  }
+}

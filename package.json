@@ -30,9 +30,12 @@
     "scripts/image2-ui",
     "scripts/image2_asset.py",
     "scripts/image2_orchestrate.mjs",
+    "scripts/workflow_state_machine.mjs",
     "scripts/ui_compare.mjs",
     "scripts/ui_loop.mjs",
     "scripts/ui_output_audit.mjs",
+    "runtime/",
+    "schemas/",
     "assets/readme/hero.png"
   ],
   "scripts": {

@@ -131,6 +131,14 @@ This repository also exposes `image2-ui orchestrate`, which invokes a compatible
 non-interactive agent CLI (Codex by default) and persists each role's handoff,
 logs, and run manifest under `.image2-ui/agents/<run-id>/`.
 
+Treat the persisted runtime state machine as authoritative during orchestration.
+Do not mutate run or role status strings directly; inspect a saved manifest with
+`image2-ui state <run.json> --json` when diagnosing a blocked or failed run.
+
+Use `image2-ui run`, `resume`, and `inspect` when a durable top-level
+Verify/Fix loop is required. Runtime state lives under `.image2-ui/runs/`; the
+legacy `loop` and `orchestrate` commands remain compatible tools beneath it.
+
 The lead agent owns the user request, repository architecture, task decomposition, merge decisions, and final report. Specialist agents must return structured artifacts and must not silently redefine the product scope.
 
 - Simple demo: visual decomposition, implementation, and QA.
