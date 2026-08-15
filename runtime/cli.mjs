@@ -32,6 +32,12 @@ const FLAG_OPTIONS = new Set([
   "-h",
 ]);
 
+const MODE_TO_RUNTIME_INTENT = Object.freeze({
+  recreate: "reference-recreation",
+  redesign: "optimize",
+  create: "create",
+});
+
 export async function runRuntimeCli(action, argv, options = {}) {
   const json = argv.includes("--json");
   try {
@@ -78,7 +84,10 @@ export async function runRuntimeCli(action, argv, options = {}) {
       ? { ...state, events: await store.events(state.runId) }
       : state;
     if (json) console.log(JSON.stringify(output, null, 2));
-    else console.log(`Runtime ${action}: ${state.status} (${state.stage})\nMode: ${state.task.intent}\nRun: ${state.runId}`);
+    else {
+      const mode = normalizeWorkflowMode(state.task.intent, { hasReference: Boolean(state.task.reference) });
+      console.log(`Runtime ${action}: ${state.status} (${state.stage})\nMode: ${mode}\nRun: ${state.runId}`);
+    }
     return exitCodeFor(action, state.status);
   } catch (error) {
     if (json) console.log(JSON.stringify({ ok: false, error: error.message, code: error.code || "runtime-command-failed" }, null, 2));
@@ -136,7 +145,7 @@ function buildRunInput(target, parsed) {
       target,
       prompt: parsed.task || "Planned UI Harness run",
       reference,
-      intent: mode,
+      intent: MODE_TO_RUNTIME_INTENT[mode],
     },
     limits: parsed.maxIterations == null ? {} : { maxIterations: parsed.maxIterations },
     policy: {
