@@ -1,3 +1,5 @@
+import { normalizeWorkflowMode } from "./workflow-modes.mjs";
+
 export const LINEAR_NEXT = Object.freeze({
   init: "preflight",
   preflight: "analyze-reference",
@@ -23,6 +25,26 @@ export class InvalidTransitionError extends Error {
 
 export const isTerminal = (status) => TERMINAL_STATUSES.has(status);
 export const isPaused = (status) => PAUSED_STATUSES.has(status);
+
+export function nextStageFor(state, stage = state?.stage) {
+  const mode = normalizeWorkflowMode(state?.task?.intent, {
+    hasReference: Boolean(state?.task?.reference),
+  });
+
+  if (stage === "preflight") {
+    if (mode === "create") {
+      return state.policy?.requireEffectImage ? "generate-effect" : "decompose";
+    }
+    return "analyze-reference";
+  }
+
+  if (stage === "analyze-reference") {
+    if (mode === "recreate") return "decompose";
+    return state.policy?.requireEffectImage ? "generate-effect" : "decompose";
+  }
+
+  return LINEAR_NEXT[stage];
+}
 
 export function transition(state, event) {
   if (!state || !Object.hasOwn(LINEAR_NEXT, state.stage) || !event?.type) {
@@ -81,10 +103,6 @@ export function transition(state, event) {
     next.iteration = state.iteration + 1;
     return next;
   }
-  if (state.stage === "analyze-reference") {
-    next.stage = state.policy?.requireEffectImage ? "generate-effect" : "decompose";
-    return next;
-  }
   if (state.stage === "review-effect") return transitionEffectReview(state, next, data, at);
   if (state.stage === "finalize") {
     next.status = "completed";
@@ -92,7 +110,7 @@ export function transition(state, event) {
     return next;
   }
 
-  next.stage = LINEAR_NEXT[state.stage];
+  next.stage = nextStageFor(state, state.stage);
   return next;
 }
 
