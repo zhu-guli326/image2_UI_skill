@@ -33,7 +33,7 @@ test("reference defaults to Recreate and skips the Effect Image gate", async () 
   assert.equal(created.status, 0, created.stderr);
   const state = JSON.parse(created.stdout);
   assert.equal(state.status, "created");
-  assert.equal(state.task.intent, "reference-recreation");
+  assert.equal(state.task.intent, "recreate");
   assert.equal(state.policy.requireEffectImage, false);
   assert.equal(state.policy.requireEffectReview, false);
   assert.equal(path.isAbsolute(state.task.reference), true);
@@ -63,7 +63,7 @@ test("Redesign requires a reference and enables Effect Image by default", async 
 
   assert.equal(created.status, 0, created.stderr);
   const state = JSON.parse(created.stdout);
-  assert.equal(state.task.intent, "optimize");
+  assert.equal(state.task.intent, "redesign");
   assert.equal(state.policy.requireEffectImage, true);
   assert.equal(state.policy.requireEffectReview, false);
 
