@@ -3,6 +3,11 @@ import path from "node:path";
 import { createRuntime } from "./runner.mjs";
 import { StateStore } from "./state-store.mjs";
 import { createLegacyToolRegistry } from "./tools/legacy-cli.mjs";
+import {
+  assertWorkflowInputs,
+  normalizeWorkflowMode,
+  workflowPolicy,
+} from "./workflow-modes.mjs";
 
 const VALUE_OPTIONS = new Map([
   ["--task", "task"],
@@ -11,6 +16,7 @@ const VALUE_OPTIONS = new Map([
   ["--max-iterations", "maxIterations"],
   ["--agent-command", "agentCommand"],
   ["--model", "model"],
+  ["--mode", "mode"],
   ["--intent", "intent"],
   ["--decision", "decision"],
 ]);
@@ -72,7 +78,7 @@ export async function runRuntimeCli(action, argv, options = {}) {
       ? { ...state, events: await store.events(state.runId) }
       : state;
     if (json) console.log(JSON.stringify(output, null, 2));
-    else console.log(`Runtime ${action}: ${state.status} (${state.stage})\nRun: ${state.runId}`);
+    else console.log(`Runtime ${action}: ${state.status} (${state.stage})\nMode: ${state.task.intent}\nRun: ${state.runId}`);
     return exitCodeFor(action, state.status);
   } catch (error) {
     if (json) console.log(JSON.stringify({ ok: false, error: error.message, code: error.code || "runtime-command-failed" }, null, 2));
@@ -109,6 +115,7 @@ export function parseRuntimeArgs(args) {
 
   if (positionals.length > 1) throw new Error(`Unexpected positional argument: ${positionals[1]}`);
   out.target = positionals[0];
+  if (out.mode && out.intent && out.mode !== out.intent) throw new Error("Use --mode or --intent, not conflicting values");
   if (out.maxIterations != null) {
     out.maxIterations = Number.parseInt(out.maxIterations, 10);
     if (!Number.isInteger(out.maxIterations) || out.maxIterations < 1) throw new Error("--max-iterations must be positive");
@@ -119,18 +126,21 @@ export function parseRuntimeArgs(args) {
 
 function buildRunInput(target, parsed) {
   const reference = parsed.reference ? path.resolve(process.cwd(), parsed.reference) : null;
+  const mode = normalizeWorkflowMode(parsed.mode || parsed.intent, { hasReference: Boolean(reference) });
+  assertWorkflowInputs(mode, { reference });
+  const effectPolicy = workflowPolicy(mode, parsed);
+
   return {
     target,
     task: {
       target,
       prompt: parsed.task || "Planned UI Harness run",
       reference,
-      intent: parsed.intent || (reference ? "reference-recreation" : "create"),
+      intent: mode,
     },
     limits: parsed.maxIterations == null ? {} : { maxIterations: parsed.maxIterations },
     policy: {
-      requireEffectImage: Boolean(reference && !parsed.noEffect),
-      requireEffectReview: Boolean(reference && !parsed.noEffect && parsed.requireEffectReview),
+      ...effectPolicy,
       requireHumanFinalReview: true,
       allowWorkspaceMutation: true,
     },
@@ -159,7 +169,16 @@ function exitCodeFor(action, status) {
 
 function printHelp(action) {
   const usage = action === "run"
-    ? "Usage: image2-ui run <project-dir> --task \"...\" [--reference FILE] [--require-effect-review] [--max-iterations N] [--dry-run] [--json]"
+    ? [
+        "Usage: image2-ui run <project-dir> --task \"...\" [--mode recreate|redesign|create] [--reference FILE] [--require-effect-review] [--max-iterations N] [--dry-run] [--json]",
+        "",
+        "Modes:",
+        "  recreate  Screenshot/reference -> UI. Original reference is the source of truth; no effect image gate.",
+        "  redesign  Reference -> new design -> UI. Generates an effect image before implementation.",
+        "  create    Description -> new design -> UI. Generates an effect image before implementation.",
+        "",
+        "Defaults: with --reference => recreate; without --reference => create.",
+      ].join("\n")
     : `Usage: image2-ui ${action} <project-dir> (--run RUN_ID | --latest)${action === "resume" ? " [--decision approved|rejected] [--max-iterations N]" : ""} [--json]`;
   console.log(usage);
 }
