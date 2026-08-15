@@ -1,3 +1,5 @@
+import { implementationSource, normalizeWorkflowMode, verificationReference } from "./workflow-modes.mjs";
+
 export const STAGES = [
   "init",
   "preflight",
@@ -108,7 +110,9 @@ export async function executeVerify({ state, tools, signal, target, operation } 
   }
   results.push(await tools.invoke("ui.validate", {
     target: effectiveTarget,
-    reference: state.task.reference,
+    reference: verificationReference(state),
+    originalReference: state.task.reference,
+    workflowMode: normalizeWorkflowMode(state.task.intent, { hasReference: Boolean(state.task.reference) }),
     noBrowser: state.runtime?.noBrowser === true,
   }, context));
 
@@ -143,22 +147,32 @@ export function executeNonIoStage(state) {
 }
 
 export function buildImagePrompt(state) {
-  return `${state.task.prompt}\n\nReference: ${state.task.reference || "none"}\nGenerate a complete effect image without readable UI text.`;
+  const mode = normalizeWorkflowMode(state.task.intent, { hasReference: Boolean(state.task.reference) });
+  if (mode === "redesign") {
+    return `${state.task.prompt}\n\nReference: ${state.task.reference}\nCreate a new full-frame UI design inspired by the reference's visual language, while following the requested product/content changes. This effect image becomes the design source of truth. Avoid readable final UI text where possible.`;
+  }
+  return `${state.task.prompt}\n\nCreate a complete full-frame UI concept from the description. This effect image becomes the design source of truth. Avoid readable final UI text where possible.`;
 }
 
 export function buildImplementRequest(state, target = state.task.target) {
-  const effect = effectArtifact(state);
+  const source = implementationSource(state);
   return {
     stage: "implement",
     access: "write",
     target,
     task: state.task,
+    workflowMode: source.mode,
     prompt: [
       state.task.prompt,
       "",
+      `Workflow mode: ${source.mode}`,
       `Original reference: ${state.task.reference || "none"}`,
-      `Approved effect image: ${effect?.path || "none"}`,
-      "Use the effect image as the implementation source of truth and keep the result clickable.",
+      `${source.kind === "reference" ? "Reference source" : "Approved effect image"}: ${source.path || "none"}`,
+      source.instruction,
+      source.mode === "recreate"
+        ? "Preserve the original composition, hierarchy, spacing, typography, component geometry, imagery, and interaction structure as faithfully as possible. Do not redesign the reference."
+        : "Implement the approved design faithfully with real code-rendered text, controls, states, and interactions.",
+      "Keep the result clickable and editable; never ship a flattened effect image as the UI.",
     ].join("\n"),
     policy: state.policy,
     artifacts: state.artifacts,
@@ -166,7 +180,7 @@ export function buildImplementRequest(state, target = state.task.target) {
 }
 
 export function buildFixRequest(state, target = state.task.target) {
-  const effect = effectArtifact(state);
+  const source = implementationSource(state);
   return {
     stage: "fix",
     access: "write",
@@ -174,10 +188,13 @@ export function buildFixRequest(state, target = state.task.target) {
     task: state.task,
     findings: state.verification.mustFix,
     artifacts: state.artifacts,
+    workflowMode: source.mode,
     prompt: [
       state.task.prompt,
       "",
-      `Approved effect image: ${effect?.path || "none"}`,
+      `Workflow mode: ${source.mode}`,
+      `Verification source: ${source.path || "none"}`,
+      source.instruction,
       "Fix every Must Fix finding:",
       ...state.verification.mustFix.map((finding) => `${finding.rule}: ${finding.message}`),
     ].join("\n"),

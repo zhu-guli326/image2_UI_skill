@@ -1,81 +1,178 @@
 ---
 name: image-to-ui-skill
-description: Use when the user provides a UI screenshot or visual design reference and asks to recreate it as a clickable code demo that needs generated or integrated bitmap assets. Do not use for standalone image generation, text-only website creation, ordinary frontend implementation without a visual reference, or design critique only.
+description: Use when the user asks to recreate a UI from a screenshot or design reference, redesign a UI from a visual reference, or create a new clickable UI from a description. Use real code for interface chrome and project-designated image2 for complex bitmap assets. Do not use for standalone image generation, design critique only, or ordinary frontend work with no UI-design intent.
 ---
 
 # Image To UI Skill
 
-把 UI 参考图做成可点击 demo。少解释，多落地。
+把 UI 任务做成可打开、可点击、可继续修改的真实界面。少解释，多落地。
+
+## 三种正式工作流 / Three Workflow Modes
+
+Every implementation task must resolve to exactly one primary mode before decomposition or coding:
+
+1. `recreate` — 截图 / 设计稿 → UI
+2. `redesign` — 参考图 → 新设计 → UI
+3. `create` — 描述 → 新设计 → UI
+
+Do not treat Effect Image as a universal mandatory step. It is a workflow strategy used by `redesign` and `create`, not by `recreate`.
+
+### 1. Recreate
+
+Use when the user wants faithful restoration, replication, screenshot-to-code, or explicitly says not to redesign.
+
+```text
+reference
+  ↓
+analyze + decompose
+  ↓
+implement
+  ↓
+render + compare against original reference
+  ↓
+fix ↺
+```
+
+Rules:
+
+- The **original reference is the source of truth** for decomposition, implementation, and visual verification.
+- Do not generate a complete Effect Image before implementation unless the user explicitly asks for one as an optional artifact.
+- Preserve composition, hierarchy, spacing, typography, component geometry, imagery, states, and interaction structure as faithfully as practical.
+- Do not introduce a redesign while trying to improve code quality.
+
+### 2. Redesign
+
+Use when the user provides a reference but wants a new design, optimization, adaptation, or the same visual language applied to different content/product requirements.
+
+```text
+reference
+  ↓
+understand visual language + constraints
+  ↓
+generate complete Effect Image
+  ↓
+review / approve
+  ↓
+decompose
+  ↓
+implement
+  ↓
+verify against Effect Image
+```
+
+Rules:
+
+- The reference is an inspiration and constraint source, not the final layout source of truth.
+- The inspected or approved **Effect Image becomes the implementation source of truth**.
+- Use the original reference as a secondary style/fidelity check.
+
+### 3. Create
+
+Use when the user wants a new UI from a description and no reference is required.
+
+```text
+description
+  ↓
+generate complete Effect Image
+  ↓
+review / approve when requested
+  ↓
+decompose
+  ↓
+implement
+  ↓
+verify against Effect Image
+```
+
+Rules:
+
+- Convert product requirements and desired visual direction into a complete Effect Image before implementation.
+- The inspected or approved Effect Image becomes the implementation source of truth.
+
+### Routing defaults
+
+- Has a reference and asks to restore / replicate / match → `recreate`.
+- Has a reference and asks to improve / adapt / redesign → `redesign`.
+- No reference and asks to design/build a new UI → `create`.
+- If the user's wording is genuinely ambiguous and the choice materially changes the result, ask whether they want faithful restoration or a new design. Otherwise infer the most conservative mode from the request.
+
+The Runtime CLI exposes the same model:
+
+```bash
+image2-ui run <project-dir> --mode recreate --task "..." --reference reference.png
+image2-ui run <project-dir> --mode redesign --task "..." --reference reference.png
+image2-ui run <project-dir> --mode create --task "..."
+```
+
+With `--reference` and no explicit mode, Runtime defaults to `recreate`. Without `--reference`, Runtime defaults to `create`. `redesign` must be selected explicitly.
 
 ## 首轮入口 / First-turn entry
 
-When a new image-to-UI or visual-style request starts, the first user-facing
-reply must first collect the task direction. If the host exposes a native
-structured choice UI, offer these five intents: `探索现有项目`, `从零创建`,
-`参考图还原`, `优化现有页面`, and `切换设计系统`. Do not claim that the skill
-controls the host UI. If that native UI is unavailable, open the launcher with
-the closest intent:
+When a new UI generation request starts, resolve the task toward the three modes above. If the host exposes a native structured choice UI, prefer these primary choices:
+
+- `截图还原 / Recreate`
+- `参考重设计 / Redesign`
+- `从零创建 / Create`
+
+Utility actions such as exploring an existing project, switching a design system, or browsing examples are supporting choices, not separate implementation modes.
+
+If a visual launcher is useful, use:
 
 `https://zhu-guli326.github.io/ui_case/launcher.html?intent=explore`
 
-Use this concise fallback wording: `先选择这次的任务方向；每种模式会提供不同表单，填写必需信息后再复制生成的调用指令给我。`
+Treat the launcher's generated prompt as structured user intent. Preserve target, scope, permission boundary, output depth, reference source, design-system choice, and verification requirements unless the user overrides them. When the launcher says a local reference file will be attached, use the image attached in the conversation; the browser preview itself never uploads that file.
 
-Treat the launcher's generated prompt as structured user intent. Preserve its
-intent-specific target, scope, permission boundary, output depth, reference
-source, design-system choice, and verification requirements unless the user
-overrides them. In `explore`, read-only means no file edits. When the launcher says a local
-reference file will be attached, use the image attached in the conversation;
-the browser preview itself never uploads that file. Use
-`https://zhu-guli326.github.io/ui_case/` when the user wants more cases. The
-gallery is maintained separately from the installable Skill so users do not
-need to clone its demos, screenshots, GIFs, or videos.
+Use `https://zhu-guli326.github.io/ui_case/` when the user wants more cases. The gallery is maintained separately from the installable Skill.
 
 ## 对外表达 / User-facing language
 
-Keep user-facing replies focused on the desired result. Do not expose internal
-tool names, skill loading, repository inspection, agent roles, execution
-statuses, or implementation prerequisites as narration.
+Keep user-facing replies focused on the desired result. Do not expose internal tool names, skill loading, repository inspection, agent roles, execution statuses, or implementation prerequisites as narration unless the user is explicitly asking about the architecture.
 
 - Do not say: `我会使用 image-to-ui-skill，并先检查仓库是否可用。`
-  Say: `我会根据你选好的配置制作可点击预览，并保留后续可修改的结构。`
-- Do not say: `它需要一张参考图片才能生成贴近原图的 UI。`
-  Say: `有参考图时可以更准确还原；没有参考图，也可以先从可视化启动器选择一个风格方向。`
-- Do not emit English-only progress labels such as `Inspecting repository` to
-  the user. Report only a short, outcome-oriented update when useful.
-- When a required input is missing, state the practical next choice and keep
-  moving with an available local style reference when that is appropriate.
+  Say: `我会按你选的方向制作可点击预览，并保留后续可修改的结构。`
+- For Recreate, say the original screenshot is the fidelity target.
+- For Redesign/Create, say the design direction will be resolved before implementation.
+- When a required input is missing, state the practical next choice rather than exposing internal setup details.
 
 ## 必守原则 / Non-Negotiables
 
+- Resolve `recreate | redesign | create` before implementation.
 - When image generation is needed, call the project-designated `image2`. If no channel is available, state the gap instead of presenting CSS/SVG/placeholders as generated images.
-- For implementation assets, `image2` is for complex bitmap work: photos, products, people, illustrations, textures, backgrounds, maps, thumbnails, and object cutouts. The complete effect image is a temporary planning artifact generated before this asset split.
 - Code owns UI: text, buttons, status bars, navigation, forms, toggles, prices, labels, common icons, and player controls.
-- Generated implementation assets must not contain readable UI text, logos, watermarks, status bars, buttons, or small UI icons. A full effect image is a temporary visual specification and may show the complete composition, but it must never be shipped as the interactive UI or used as a substitute for real text and controls.
+- `image2` owns complex bitmap work: photos, products, people, illustrations, textures, backgrounds, maps, thumbnails, and object cutouts.
+- Generated implementation assets must not contain readable UI text, logos, watermarks, status bars, buttons, or small UI icons.
+- A complete Effect Image is a temporary visual specification. It must never be shipped as the interactive UI or used as a substitute for real text and controls.
 - The final demo must be openable, clickable, and editable.
 - Brand profiles constrain color, typography, spacing, radius, components, motion, photography, illustration, and content voice. They never authorize generating a brand logo, trademark, branded text, commercial font, or proprietary asset.
 
-## 效果图门禁 / Effect-image gate
+## Effect Image Policy
 
-For image-to-UI implementation, use this mandatory order:
+Effect Image is **conditional**:
 
-`reference image -> complete effect image -> effect-image review -> UI decomposition -> clickable implementation`
+| Mode | Effect Image | Implementation source of truth | Verification target |
+| --- | --- | --- | --- |
+| Recreate | Skip by default | Original reference | Original reference |
+| Redesign | Required by default | Approved/inspected Effect Image | Effect Image; original reference is secondary |
+| Create | Required by default | Approved/inspected Effect Image | Effect Image |
 
-The effect image is a saved, full-frame visual mockup of the target screen or screen set. It is the visual source of truth for decomposition; it is not an isolated hero asset, an asset manifest, or a screenshot of code that was already implemented.
+For Redesign/Create:
 
-1. Analyze the reference only far enough to capture composition, visual language, device format, content hierarchy, and the prompt needed to generate the effect image. Do not produce the implementation-level `code-ui` / `image2-assets` split yet.
-2. Actually generate and save the complete effect image. Record its path and generation channel.
-3. Inspect the saved effect image for framing, hierarchy, legibility, and reference fidelity. If the user requested an approval checkpoint, wait for approval; otherwise perform and record the review internally.
-4. Decompose the UI from the approved or inspected effect image. Treat the original reference as a fidelity check, not as the implementation decomposition source.
-5. Implement real text, controls, icons, states, image assets, and interactions, then validate the rendered demo against the effect image.
+1. Analyze enough context to define the target composition, visual language, device format, hierarchy, and constraints.
+2. Generate and save a complete full-frame Effect Image.
+3. Inspect it for framing, hierarchy, legibility, and task fidelity. If the user requested a checkpoint, wait for approval.
+4. Decompose `code-ui` and `image2-assets` from the inspected/approved Effect Image.
+5. Implement real text, controls, icons, states, image assets, and interactions.
+6. Render and validate against the Effect Image.
 
-Do not:
+For Recreate:
 
-- decompose the original reference directly into implementation tasks before a complete effect image exists;
-- claim UI decomposition is complete when only the original reference was analyzed;
-- start frontend implementation before the effect image has been saved and inspected;
-- use the flattened effect image itself as the final clickable screen.
+1. Analyze the original reference directly.
+2. Decompose it into code-rendered UI and bitmap assets.
+3. Implement the clickable interface.
+4. Render and compare directly against the original reference.
+5. Fix visual or interaction differences in a bounded loop.
 
-Skip this gate only when the user explicitly asks for analysis/a static audit only, or explicitly asks to skip effect-image generation. A missing image-generation channel is a blocker for the normal implementation workflow, not permission to silently bypass the gate.
+A missing image-generation channel blocks Redesign/Create when an Effect Image or implementation bitmap asset is required. It does **not** block Recreate when the page can be faithfully implemented without newly generated bitmap assets.
 
 ## Image2 通道 / Image2 Channels
 
@@ -102,18 +199,26 @@ image2-ui doctor
 
 ## 组件与品牌工作流 / Component and Brand-Aware Workflow
 
-Use this order:
+Resolve the workflow mode first, then apply component/design-system constraints.
 
-`component selection -> brand/design-system resolution -> UI decomposition -> asset generation -> token implementation -> compliance verification`
+### Recreate
 
-1. Resolve the selected case, optional style profile, and selected Component References. Resolve each component's owning Brand Profile and record its public source, source status, review date, and authorization boundary. Never treat a Style Profile such as minimal technology as a brand.
-2. Analyze the reference for effect-image composition, apply only the permitted visual-language constraints, then generate, save, and inspect the complete effect image.
-3. Use the inspected effect image to produce the `code-ui` and `image2-assets` inventories. Keep all readable text, UI chrome, logos, and trademarks out of generated implementation assets.
+`reference -> component/design-system identification -> direct decomposition -> assets -> implementation -> reference comparison`
+
+Use public component/design-system references to improve implementation accuracy, but never let them override visible evidence in the target screenshot unless the user asks for modernization.
+
+### Redesign / Create
+
+`component selection -> brand/design-system resolution -> Effect Image -> review -> decomposition -> assets -> token implementation -> compliance verification`
+
+1. Resolve the selected case, optional style profile, and Component References. Record owning Brand Profile, public source, source status, review date, and authorization boundary.
+2. Generate the complete Effect Image under those constraints.
+3. Use the inspected Effect Image to produce `code-ui` and `image2-assets` inventories.
 4. Generate real bitmap assets and record purpose, dimensions, crop strategy, negative constraints, path, channel, and provenance.
-5. Implement tokens and behavior from the selected Component References in the existing stack, then build the clickable UI with real states and responsive behavior. Use the Brand Profile as provenance and grouping context, not as permission to copy logos or proprietary assets.
-6. Verify interactions and compare the rendered result against the effect image, original reference, selected components, and their owning Brand Profiles.
+5. Implement tokens and behavior from the selected Component References in the existing stack.
+6. Verify interactions and visual fidelity against the workflow's source of truth.
 
-When public design-system components or a Brand Profile are applied, always produce:
+When public design-system components or a Brand Profile are applied, produce:
 
 ```text
 artifacts/brand-profile.json
@@ -121,31 +226,25 @@ artifacts/brand-tokens.json
 artifacts/brand-compliance.md
 ```
 
-`brand-profile.json` must include the selected `componentReferenceIds`. `brand-compliance.md` must cover component anatomy, states, behavior, tokens, accessibility, source provenance, and the logo/trademark/font authorization boundary. Public guidelines never imply affiliation or endorsement.
+`brand-profile.json` must include selected `componentReferenceIds`. `brand-compliance.md` must cover component anatomy, states, behavior, tokens, accessibility, source provenance, and logo/trademark/font authorization boundaries. Public guidelines never imply affiliation or endorsement.
 
 ## Multi-Agent Orchestration
 
 Do not invoke the full role graph by default. Choose the smallest tier that matches the work and use `references/multi-agent-orchestration.md` only when delegation is actually needed.
 
-This repository also exposes `image2-ui orchestrate`, which invokes a compatible
-non-interactive agent CLI (Codex by default) and persists each role's handoff,
-logs, and run manifest under `.image2-ui/agents/<run-id>/`.
+This repository exposes `image2-ui orchestrate`, which invokes a compatible non-interactive agent CLI and persists role handoffs, logs, and run manifests under `.image2-ui/agents/<run-id>/`.
 
-Treat the persisted runtime state machine as authoritative during orchestration.
-Do not mutate run or role status strings directly; inspect a saved manifest with
-`image2-ui state <run.json> --json` when diagnosing a blocked or failed run.
+The **Runtime is the authoritative top-level control plane**. The Agent DAG is a scheduler/dependency graph underneath it; it must not become a second competing lifecycle.
 
-Use `image2-ui run`, `resume`, and `inspect` when a durable top-level
-Verify/Fix loop is required. Runtime state lives under `.image2-ui/runs/`; the
-legacy `loop` and `orchestrate` commands remain compatible tools beneath it.
+Use `image2-ui run`, `resume`, and `inspect` for durable top-level execution and the bounded Verify/Fix loop. Runtime state lives under `.image2-ui/runs/`.
 
-The lead agent owns the user request, repository architecture, task decomposition, merge decisions, and final report. Specialist agents must return structured artifacts and must not silently redefine the product scope.
+The lead agent owns the user request, repository architecture, task decomposition, merge decisions, and final report. Specialist agents return structured artifacts and must not silently redefine product scope.
 
-- Simple demo: visual decomposition, implementation, and QA.
+- Simple demo: visual decomposition, implementation, QA.
 - Medium demo: add asset engineering and accessibility.
 - Complex product: add architecture, backend contract, state machine, code review, and release only when those concerns are present.
 
-Single-agent execution is valid for simple and medium work. Do not simulate nine roles sequentially just to satisfy a process checklist.
+Single-agent execution is valid for simple and medium work. Do not simulate many roles sequentially just to satisfy a process checklist.
 
 ## Reference Files
 
@@ -163,17 +262,17 @@ Read only the relevant reference files for the current task:
 
 ## Design, Icons, And Layout
 
-- Before building, name the visible UI regions with `references/ui-section-vocabulary.md` when the screen has multiple sections, controls, states, or repeated content blocks.
+- Before building, name visible UI regions when the screen has multiple sections, controls, states, or repeated content blocks.
 - Prefer precise pattern names: top app bar, sidebar, rail navigation, bottom tab bar, search field, filter chips, segmented control, card grid, masonry grid, bento grid, detail drawer, bottom sheet, modal, loading skeleton, empty state, no-results state, inline error, and toast.
-- In the `code-ui` inventory, list section names and state names, not only individual components. Example: `library screen -> top app bar, category rail, search field, filter chips, masonry card grid, detail drawer, empty state`.
+- In the `code-ui` inventory, list section names and state names, not only individual components.
 - Use one code-rendered icon system.
 - Back, close, menu, search, settings, status bar, battery/Wi-Fi/signal, playback, bottom tabs, toggles, plus, and minus are code-rendered.
 - Device appearances, product-cutout assets, and product images can use `image2`.
-- Classify by role, not name: `camera`, `lamp`, and `speaker` are `code-icon` in controls, but can be `product-cutout`, `object-thumbnail`, or `device-product-image` in product/device visuals.
+- Classify by role, not name: `camera`, `lamp`, and `speaker` are `code-icon` in controls, but can be bitmap assets in product/device visuals.
 - Text must be real text, not baked into images.
 - Visible controls must be clickable or provide clear feedback.
 - Mobile layouts must avoid horizontal scrolling, and text must not overflow buttons or cards.
-- Avoid repeated `icon + heading + paragraph` card grids unless the reference clearly uses that pattern.
+- Avoid repeated `icon + heading + paragraph` card grids unless the reference or approved design clearly uses that pattern.
 - Touch targets should be at least `44x44px`.
 - Headings can use `text-wrap: balance` for better wrapping.
 
@@ -184,11 +283,11 @@ Approved icon libraries:
 - `@radix-ui/react-icons`
 - `@tabler/icons-react`
 
-Application code should use a single icon entry such as `UiIcon`, `IconRegistry`, or an SVG sprite. Keep an icon coverage table before delivery.
+Application code should use a single icon entry such as `UiIcon`, `IconRegistry`, or an SVG sprite. Keep an icon coverage table before delivery when icon fidelity matters.
 
 ## UI Glyph Lock Rule
 
-`image2` prompts must explicitly exclude UI glyphs:
+`image2` prompts for implementation bitmap assets must explicitly exclude UI glyphs:
 
 ```text
 no icons, no UI symbols, no readable text, no logo, no watermark,
@@ -199,25 +298,26 @@ no tab icons, no toggles, no status dots
 
 ## Page Output Audit Loop
 
-After generation and integration, prefer:
+After implementation, validate against the workflow source of truth.
+
+For Recreate:
 
 ```bash
-image2-ui validate <demo-dir> --reference <reference-image>
+image2-ui validate <demo-dir> --reference <original-reference>
+image2-ui loop <demo-dir> --reference <original-reference> --build "<build-command>"
 ```
 
-For iterative checks:
+For Redesign/Create, the Runtime passes the approved Effect Image to validation while preserving the original reference as secondary context when one exists.
 
-```bash
-image2-ui loop <demo-dir> --reference <reference-image> --build "<build-command>"
-```
-
-This repo also includes `ui_output_audit.mjs` to catch broken assets, remote assets, low contrast, text overflow, mixed icon libraries, `generated-ui-glyph-asset`, `image-icon-in-control`, `cutout-asset-missing-alt`, and related issues.
+The audit tooling catches broken assets, remote assets, low contrast, text overflow, mixed icon libraries, generated UI glyph assets, image icons used as controls, missing alt text, and related issues.
 
 ## 最终汇报 / Final Report
 
+- Workflow mode: `recreate | redesign | create`.
 - Preview entry or local URL.
-- Paths to generated `image2` assets.
-- Actual channel, such as `native-image2 source=system-imagegen`, `source=project-image2`, `youtoken-gpt-image-2`, or `openrouter-icu-gpt-image-2`.
+- Source of truth used for implementation and verification.
+- Paths to generated `image2` assets, if any.
+- Actual image channel used, if any.
 - Which UI surfaces are code-rendered.
 - Which checks were run.
-- Which Component References and owning Brand Profile source status were applied, plus paths to brand artifacts and any compliance exceptions.
+- Which Component References and owning Brand Profile source status were applied, plus paths to brand artifacts and compliance exceptions.

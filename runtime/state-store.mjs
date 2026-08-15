@@ -138,7 +138,7 @@ export function assertState(state) {
   if (state.effectRevision !== undefined && (!Number.isInteger(state.effectRevision) || state.effectRevision < 0)) throw new TypeError("Runtime state effectRevision must be a non-negative integer");
   if (!state.task || typeof state.task !== "object" || typeof state.task.target !== "string" || !state.task.target) throw new TypeError("Runtime state task.target must not be empty");
   assertOnlyKeys(state.task, ["intent", "target", "prompt", "reference"], "task");
-  if (!["reference-recreation", "create", "optimize", "switch-design-system", "explore"].includes(state.task.intent)) throw new TypeError(`Runtime state task.intent is invalid: ${state.task.intent}`);
+  if (!["recreate", "redesign", "create", "reference-recreation", "optimize", "switch-design-system", "explore"].includes(state.task.intent)) throw new TypeError(`Runtime state task.intent is invalid: ${state.task.intent}`);
   if (typeof state.task.prompt !== "string" || !state.task.prompt.trim()) throw new TypeError("Runtime state task.prompt must not be empty");
   if (!("reference" in state.task) || (state.task.reference !== null && typeof state.task.reference !== "string")) throw new TypeError("Runtime state task.reference must be a string or null");
   if (!state.policy || typeof state.policy !== "object") throw new TypeError("Runtime state policy is required");
@@ -225,8 +225,6 @@ export function validateState(state) {
 }
 
 export async function saveStateAtomic(file, state, options = {}) {
-  // Accept the convenient `(state, file)` form as well as the documented
-  // `(file, state)` form for small integrations.
   if (file && typeof file === "object" && typeof state === "string") {
     const value = file;
     file = state;
@@ -244,9 +242,6 @@ export async function saveStateAtomic(file, state, options = {}) {
     try {
       await fs.rename(temp, destination);
     } catch (error) {
-      // Windows cannot replace an existing destination with rename in some
-      // filesystem configurations.  The destination is a controlled state
-      // file; remove only that exact path before retrying the replace.
       if (error?.code !== "EEXIST" && error?.code !== "EPERM" && error?.code !== "ENOTEMPTY") throw error;
       await fs.rm(destination, { force: true });
       await fs.rename(temp, destination);
@@ -292,8 +287,6 @@ export async function appendEvent(file, event, options = {}) {
     at: event.at || nowIso(options.clock || Date),
     ...event,
   };
-  // `seq` and `at` are authoritative even if a caller supplied them in the
-  // spread object above.
   record.seq = sequence;
   record.at = event.at || record.at;
   await fs.appendFile(eventFile, `${JSON.stringify(record)}\n`, "utf8");
@@ -321,10 +314,6 @@ export async function clearOperation(file, state, options = {}) {
   return next;
 }
 
-/**
- * File-backed store used by Runner.  `target` is the project directory;
- * callers that already know a state file can pass `stateFile` instead.
- */
 export class StateStore {
   constructor(options = {}) {
     if (typeof options === "string") options = { target: options };
@@ -496,8 +485,6 @@ export function createStateStore(options = {}) {
   return new StateStore(options);
 }
 
-// Short names mirror the P0 design document and make the module convenient
-// to use from small adapters without forcing a class import.
 export const create = createState;
 export const save = saveStateAtomic;
 export const load = loadState;

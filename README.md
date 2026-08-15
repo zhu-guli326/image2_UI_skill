@@ -4,9 +4,13 @@
   <img src="./assets/readme/hero.png" width="100%" alt="image2_UI_skill turns UI references into code-rendered interfaces, generated image assets, and clickable demos">
 </p>
 
-把 UI 截图、设计稿或 App 参考图交给 Codex，让它先生成完整效果图，再拆分代码界面与 `image2` 位图资产，最终交付可打开、可点击、可继续修改的 demo。
+一个面向 UI 生成与还原的 Agent Harness。它把任务分成三种正式工作流：
 
-Give Codex a UI screenshot, design mockup, or app reference. This Skill generates and reviews a complete effect image first, then separates code-rendered UI from real `image2` bitmap assets and delivers an editable, clickable demo.
+1. **Recreate**：截图 / 设计稿 → UI。原始参考图就是 source of truth，不先重画效果图。
+2. **Redesign**：参考图 → 新设计 → UI。先生成并审核 Effect Image，再实现。
+3. **Create**：文字描述 → 新设计 → UI。先生成 Effect Image，再实现。
+
+最终交付都必须是可打开、可点击、可继续修改的真实界面；文字、按钮、导航、表单和常用图标由代码渲染，复杂照片、人物、产品、插画、背景等位图资产交给 `image2`。
 
 ## Install
 
@@ -24,22 +28,135 @@ git clone https://github.com/zhu-guli326/image2_UI_skill.git "${CODEX_HOME:-$HOM
 
 安装后重启 Codex，或新开一个会话。
 
-## Usage
+## Three Workflow Modes
 
-把参考图发给 Codex，然后说：
+### 1. Recreate
+
+适合：
+
+- “把这张截图 1:1 还原”
+- “把这个 Figma / App 页面做成可点击 UI”
+- “不要改设计，只做成代码”
+
+流程：
 
 ```text
-使用 image-to-ui-skill，参考我上传的图，做一个可点击 demo。
-需要真实调用 image2 生成必要图片资产，并接回页面。
+Reference
+  ↓
+Analyze / Decompose
+  ↓
+Implement
+  ↓
+Render + Compare against original reference
+  ↓
+Fix ↺
 ```
 
-没有明确方向时，先打开独立的可视化启动器：
+**不会强制生成 Effect Image。** 原图本身就是实现和视觉验证的基准，避免 `原图 → AI 重画 → 代码` 带来的二次误差。
+
+### 2. Redesign
+
+适合：
+
+- “参考这个风格重新设计”
+- “保留视觉语言，但换成我的产品”
+- “优化这个页面，不要照抄”
+
+流程：
+
+```text
+Reference
+  ↓
+Understand visual language
+  ↓
+Generate Effect Image
+  ↓
+Review / Approve
+  ↓
+Decompose
+  ↓
+Implement
+  ↓
+Verify against Effect Image
+```
+
+Effect Image 在这里相当于 AI 生成的设计稿，是实现 source of truth；原始参考图用于风格与方向校验。
+
+### 3. Create
+
+适合：
+
+- “从零做一个 App 页面”
+- “根据这段描述设计一个 Dashboard”
+- 没有参考图的新产品 UI
+
+流程：
+
+```text
+Description
+  ↓
+Generate Effect Image
+  ↓
+Review
+  ↓
+Decompose
+  ↓
+Implement
+  ↓
+Verify against Effect Image
+```
+
+## Usage
+
+有截图、希望忠实还原：
+
+```bash
+image2-ui run <project-dir> \
+  --mode recreate \
+  --task "Recreate this UI faithfully" \
+  --reference reference.png
+```
+
+有参考图、希望重新设计：
+
+```bash
+image2-ui run <project-dir> \
+  --mode redesign \
+  --task "Redesign this reference for my product" \
+  --reference reference.png
+```
+
+没有参考图、从零创建：
+
+```bash
+image2-ui run <project-dir> \
+  --mode create \
+  --task "Create a premium mobile finance dashboard"
+```
+
+默认路由：**带 `--reference` 时默认 Recreate；没有 `--reference` 时默认 Create。Redesign 需要显式选择。**
+
+如果 Redesign / Create 需要用户确认效果图，再加：
+
+```bash
+--require-effect-review
+```
+
+并通过：
+
+```bash
+image2-ui resume <project-dir> --latest --decision approved
+```
+
+继续执行。
+
+没有明确方向时，也可以打开独立的可视化启动器：
 
 <https://zhu-guli326.github.io/ui_case/launcher.html?intent=explore>
 
 ## UI Case Gallery
 
-网页、案例数据、设计系统实验室、截图、GIF、视频和可点击 demo 已迁移到独立仓库：
+网页、案例数据、设计系统实验室、截图、GIF、视频和可点击 demo 由独立仓库维护：
 
 - Gallery: <https://zhu-guli326.github.io/ui_case/library.html?lang=zh>
 - Repository: <https://github.com/zhu-guli326/ui_case>
@@ -51,8 +168,6 @@ git clone https://github.com/zhu-guli326/image2_UI_skill.git "${CODEX_HOME:-$HOM
 
 ### 精选视频预览
 
-仓库另外附带 5 个轻量视频案例，打开 GitHub 项目即可查看并点击播放：
-
 | 案例 | 适合观察的内容 | 预览 |
 | --- | --- | --- |
 | Mimo Activities | 活动流、卡片层级与移动端浏览节奏 | [播放视频](./assets/video-cases/mimo-activities-demo.mp4) |
@@ -63,8 +178,6 @@ git clone https://github.com/zhu-guli326/image2_UI_skill.git "${CODEX_HOME:-$HOM
 
 完整说明见[视频案例预览索引](./references/video-case-previews.md)。
 
-完整视频和案例媒体仍由独立的 [UI Case Gallery](https://zhu-guli326.github.io/ui_case/library.html?lang=zh) 维护。
-
 ## CLI
 
 ```bash
@@ -74,22 +187,16 @@ image2-ui compare --reference <reference-image> --actual <output-image>
 image2-ui loop <demo-dir> --reference <reference-image>
 image2-ui orchestrate <project-dir> --task "Build a clickable UI"
 image2-ui state <run.json> --json
-image2-ui run <project-dir> --task "Build a clickable UI" --reference reference.png
+image2-ui run <project-dir> --mode recreate --task "Recreate UI" --reference reference.png
+image2-ui run <project-dir> --mode redesign --task "Redesign UI" --reference reference.png
+image2-ui run <project-dir> --mode create --task "Create UI"
 image2-ui inspect <project-dir> --latest --json
 image2-ui resume <project-dir> --latest
 ```
 
-Use `--require-effect-review` only when an explicit user checkpoint is needed;
-continue that checkpoint with `resume --decision approved|rejected`.
+`run` 会在 `<project>/.image2-ui/runs/<run-id>/` 持久化 `state.json` 和 `events.jsonl`，并执行有界的 `verify -> fix -> verify` 闭环。`inspect` 查看快照，`resume` 恢复执行；写入型操作中断后会先验证当前工作区，不会盲目重复修改。
 
-`orchestrate` 使用显式状态机管理运行与各 Agent 角色。运行状态为
-`created -> planned -> running -> complete|failed|blocked`，角色状态为
-`pending -> running -> complete|failed`，前置依赖失败时进入 `blocked`。每次迁移都会原子写入
-`<project>/.image2-ui/agents/<run-id>/run.json`；可用 `image2-ui state` 校验和查看快照。
-
-`run` 会在 `<project>/.image2-ui/runs/<run-id>/` 持久化 `state.json` 和
-`events.jsonl`，并强制执行有界的 `verify -> fix -> verify` 闭环。`inspect`
-查看快照，`resume` 恢复执行；写入型操作中断后会先验证当前工作区，不会盲目重复修改。
+`orchestrate` 用于需要多 Agent 的任务图；Runtime 仍应作为顶层控制层，Agent DAG 负责依赖与并行，不应成为第二套互相竞争的生命周期。
 
 开发检查：
 
@@ -99,7 +206,7 @@ npm run doctor
 npm run pack:check
 ```
 
-Windows PowerShell 可运行完整的 Skill 仓库自检：
+Windows PowerShell：
 
 ```powershell
 .\validate.ps1
@@ -107,18 +214,24 @@ Windows PowerShell 可运行完整的 Skill 仓库自检：
 
 ## Key Rules
 
+- **先判断模式，再决定是否需要 Effect Image。**
+- Recreate：`reference -> decompose -> implement -> compare -> fix`。
+- Redesign：`reference -> effect image -> review -> decompose -> implement -> verify`。
+- Create：`description -> effect image -> review -> decompose -> implement -> verify`。
 - 需要生图时必须调用项目指定的 `image2`；没有可用通道时明确说明缺口。
-- 工作顺序是 `reference image -> complete effect image -> review -> UI decomposition -> clickable implementation`。
 - 文案、按钮、导航、表单、状态栏和常用图标由代码渲染。
 - 照片、商品、人物、插画、纹理、背景和对象抠图使用真实位图资产。
-- 生成资产不得包含可读 UI 文案、logo、水印、状态栏、按钮或小型 UI glyph。
-- 最终 demo 必须可打开、可点击、可编辑，并通过与风险相称的验证。
+- 生成的 implementation assets 不得包含可读 UI 文案、logo、水印、状态栏、按钮或小型 UI glyph。
+- Effect Image 只是设计规格，不得作为最终可点击 UI 的扁平图片替代品。
+- 最终 demo 必须可打开、可点击、可编辑，并通过与当前 workflow source of truth 相对应的视觉验证。
 
 ## Repository Split
 
 ```text
 image2_UI_skill
 |-- SKILL.md
+|-- runtime/
+|-- schemas/
 |-- references/
 |-- scripts/
 |-- tests/

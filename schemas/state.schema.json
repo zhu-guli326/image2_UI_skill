@@ -31,7 +31,7 @@
       "additionalProperties": false,
       "required": ["intent", "target", "prompt", "reference"],
       "properties": {
-        "intent": { "enum": ["reference-recreation", "create", "optimize", "switch-design-system", "explore"] },
+        "intent": { "enum": ["recreate", "redesign", "create", "reference-recreation", "optimize", "switch-design-system", "explore"] },
         "target": { "type": "string", "minLength": 1 },
         "prompt": { "type": "string", "minLength": 1 },
         "reference": { "type": ["string", "null"] }
