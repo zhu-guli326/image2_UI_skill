@@ -22,31 +22,38 @@ New backgrounds, people, products, editorial photos, illustrations, scenes, obje
 
 Local Python/Pillow, Canvas, SVG drawing code or CSS must not be used to invent a replacement semantic image.
 
-Local code is allowed for **post-processing only**, such as:
+Local code is allowed for **post-processing of an image2 output or legitimate project asset only**, such as:
 
-- crop;
 - resize;
 - compression;
 - format conversion;
 - remove background;
+- crop after generation to the required aspect ratio;
 - safe masking that does not invent new semantic content.
 
-The image2 wrapper already writes `<asset>.<ext>.provenance.json`. Assets intentionally stored under `generated/`, `generated-assets/`, `ai-assets/` or `image2-assets/` must keep that sidecar.
+Local post-processing does **not** authorize turning screenshot/reference pixels into a final implementation asset.
+
+The image2 wrapper writes `<asset>.<ext>.provenance.json`. Image2-created semantic assets must keep that sidecar so the Harness can verify the channel, action and prompt.
 
 `ui.validate` fails generated visual assets with missing, invalid or unapproved provenance.
 
-## 3. Recreate source-of-truth rule
+## 3. Recreate source-of-truth and asset-source rule
 
-For Recreate, the original reference remains the visual source of truth.
+For Recreate, the original reference remains the visual source of truth, but **not a source of shippable raster pixels**.
 
-- Reuse user/project assets when they are available.
-- Do not silently invent a new hero/background to make implementation easier.
-- If a missing complex visual must be rebuilt, use image2 and preserve provenance.
+- Reuse legitimate user/project assets when they already exist.
+- If a required photographic/product/person/animal/background/illustration/cutout visual exists only inside the screenshot, identify/select its reference region and call image2 to recreate a clean standalone asset.
+- The screenshot or selected region may guide an image2 `edit`, but the frontend must use the image2 output, never the crop itself.
+- `source: "reference"` is forbidden for final Recreate raster assets.
+- Do not ship raw crops, cleaned crops, masked crops or background-removed screenshot crops.
+- If image2 is unavailable and the visual cannot be implemented from legitimate project assets, block instead of degrading to screenshot reuse.
 - Do not flatten the whole reference into a background image.
 - Code-render text, controls, navigation, status chrome and functional icons.
 
+`ui.validate` reports direct reference-pixel reuse as `recreate-reference-raster-forbidden`.
+
 ## 4. Why the guard exists
 
-A UI may look approximately correct while still being structurally wrong. Placeholder icons and ad-hoc generated backgrounds hide those mistakes.
+A UI may look approximately correct while still being structurally wrong. Placeholder icons, ad-hoc visuals and screenshot crops can hide those mistakes.
 
 The Harness therefore treats icon provenance and semantic-image provenance as implementation correctness, not polish.
