@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   InvalidTransitionError,
+  ORCHESTRATOR_ROLE_ORDER,
   ROLE_TRANSITIONS,
   StateMachine,
   WORKFLOW_TRANSITIONS,
@@ -78,12 +79,26 @@ test("legacy snapshot replay rejects tampered transition history", () => {
 });
 
 test("legacy run manifest inspection remains available for pre-Runtime scheduler runs", () => {
-  const workflow = createWorkflowStateMachine();
+  const workflow = createWorkflowStateMachine({ clock: () => "2026-08-15T00:00:01.000Z" });
   workflow.transition("plan");
-  const role = createRoleStateMachine("visual-analyst");
+  const roles = Object.fromEntries(ORCHESTRATOR_ROLE_ORDER.map((role) => {
+    const machine = createRoleStateMachine(role);
+    return [role, {
+      phase: "legacy",
+      attempts: 0,
+      state: machine.state,
+      status: machine.state,
+      stateMachine: machine.snapshot(),
+    }];
+  }));
   const manifest = {
     schemaVersion: 1,
+    revision: 1,
     runId: "legacy-run",
+    startedAt: "2026-08-15T00:00:00.000Z",
+    updatedAt: "2026-08-15T00:00:01.000Z",
+    currentPhase: null,
+    plan: [],
     state: "planned",
     status: "pending",
     stateMachine: workflow.snapshot(),
@@ -93,15 +108,7 @@ test("legacy run manifest inspection remains available for pre-Runtime scheduler
       subject: "legacy-run",
       ...record,
     })),
-    roles: {
-      "visual-analyst": {
-        phase: "discovery",
-        attempts: 0,
-        state: role.state,
-        status: role.state,
-        stateMachine: role.snapshot(),
-      },
-    },
+    roles,
   };
   assert.equal(inspectRunManifest(manifest).valid, true);
 
