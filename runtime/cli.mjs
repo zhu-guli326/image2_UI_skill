@@ -32,12 +32,6 @@ const FLAG_OPTIONS = new Set([
   "-h",
 ]);
 
-const MODE_TO_RUNTIME_INTENT = Object.freeze({
-  recreate: "reference-recreation",
-  redesign: "optimize",
-  create: "create",
-});
-
 export async function runRuntimeCli(action, argv, options = {}) {
   const json = argv.includes("--json");
   try {
@@ -145,7 +139,7 @@ function buildRunInput(target, parsed) {
       target,
       prompt: parsed.task || "Planned UI Harness run",
       reference,
-      intent: MODE_TO_RUNTIME_INTENT[mode],
+      intent: mode,
     },
     limits: parsed.maxIterations == null ? {} : { maxIterations: parsed.maxIterations },
     policy: {

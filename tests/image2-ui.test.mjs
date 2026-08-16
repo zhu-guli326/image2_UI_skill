@@ -99,14 +99,20 @@ test("doctor reports a missing configured image2 executable", () => {
   assert.match(channel.reason, /executable not found/);
 });
 
-test("skill keeps the effect-image gate and points to the standalone gallery", () => {
+test("skill exposes the three workflow contracts and standalone gallery", () => {
   const skill = fs.readFileSync(path.join(repoRoot, "SKILL.md"), "utf8");
   const guide = fs.readFileSync(path.join(repoRoot, "references/asset-manifest-and-prompts.md"), "utf8");
-  assert.match(skill, /reference image -> complete effect image -> effect-image review -> UI decomposition -> clickable implementation/);
-  assert.match(skill, /start frontend implementation before the effect image has been saved and inspected/);
+  assert.match(skill, /1\. `recreate` — 截图 \/ 设计稿 → UI/);
+  assert.match(skill, /2\. `redesign` — 参考图 → 新设计 → UI/);
+  assert.match(skill, /3\. `create` — 描述 → 新设计 → UI/);
+  assert.match(skill, /Do not treat Effect Image as a universal mandatory step/);
+  assert.match(skill, /Recreate \| Skip by default \| Original reference \| Original reference/);
+  assert.match(skill, /Redesign \| Required by default/);
+  assert.match(skill, /Create \| Required by default/);
   assert.match(skill, /https:\/\/zhu-guli326\.github\.io\/ui_case\/launcher\.html\?intent=explore/);
   assert.match(skill, /https:\/\/zhu-guli326\.github\.io\/ui_case\//);
-  assert.match(guide, /第一轮审查只服务于生成完整效果图，不做代码组件和图片资产拆分/);
+  assert.match(guide, /Recreate：直接从原参考图拆分/);
+  assert.match(guide, /Redesign \/ Create：先生成并检查完整 Effect Image/);
 });
 
 test("multi-agent orchestrator exposes its production DAG", () => {
