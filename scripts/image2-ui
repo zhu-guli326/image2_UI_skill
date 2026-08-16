@@ -31,6 +31,12 @@ if (command === "compare") {
   process.exit(result.status ?? 1);
 }
 
+if (command === "preview") {
+  const previewScript = path.join(__dirname, "ui_preview_bundle.mjs");
+  const result = spawnSync(process.execPath, [previewScript, ...args.slice(1)], { stdio: "inherit", cwd: process.cwd() });
+  process.exit(result.status ?? 1);
+}
+
 if (command === "loop") {
   const loopScript = path.join(__dirname, "ui_loop.mjs");
   const result = spawnSync(process.execPath, [loopScript, ...args.slice(1)], { stdio: "inherit", cwd: process.cwd() });
@@ -77,6 +83,7 @@ function printHelp() {
   console.log(`Usage:
   image2-ui validate <demo-dir-or-html> [--reference reference.png] [--json] [--no-browser]
   image2-ui compare --reference reference.png --actual output.png [--out comparison.png]
+  image2-ui preview <demo-dir-or-html> [--out preview.html] [--json]
   image2-ui loop <demo-dir-or-html> --reference reference.png [--build "npm run build"]
   image2-ui run <project-dir> --mode recreate --task "..." --reference reference.png [--execution single-agent|multi-agent]
   image2-ui run <project-dir> --mode redesign --task "..." --reference reference.png [--require-effect-review] [--execution single-agent|multi-agent]
@@ -106,6 +113,7 @@ Defaults:
 Commands:
   validate    Audit a generated demo for broken assets, render issues, text overflow, contrast, and common visual anti-patterns.
   compare     Build a reference/output comparison board.
+  preview     Create a preview-only self-contained HTML artifact so local images/CSS/JS remain visible when the HTML is opened or attached by itself.
   loop        Run build, screenshot capture, validate, compare, and write a fix queue.
   run         Start the durable UI Harness Runtime; add --execution multi-agent to activate the Runtime-owned DAG Scheduler.
   orchestrate Compatibility entry that delegates to Runtime multi-agent execution; it no longer owns a separate run lifecycle.
