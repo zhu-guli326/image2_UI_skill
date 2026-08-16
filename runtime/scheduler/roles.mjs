@@ -42,13 +42,13 @@ export const AGENT_ROLES = Object.freeze({
     phase: "implementation",
     deps: ["ui-architect", "backend-contract", "state-machine", "asset-engineer", "visual-analyst"],
     outputs: ["implementation-notes.md"],
-    prompt: "Implement the production-shaped UI in the existing project conventions. Respect the workflow source of truth and consume the prepared asset plan rather than arbitrary screenshot crops. Code owns semantic text, buttons, status bars, navigation, controls, labels, and functional icons. Do not re-render text that remains embedded in a bitmap; instead stop and require the asset to be cleaned. Use background-plate assets as backgrounds, transparent cutouts as layered subjects, and inline photos only in their intended media slots. Preserve major reference region proportions and visible controls. Include responsive and interaction states. Do not commit or push.",
+    prompt: "Implement the production-shaped UI in the existing project conventions. Respect the workflow source of truth and consume the prepared asset plan rather than arbitrary screenshot crops. Code owns semantic text, buttons, status bars, navigation, controls, labels, and functional icons. Do not re-render text that remains embedded in a bitmap; instead stop and require the asset to be cleaned. Use background-plate assets as backgrounds, transparent cutouts as layered subjects, and inline photos only in their intended media slots. Preserve major reference region proportions and visible controls. Include responsive and interaction states. Keep canonical assets as normal traceable files; never base64-inline them merely to make an attached HTML preview work. If the handoff requires a standalone HTML preview, create it with `image2-ui preview` after the canonical implementation is complete. Do not commit or push.",
   }),
   "code-reviewer": Object.freeze({
     phase: "review",
     deps: ["ui-implementer"],
     outputs: ["code-review-report.md"],
-    prompt: "Review the implementation as a senior code reviewer. Check correctness, regressions, security, maintainability, standards, scope compliance, missing tests, unresolved production risks, untracked raster assets, ad-hoc icons, and suspicious raw screenshot crops used as implementation assets. Report findings first. Do not edit source files.",
+    prompt: "Review the implementation as a senior code reviewer. Check correctness, regressions, security, maintainability, standards, scope compliance, missing tests, unresolved production risks, untracked raster assets, ad-hoc icons, suspicious raw screenshot crops used as implementation assets, and whether a standalone HTML handoff incorrectly depends on missing sibling assets. Report findings first. Do not edit source files.",
   }),
   accessibility: Object.freeze({
     phase: "verification",
@@ -60,13 +60,13 @@ export const AGENT_ROLES = Object.freeze({
     phase: "verification",
     deps: ["ui-implementer", "accessibility", "code-reviewer"],
     outputs: ["qa-report.md", "qa-findings.json"],
-    prompt: "Run appropriate build, tests, browser checks, asset checks, and visual comparison against the workflow source of truth. In Recreate, explicitly inspect for: asset-text-contamination (reference text/UI left inside bitmap crops), duplicate-semantic-content (same text in bitmap and DOM), asset-kind-mismatch (a cutout/collage subject implemented as a rectangular crop or wrong asset type), reference-element-missing (visible controls such as back/heart/menu/action/status/nav omitted), and layout-ratio-drift (major hero/card/nav/media region proportions materially differ from the reference). These are Must Fix when they affect visible fidelity. Also check icon-family consistency and prepared asset provenance. Write qa-report.md and a machine-readable qa-findings.json with exactly {\"mustFix\":[{\"rule\":\"...\",\"message\":\"...\",\"location\":\"optional\"}],\"shouldFix\":[...]} so Runtime can merge the findings into its Verify/Fix loop. Do not silently edit implementation files.",
+    prompt: "Run appropriate build, tests, browser checks, asset checks, and visual comparison against the workflow source of truth. In Recreate, explicitly inspect for: asset-text-contamination (reference text/UI left inside bitmap crops), duplicate-semantic-content (same text in bitmap and DOM), asset-kind-mismatch (a cutout/collage subject implemented as a rectangular crop or wrong asset type), reference-element-missing (visible controls such as back/heart/menu/action/status/nav omitted), and layout-ratio-drift (major hero/card/nav/media region proportions materially differ from the reference). These are Must Fix when they affect visible fidelity. Also check icon-family consistency, prepared asset provenance, and that any preview-only HTML intended for standalone delivery is self-contained rather than depending on sibling local paths. Write qa-report.md and a machine-readable qa-findings.json with exactly {\"mustFix\":[{\"rule\":\"...\",\"message\":\"...\",\"location\":\"optional\"}],\"shouldFix\":[...]} so Runtime can merge the findings into its Verify/Fix loop. Do not silently edit implementation files.",
   }),
   release: Object.freeze({
     phase: "release",
     deps: ["qa-auditor", "accessibility", "code-reviewer"],
     outputs: ["release-report.md"],
-    prompt: "Review Runtime and scheduler artifacts, git status, validation evidence, changed files, and known risks. Do not release Recreate work with unresolved asset-text-contamination, duplicate-semantic-content, asset-kind-mismatch, missing reference controls, or major layout-ratio-drift findings. Produce a release handoff. Do not commit or push.",
+    prompt: "Review Runtime and scheduler artifacts, git status, validation evidence, changed files, and known risks. Do not release Recreate work with unresolved asset-text-contamination, duplicate-semantic-content, asset-kind-mismatch, missing reference controls, or major layout-ratio-drift findings. For user-facing standalone HTML delivery, never hand off a canonical HTML file that still depends on sibling local assets; generate a preview-only self-contained artifact with `image2-ui preview` and record its path in the release handoff while keeping the canonical project/ZIP separate. Produce a release handoff. Do not commit or push.",
   }),
 });
 
