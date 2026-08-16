@@ -10,6 +10,7 @@ const MARKUP_EXT_RE = /\.(?:html?|jsx?|tsx?|vue|svelte)$/i;
 const SCRIPT_EXT_RE = /\.(?:py|js|mjs|cjs|jsx|ts|tsx)$/i;
 const GENERATED_PATH_RE = /(?:^|[/\\])(?:generated|generated-assets|ai-assets|image2-assets)(?:[/\\]|$)|(?:^|[/\\])generated[-_]/i;
 const ICON_CONTEXT_RE = /(?:^|[-_\s])(?:icon|glyph|dot|symbol|status|signal|wifi|battery|nav|tab|toolbar|menu|control|action|circle)(?:[-_\s]|$)/i;
+const KNOWN_ICON_SYSTEM_RE = /(?:data-icon(?:-family)?\s*=|class=["'][^"']*(?:lucide|phosphor|tabler|radix|hugeicon|icon-registry|ui-icon))/i;
 const PLACEHOLDER_SYMBOL_RE = /[⌂◉♟●◎☰♡▣⌁◆◇○◈◦•▪▫▮▯♢♧♤♠♣♥♦★☆✦]/u;
 const PROCEDURAL_VISUAL_RE = /(?:ImageDraw\.Draw|Image\.new\s*\(|PIL\.Image\.new\s*\(|createElement\s*\(\s*["']canvas["']\s*\)|getContext\s*\(\s*["']2d["']\s*\)|toDataURL\s*\(|canvas\.toBlob\s*\()/i;
 const SEMANTIC_DRAW_RE = /(?:ImageDraw\.(?:text|rectangle|ellipse|polygon)|\b(?:draw|ctx|context)\.(?:text|rectangle|ellipse|polygon|fillText|strokeText|fillRect|strokeRect|drawImage)\s*\(|\.fillText\s*\(|\.strokeText\s*\(|\.fillRect\s*\(|\.strokeRect\s*\(|\.drawImage\s*\()/i;
@@ -33,6 +34,7 @@ export function runHarnessGuard({ target, workflowMode = null, originalReference
 
   for (const file of files.filter((item) => MARKUP_EXT_RE.test(item))) {
     checkPlaceholderUiGlyphs(file, rootDir, findings);
+    checkAdHocFunctionalSvgs(file, rootDir, findings);
   }
 
   checkGeneratedVisualProvenance(files, rootDir, findings);
@@ -94,6 +96,33 @@ function checkPlaceholderUiGlyphs(file, rootDir, findings) {
       message: `UI icon/status element in ${relative} uses "${text}" as a placeholder/Unicode glyph. Status bar, nav, tab, toolbar and action glyphs must be code-rendered by the unified icon system.`,
       file,
     });
+  }
+}
+
+function checkAdHocFunctionalSvgs(file, rootDir, findings) {
+  const source = fs.readFileSync(file, "utf8");
+  const relative = path.relative(rootDir, file) || path.basename(file);
+  const trackedSprite = /<svg\b[^>]*data-icon-family=["'][^"']+["'][^>]*>[\s\S]*?<symbol\b/i.test(source);
+  const controlPattern = /<(button|a)\b([^>]*)>([\s\S]*?)<\/\1>/gi;
+
+  for (const match of source.matchAll(controlPattern)) {
+    const controlAttrs = match[2] || "";
+    const body = match[3] || "";
+    for (const svg of body.matchAll(/<svg\b([^>]*)>([\s\S]*?)<\/svg>/gi)) {
+      const svgAttrs = svg[1] || "";
+      const svgBody = svg[2] || "";
+      const usesTrackedComponent = KNOWN_ICON_SYSTEM_RE.test(svgAttrs) || KNOWN_ICON_SYSTEM_RE.test(controlAttrs);
+      const usesSprite = /<use\b[^>]*(?:href|xlink:href)=["']#[^"']+["']/i.test(svgBody);
+      if (usesTrackedComponent || (usesSprite && trackedSprite)) continue;
+
+      findings.push({
+        level: "fail",
+        rule: "ad-hoc-functional-svg",
+        message: `Functional ${match[1]} in ${relative} contains an untracked inline SVG. Do not hand-draw one-off arrows or action glyphs. Use the project's declared icon family/IconRegistry, or mark a single SVG sprite with data-icon-family so the icon source is explicit and consistent.`,
+        file,
+      });
+      break;
+    }
   }
 }
 
