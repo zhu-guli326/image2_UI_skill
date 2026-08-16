@@ -1,9 +1,10 @@
 # Visual Role & Text/Image Overlay Rules
 
-This contract answers two questions before implementation:
+This contract answers three questions before implementation:
 
 1. **What is this visible thing?** — code UI, a graphic primitive/placeholder, a background plate, a cutout subject, or an inline photo.
 2. **How does it relate to nearby text?** — separated, safely overlapped, masked, layered as a cutout, or contained inside a card.
+3. **How may it be cropped?** — especially for primary hero imagery, the crop must protect focal subjects, persistent controls, and required visual bleed.
 
 The goal is not to add more Runtime stages. New runs record the answers in `visual-role-plan.json`; the existing Analyze/Decompose/Implement/Verify flow consumes that plan.
 
@@ -44,6 +45,63 @@ Choose exactly one overlay mode:
 9. Device/frame decoration must never sit above functional navigation or CTA content.
 10. In Recreate, the overlay mode should reproduce the reference relationship rather than choosing a more convenient layout.
 
+## Hero Crop & Bleed Rules
+
+A primary hero is not just "an image that fills a box". It is an image prepared for a specific layout, with enough framing freedom to survive the final aspect ratio without visibly chopping the focal subject.
+
+### Hero asset generation
+
+1. Generate the hero for the **target layout/aspect ratio**, not as an arbitrary tight portrait that will later be forced through `object-fit: cover`.
+2. The image2 prompt must reserve layout-safe visual space where the reference needs title, CTA, navigation, or other persistent overlays.
+3. Faces, eyes, hats, headphones, product silhouettes and other focal edges belong inside `subjectCriticalZones`.
+4. A primary `background-plate` must declare `cropPolicy`.
+5. `fit=cover` requires either `focalPoint` or `safeCropBox`.
+6. Default minimum hero bleed budget:
+   - top: **10%**
+   - left/right: **8%**
+   - bottom: **12%**
+7. `criticalCropMaxPercent` must be **3% or less** for a primary hero.
+8. Persistent CTA/nav/status zones should be recorded as `persistentControlZones` and must not intersect `subjectCriticalZones` unless the reference explicitly requires that overlap and records a reason.
+9. If the source asset is already too tightly cropped to satisfy this contract, regenerate/extend the image2 asset. Do not hide the problem with CSS scaling.
+10. `object-fit: cover` is a placement tool, not a substitute for a correctly composed hero asset.
+
+Example:
+
+```json
+{
+  "id": "winter-seal-hero",
+  "semanticPriority": "primary",
+  "assetRole": {
+    "role": "background-plate",
+    "renderer": "image2",
+    "placement": "background",
+    "generationScope": "asset-only",
+    "containsCodeOwnedText": false
+  },
+  "overlayRole": {
+    "mode": "safe-overlap",
+    "zOrder": "text-over-image",
+    "textOnImage": true,
+    "textSafeZones": [[0, 0, 100, 20]],
+    "subjectCriticalZones": [[18, 24, 64, 45]],
+    "persistentControlZones": [[8, 82, 84, 12]],
+    "allowTextOverSubject": false,
+    "allowControlOverSubject": false,
+    "safeArea": "inside"
+  },
+  "cropPolicy": {
+    "fit": "cover",
+    "focalPoint": [50, 48],
+    "safeCropBox": [8, 10, 84, 72],
+    "minBleedTop": 10,
+    "minBleedSides": 8,
+    "minBleedBottom": 12,
+    "criticalCropMaxPercent": 3,
+    "targetAspectRatio": 0.85
+  }
+}
+```
+
 ## Text/Image Hard Rules
 
 The following are **Must Fix** in Recreate when materially visible:
@@ -55,7 +113,11 @@ The following are **Must Fix** in Recreate when materially visible:
 - `overlay-safe-zone-required` — text is placed on imagery without a declared safe zone where required.
 - `overlay-mask-required` — a masked overlay has no readability mask.
 - `overlay-z-order-required` — overlapping text/image layers have no explicit stacking order.
-- `subject-critical-overlap` — text/control content covers a protected focal zone without explicit reference-backed justification.
+- `subject-critical-overlap` — text content covers a protected focal zone without explicit reference-backed justification.
+- `cta-subject-overlap` — CTA/nav/status overlays cross a protected focal zone instead of using reserved safe space.
+- `hero-cover-without-focal-point` — a primary hero uses `cover` without focal/crop guidance.
+- `insufficient-hero-bleed` — a primary hero has too little top/side/bottom compositional bleed for the target layout.
+- `critical-subject-crop` — the contract allows too much visible crop of a face/product/focal subject, or visual QA observes that crop in the rendered result.
 - `bitmap-code-content` — generated imagery contains code-owned UI/text.
 - `full-ui-image2-generation` — image2 was asked to generate a complete UI composition and that output was then mined for frontend assets.
 - `safe-area-overlap` — CTA/navigation/status content enters the device or viewport safe-area exclusion zone.
@@ -80,6 +142,10 @@ Does the subject silhouette participate in freeform overlap?
               ↓
 Is the background itself part of the composition?
               ├─ yes → background-plate
+              │        ↓
+              │   Is it a primary hero?
+              │        ├─ yes → cropPolicy + focal point/safe crop + bleed + critical zones
+              │        └─ no → ordinary background placement
               └─ no → inline-photo
 ```
 

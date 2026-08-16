@@ -9,6 +9,9 @@ const MASKS = new Set(["none", "gradient", "solid-backplate", "blur"]);
 const CODE_ROLES = new Set(["code-ui", "graphic-primitive"]);
 const RASTER_ROLES = new Set(["background-plate", "cutout-subject", "inline-photo", "generated-clean"]);
 
+const HERO_BLEED_MIN = Object.freeze({ top: 10, sides: 8, bottom: 12 });
+const HERO_CRITICAL_CROP_MAX = 3;
+
 export function runVisualRoleGuard({ rootDir, workflowMode = null } = {}) {
   if (!rootDir) return [];
   const planFile = findVisualRolePlan(rootDir);
@@ -139,8 +142,60 @@ function validateElement(element, planFile, findings, seen) {
   if (overlay.allowTextOverSubject === true && !nonEmpty(overlay.referenceBackedOverlapReason)) {
     findings.push(fail("subject-critical-overlap", `Element ${id} allows text over the subject but has no reference-backed reason.`, planFile));
   }
+  if (overlay.allowControlOverSubject === true && !nonEmpty(overlay.referenceBackedControlOverlapReason)) {
+    findings.push(fail("cta-subject-overlap", `Element ${id} allows persistent controls over the subject but has no reference-backed reason.`, planFile));
+  }
   if (overlay.safeArea && !["inside", "not-applicable"].includes(overlay.safeArea)) {
     findings.push(fail("safe-area-overlap", `Element ${id} has invalid safeArea contract ${JSON.stringify(overlay.safeArea)}.`, planFile));
+  }
+
+  const criticalZones = rectList(overlay.subjectCriticalZones);
+  const textZones = rectList(overlay.textSafeZones);
+  const controlZones = rectList(overlay.persistentControlZones);
+  if (criticalZones.length && textZones.length && overlay.allowTextOverSubject !== true && anyOverlap(criticalZones, textZones)) {
+    findings.push(fail("subject-critical-overlap", `Element ${id} declares a text-safe zone that intersects a subject-critical zone. Move the text zone or record an explicit reference-backed exception.`, planFile));
+  }
+  if (criticalZones.length && controlZones.length && overlay.allowControlOverSubject !== true && anyOverlap(criticalZones, controlZones)) {
+    findings.push(fail("cta-subject-overlap", `Element ${id} places a persistent CTA/nav/status zone across a subject-critical region. Controls must sit in reserved safe space rather than cover the focal subject.`, planFile));
+  }
+
+  validateHeroCrop(element, planFile, findings, id, role, criticalZones);
+}
+
+function validateHeroCrop(element, planFile, findings, id, role, criticalZones) {
+  const isPrimaryHero = role === "background-plate" && element.semanticPriority === "primary";
+  if (!isPrimaryHero) return;
+
+  const crop = element.cropPolicy;
+  if (!crop || typeof crop !== "object") {
+    findings.push(fail("hero-cover-without-focal-point", `Primary hero ${id} requires cropPolicy so frontend placement cannot fall back to blind object-fit cropping.`, planFile));
+    findings.push(fail("insufficient-hero-bleed", `Primary hero ${id} requires explicit top/side/bottom bleed budgets.`, planFile));
+    findings.push(fail("critical-subject-crop", `Primary hero ${id} requires a criticalCropMaxPercent budget.`, planFile));
+    return;
+  }
+
+  if (crop.fit === "cover" && !validPoint(crop.focalPoint) && !validRect(crop.safeCropBox)) {
+    findings.push(fail("hero-cover-without-focal-point", `Primary hero ${id} uses fit=cover without focalPoint or safeCropBox. Blind cover cropping can cut faces/products at container edges.`, planFile));
+  }
+
+  const top = finiteNumber(crop.minBleedTop);
+  const sides = finiteNumber(crop.minBleedSides);
+  const bottom = finiteNumber(crop.minBleedBottom);
+  if (top === null || sides === null || bottom === null || top < HERO_BLEED_MIN.top || sides < HERO_BLEED_MIN.sides || bottom < HERO_BLEED_MIN.bottom) {
+    findings.push(fail(
+      "insufficient-hero-bleed",
+      `Primary hero ${id} must reserve at least ${HERO_BLEED_MIN.top}% top, ${HERO_BLEED_MIN.sides}% side, and ${HERO_BLEED_MIN.bottom}% bottom bleed for target-layout cropping and overlays.`,
+      planFile,
+    ));
+  }
+
+  const maxCrop = finiteNumber(crop.criticalCropMaxPercent);
+  if (maxCrop === null || maxCrop > HERO_CRITICAL_CROP_MAX) {
+    findings.push(fail("critical-subject-crop", `Primary hero ${id} must cap critical-subject crop at ${HERO_CRITICAL_CROP_MAX}% or less; faces, eyes, product silhouettes and focal objects may not be visibly chopped by the hero container.`, planFile));
+  }
+
+  if (criticalZones.length === 0) {
+    findings.push(fail("subject-critical-zone-required", `Primary hero ${id} requires subjectCriticalZones so crop/CTA QA can protect the focal subject.`, planFile));
   }
 }
 
@@ -173,6 +228,32 @@ function findNamedFiles(root, name) {
 
 function nonEmpty(value) {
   return typeof value === "string" && value.trim().length > 0;
+}
+
+function finiteNumber(value) {
+  return typeof value === "number" && Number.isFinite(value) ? value : null;
+}
+
+function validPoint(value) {
+  return Array.isArray(value) && value.length === 2 && value.every((item) => finiteNumber(item) !== null);
+}
+
+function validRect(value) {
+  return Array.isArray(value) && value.length === 4 && value.every((item) => finiteNumber(item) !== null) && value[2] > 0 && value[3] > 0;
+}
+
+function rectList(value) {
+  return Array.isArray(value) ? value.filter(validRect) : [];
+}
+
+function anyOverlap(a, b) {
+  return a.some((left) => b.some((right) => rectsOverlap(left, right)));
+}
+
+function rectsOverlap(a, b) {
+  const [ax, ay, aw, ah] = a;
+  const [bx, by, bw, bh] = b;
+  return ax < bx + bw && ax + aw > bx && ay < by + bh && ay + ah > by;
 }
 
 function fail(rule, message, file) {

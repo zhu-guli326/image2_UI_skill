@@ -20,8 +20,15 @@
       "type": "array",
       "items": { "$ref": "#/$defs/rect" }
     },
+    "persistentControlZones": {
+      "description": "Normalized rectangles occupied by persistent CTA/nav/status overlays that must remain clear of subject-critical content.",
+      "type": "array",
+      "items": { "$ref": "#/$defs/rect" }
+    },
     "allowTextOverSubject": { "type": "boolean" },
+    "allowControlOverSubject": { "type": "boolean" },
     "referenceBackedOverlapReason": { "type": "string" },
+    "referenceBackedControlOverlapReason": { "type": "string" },
     "maxOverlapRatio": { "type": "number", "minimum": 0, "maximum": 1 },
     "safeArea": { "enum": ["inside", "not-applicable"] },
     "notes": { "type": "string" }
@@ -68,6 +75,10 @@
     {
       "if": { "properties": { "allowTextOverSubject": { "const": true } }, "required": ["allowTextOverSubject"] },
       "then": { "required": ["referenceBackedOverlapReason"] }
+    },
+    {
+      "if": { "properties": { "allowControlOverSubject": { "const": true } }, "required": ["allowControlOverSubject"] },
+      "then": { "required": ["referenceBackedControlOverlapReason"] }
     }
   ]
 }

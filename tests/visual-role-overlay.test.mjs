@@ -41,6 +41,35 @@ function baseElement(overrides = {}) {
   };
 }
 
+function validPrimaryHero(overrides = {}) {
+  return baseElement({
+    id: "winter-seal",
+    semanticPriority: "primary",
+    overlayRole: {
+      mode: "safe-overlap",
+      zOrder: "text-over-image",
+      textOnImage: true,
+      textSafeZones: [[0, 0, 100, 20]],
+      subjectCriticalZones: [[18, 24, 64, 45]],
+      persistentControlZones: [[8, 82, 84, 12]],
+      allowTextOverSubject: false,
+      allowControlOverSubject: false,
+      safeArea: "inside",
+    },
+    cropPolicy: {
+      fit: "cover",
+      focalPoint: [50, 48],
+      safeCropBox: [8, 10, 84, 72],
+      minBleedTop: 10,
+      minBleedSides: 8,
+      minBleedBottom: 12,
+      criticalCropMaxPercent: 3,
+      targetAspectRatio: 0.85,
+    },
+    ...overrides,
+  });
+}
+
 test("graphic primitives must stay code-rendered instead of going through image2", () => {
   const dir = fixture();
   writePlan(dir, [baseElement({
@@ -145,6 +174,58 @@ test("image2 jobs must generate one asset rather than a full UI composition", ()
     },
   })]);
   assert.ok(guard(dir).some((finding) => finding.rule === "full-ui-image2-generation"));
+});
+
+test("primary hero cover requires focal-point or safe-crop guidance", () => {
+  const dir = fixture();
+  const hero = validPrimaryHero();
+  hero.cropPolicy = { ...hero.cropPolicy, focalPoint: undefined, safeCropBox: undefined };
+  writePlan(dir, [hero]);
+  assert.ok(guard(dir).some((finding) => finding.rule === "hero-cover-without-focal-point"));
+});
+
+test("primary hero requires minimum bleed budget", () => {
+  const dir = fixture();
+  const hero = validPrimaryHero();
+  hero.cropPolicy = { ...hero.cropPolicy, minBleedTop: 4, minBleedSides: 3, minBleedBottom: 6 };
+  writePlan(dir, [hero]);
+  assert.ok(guard(dir).some((finding) => finding.rule === "insufficient-hero-bleed"));
+});
+
+test("primary hero protects critical subject crop budget", () => {
+  const dir = fixture();
+  const hero = validPrimaryHero();
+  hero.cropPolicy = { ...hero.cropPolicy, criticalCropMaxPercent: 8 };
+  writePlan(dir, [hero]);
+  assert.ok(guard(dir).some((finding) => finding.rule === "critical-subject-crop"));
+});
+
+test("persistent CTA zones cannot cross subject-critical zones", () => {
+  const dir = fixture();
+  const hero = validPrimaryHero();
+  hero.overlayRole = {
+    ...hero.overlayRole,
+    persistentControlZones: [[18, 55, 64, 24]],
+  };
+  writePlan(dir, [hero]);
+  assert.ok(guard(dir).some((finding) => finding.rule === "cta-subject-overlap"));
+});
+
+test("text-safe zones cannot be declared through protected focal content", () => {
+  const dir = fixture();
+  const hero = validPrimaryHero();
+  hero.overlayRole = {
+    ...hero.overlayRole,
+    textSafeZones: [[20, 30, 50, 20]],
+  };
+  writePlan(dir, [hero]);
+  assert.ok(guard(dir).some((finding) => finding.rule === "subject-critical-overlap"));
+});
+
+test("a valid primary hero crop and overlay contract passes", () => {
+  const dir = fixture();
+  writePlan(dir, [validPrimaryHero()]);
+  assert.equal(guard(dir).filter((finding) => finding.level === "fail").length, 0);
 });
 
 test("a valid cutout layering contract passes the visual-role guard", () => {
