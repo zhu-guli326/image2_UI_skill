@@ -1,10 +1,14 @@
 name: CI
 
 on:
-  push:
-    branches: [main, "codex/**"]
   pull_request:
     branches: [main]
+    types: [opened, reopened, ready_for_review]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:
