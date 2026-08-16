@@ -3,6 +3,7 @@ import path from "node:path";
 
 const TEXT_SOURCE_EXT_RE = /\.(?:html?|css|scss|sass|less|jsx?|tsx?|vue|svelte)$/i;
 const INLINE_RASTER_RE = /data:image\/(?:png|jpe?g|webp|gif|avif);base64,/i;
+const PREVIEW_ONLY_RE = /data-image2-ui-artifact=["']preview-only["']/i;
 
 export function runReferenceAssetGuard({ files = [], workflowMode = null, originalReference = null } = {}) {
   if (workflowMode !== "recreate") return [];
@@ -12,6 +13,10 @@ export function runReferenceAssetGuard({ files = [], workflowMode = null, origin
   for (const file of files.filter((item) => TEXT_SOURCE_EXT_RE.test(item))) {
     let source;
     try { source = fs.readFileSync(file, "utf8"); } catch { continue; }
+
+    // Portable preview artifacts are intentionally self-contained for delivery environments
+    // that do not preserve sibling asset paths. They are not canonical implementation source.
+    if (/\.html?$/i.test(file) && PREVIEW_ONLY_RE.test(source)) continue;
 
     if (INLINE_RASTER_RE.test(source)) {
       findings.push({
