@@ -33,7 +33,7 @@ function runtimeState(target, extra = {}) {
   });
 }
 
-function fakeTools({ blockRole = null, qaMustFix = [] } = {}) {
+function fakeTools({ blockRole = null, qaMustFix = [], invalidQaJson = false } = {}) {
   const tools = new ToolRegistry();
   tools.register({
     name: "agent.execute",
@@ -51,7 +51,11 @@ function fakeTools({ blockRole = null, qaMustFix = [] } = {}) {
         for (const file of outputs) {
           await fs.mkdir(path.dirname(file), { recursive: true });
           if (file.endsWith("qa-findings.json")) {
-            await fs.writeFile(file, JSON.stringify({ mustFix: qaMustFix, shouldFix: [] }), "utf8");
+            await fs.writeFile(
+              file,
+              invalidQaJson ? "{not-json" : JSON.stringify({ mustFix: qaMustFix, shouldFix: [] }),
+              "utf8",
+            );
           } else {
             await fs.writeFile(file, `${input.role} output\n`, "utf8");
           }
@@ -106,12 +110,14 @@ test("Runtime scheduler persists node progress under the canonical run", async (
   assert.equal(verification.data.findings.mustFix.length, 0);
   manifest = await loadSchedulerManifest(paths.manifest);
   assert.equal(manifest.roles["qa-auditor"].status, "complete");
+  await fs.access(path.join(paths.artifacts, "qa-findings.json"));
 
   await invalidateSchedulerFromPhase({ target, runId: state.runId, phase: "review" });
   manifest = await loadSchedulerManifest(paths.manifest);
   assert.equal(manifest.roles["ui-implementer"].status, "complete");
   assert.equal(manifest.roles["code-reviewer"].status, "pending");
   assert.equal(manifest.roles["qa-auditor"].status, "pending");
+  await assert.rejects(fs.access(path.join(paths.artifacts, "qa-findings.json")));
 
   await executeAgentDag({ state: { ...state, stage: "verify" }, tools, throughPhase: "verification" });
   manifest = await loadSchedulerManifest(paths.manifest);
@@ -138,6 +144,19 @@ test("scheduler QA findings feed the Runtime Verify/Fix contract", async () => {
     { rule: "scheduler-visual-gap", message: "Hero spacing differs from the source of truth", location: "hero" },
   ]);
   assert.ok(result.artifacts.some((artifact) => artifact.kind === "scheduler-manifest"));
+});
+
+test("invalid machine-readable QA evidence fails the scheduler node", async () => {
+  const target = await fs.mkdtemp(path.join(os.tmpdir(), "image2-runtime-scheduler-invalid-qa-"));
+  const state = runtimeState(target, { stage: "verify", runId: "scheduler-invalid-qa" });
+  const tools = fakeTools({ invalidQaJson: true });
+
+  await assert.rejects(
+    executeAgentDag({ state, tools, throughPhase: "verification" }),
+    (error) => error.code === "scheduler-agent-failed" && /qa-findings\.json is invalid JSON/.test(error.message),
+  );
+  const manifest = await loadSchedulerManifest(schedulerPaths(target, state.runId).manifest);
+  assert.equal(manifest.roles["qa-auditor"].status, "failed");
 });
 
 test("a blocked specialist blocks the subordinate scheduler without creating a second run lifecycle", async () => {
