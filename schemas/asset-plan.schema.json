@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://zhu-guli326.github.io/image2_UI_skill/schemas/asset-plan.schema.json",
+  "title": "Image2 UI Recreate Asset Plan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "workflow", "assets"],
+  "properties": {
+    "version": { "const": 1 },
+    "workflow": { "const": "recreate" },
+    "reference": { "type": "string" },
+    "assets": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "kind", "source", "output", "operations"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "kind": {
+            "enum": ["background-plate", "cutout", "inline-photo", "generated-clean", "project-existing"]
+          },
+          "source": { "enum": ["reference", "image2", "project"] },
+          "output": { "type": "string", "minLength": 1 },
+          "referenceRegion": {
+            "type": "array",
+            "prefixItems": [
+              { "type": "number" },
+              { "type": "number" },
+              { "type": "number", "exclusiveMinimum": 0 },
+              { "type": "number", "exclusiveMinimum": 0 }
+            ],
+            "minItems": 4,
+            "maxItems": 4
+          },
+          "operations": {
+            "type": "array",
+            "items": { "type": "string" },
+            "uniqueItems": true
+          },
+          "sourceMayContainText": { "type": "boolean" },
+          "sourceMayContainUi": { "type": "boolean" },
+          "textRemoved": { "type": "boolean" },
+          "uiRemoved": { "type": "boolean" },
+          "backgroundRemoved": { "type": "boolean" },
+          "codeOwnedText": {
+            "type": "array",
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "embeddedText": {
+            "type": "array",
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "allowEmbeddedText": { "type": "boolean" },
+          "embeddedTextReason": { "type": "string" }
+        }
+      }
+    },
+    "referenceElements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "kind", "required", "status"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "kind": { "enum": ["code-ui", "asset"] },
+          "required": { "type": "boolean" },
+          "status": { "enum": ["implemented", "missing", "intentionally-omitted"] },
+          "notes": { "type": "string" }
+        }
+      }
+    }
+  }
+}

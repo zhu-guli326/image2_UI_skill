@@ -64,7 +64,11 @@ function scriptTool(root, file, name, build, allow = [0]) {
     name,
     async invoke(input = {}, ctx = {}) {
       const args = build(input);
-      if (name === "ui.validate" && input.reference && !args.includes("--reference")) args.push("--reference", input.reference);
+      if (name === "ui.validate") {
+        if (input.reference && !args.includes("--reference")) args.push("--reference", input.reference);
+        if (input.workflowMode && !args.includes("--workflow-mode")) args.push("--workflow-mode", input.workflowMode);
+        if (input.originalReference && !args.includes("--original-reference")) args.push("--original-reference", input.originalReference);
+      }
       const result = await runProcess(process.execPath, [path.join(root, "scripts", file), ...args], {
         cwd: root,
         signal: ctx.signal,

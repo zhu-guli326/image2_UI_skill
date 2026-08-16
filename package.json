@@ -34,6 +34,11 @@
     "scripts/ui_compare.mjs",
     "scripts/ui_loop.mjs",
     "scripts/ui_output_audit.mjs",
+    "scripts/ui_output_audit_core.mjs",
+    "scripts/ui_harness_guard.mjs",
+    "scripts/ui_harness_guard_v2.mjs",
+    "scripts/ui_asset_plan_guard.mjs",
+    "scripts/ui_reference_asset_guard.mjs",
     "runtime/",
     "schemas/",
     "assets/readme/hero.png"

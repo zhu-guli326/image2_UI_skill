@@ -12,19 +12,19 @@ export const AGENT_ROLES = Object.freeze({
     phase: "discovery",
     deps: [],
     outputs: ["ui-audit.md", "code-ui-inventory.md", "image2-assets.md", "visual-risks.md"],
-    prompt: "Inspect the workflow source of truth and repository. Split code-rendered UI from bitmap/image2 assets, identify visual risks, and do not edit application source files.",
+    prompt: "Inspect the workflow source of truth and repository. Split code-rendered UI from bitmap/image2 assets. For every reference-derived bitmap, classify whether it is a background-plate, cutout, inline-photo, generated-clean asset, or existing project asset. Flag any crop that contains code-owned text, buttons, status/nav chrome, duplicated labels, or a subject that should be a transparent cutout rather than a rectangular screenshot. Record missing visible reference controls and major layout/proportion risks. Do not edit application source files.",
   }),
   "asset-engineer": Object.freeze({
     phase: "discovery",
     deps: [],
-    outputs: ["asset-manifest.json", "image2-prompts.md", "asset-provenance.md"],
-    prompt: "Create or verify the image2 asset manifest, prompts, local asset paths, alt text, crop strategy, and provenance. Do not edit application source files.",
+    outputs: ["asset-plan.json", "asset-manifest.json", "image2-prompts.md", "asset-provenance.md"],
+    prompt: "Create asset-plan.json before implementation and verify the bitmap pipeline. Every rendered raster must be classified as background-plate, cutout, inline-photo, generated-clean, or project-existing. Reference-derived assets must record referenceRegion, cleanup operations, whether the source may contain text/UI, and whether text/UI/background were actually removed. Never pass a raw screenshot crop containing code-owned text or UI chrome into the implementation. Cutout assets require real background removal and transparent PNG/WebP. If cleaning needs semantic inpainting or reconstruction, use image2 and preserve provenance. Also produce the normal asset manifest, prompts, local paths, alt text, crop strategy, and provenance. Do not edit application source files.",
   }),
   "ui-architect": Object.freeze({
     phase: "architecture",
     deps: ["visual-analyst"],
     outputs: ["ui-architecture.md"],
-    prompt: "Define route and feature boundaries, component APIs, design tokens, i18n structure, responsive strategy, and test surface. Do not implement application code.",
+    prompt: "Define route and feature boundaries, component APIs, design tokens, i18n structure, responsive strategy, and test surface. Preserve reference composition and major region proportions in Recreate; do not compensate for bad bitmap preparation by changing the layout. Do not implement application code.",
   }),
   "backend-contract": Object.freeze({
     phase: "architecture",
@@ -42,13 +42,13 @@ export const AGENT_ROLES = Object.freeze({
     phase: "implementation",
     deps: ["ui-architect", "backend-contract", "state-machine", "asset-engineer", "visual-analyst"],
     outputs: ["implementation-notes.md"],
-    prompt: "Implement the production-shaped UI in the existing project conventions. Respect the workflow source of truth, wire local assets, and include responsive and interaction states. Do not commit or push.",
+    prompt: "Implement the production-shaped UI in the existing project conventions. Respect the workflow source of truth and consume the prepared asset plan rather than arbitrary screenshot crops. Code owns semantic text, buttons, status bars, navigation, controls, labels, and functional icons. Do not re-render text that remains embedded in a bitmap; instead stop and require the asset to be cleaned. Use background-plate assets as backgrounds, transparent cutouts as layered subjects, and inline photos only in their intended media slots. Preserve major reference region proportions and visible controls. Include responsive and interaction states. Do not commit or push.",
   }),
   "code-reviewer": Object.freeze({
     phase: "review",
     deps: ["ui-implementer"],
     outputs: ["code-review-report.md"],
-    prompt: "Review the implementation as a senior code reviewer. Check correctness, regressions, security, maintainability, standards, scope compliance, missing tests, and unresolved production risks. Report findings first. Do not edit source files.",
+    prompt: "Review the implementation as a senior code reviewer. Check correctness, regressions, security, maintainability, standards, scope compliance, missing tests, unresolved production risks, untracked raster assets, ad-hoc icons, and suspicious raw screenshot crops used as implementation assets. Report findings first. Do not edit source files.",
   }),
   accessibility: Object.freeze({
     phase: "verification",
@@ -60,13 +60,13 @@ export const AGENT_ROLES = Object.freeze({
     phase: "verification",
     deps: ["ui-implementer", "accessibility", "code-reviewer"],
     outputs: ["qa-report.md", "qa-findings.json"],
-    prompt: "Run appropriate build, tests, browser checks, asset checks, and visual comparison. Write qa-report.md and a machine-readable qa-findings.json with exactly {\"mustFix\":[{\"rule\":\"...\",\"message\":\"...\",\"location\":\"optional\"}],\"shouldFix\":[...]} so Runtime can merge the findings into its Verify/Fix loop. Do not silently edit implementation files.",
+    prompt: "Run appropriate build, tests, browser checks, asset checks, and visual comparison against the workflow source of truth. In Recreate, explicitly inspect for: asset-text-contamination (reference text/UI left inside bitmap crops), duplicate-semantic-content (same text in bitmap and DOM), asset-kind-mismatch (a cutout/collage subject implemented as a rectangular crop or wrong asset type), reference-element-missing (visible controls such as back/heart/menu/action/status/nav omitted), and layout-ratio-drift (major hero/card/nav/media region proportions materially differ from the reference). These are Must Fix when they affect visible fidelity. Also check icon-family consistency and prepared asset provenance. Write qa-report.md and a machine-readable qa-findings.json with exactly {\"mustFix\":[{\"rule\":\"...\",\"message\":\"...\",\"location\":\"optional\"}],\"shouldFix\":[...]} so Runtime can merge the findings into its Verify/Fix loop. Do not silently edit implementation files.",
   }),
   release: Object.freeze({
     phase: "release",
     deps: ["qa-auditor", "accessibility", "code-reviewer"],
     outputs: ["release-report.md"],
-    prompt: "Review Runtime and scheduler artifacts, git status, validation evidence, changed files, and known risks. Produce a release handoff. Do not commit or push.",
+    prompt: "Review Runtime and scheduler artifacts, git status, validation evidence, changed files, and known risks. Do not release Recreate work with unresolved asset-text-contamination, duplicate-semantic-content, asset-kind-mismatch, missing reference controls, or major layout-ratio-drift findings. Produce a release handoff. Do not commit or push.",
   }),
 });
 
