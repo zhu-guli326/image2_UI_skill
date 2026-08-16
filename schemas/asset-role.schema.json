@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://zhu-guli326.github.io/image2_UI_skill/schemas/asset-role.schema.json",
+  "title": "Image2 UI Asset Role",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["role", "renderer", "placement"],
+  "properties": {
+    "role": {
+      "enum": [
+        "code-ui",
+        "graphic-primitive",
+        "background-plate",
+        "cutout-subject",
+        "inline-photo",
+        "generated-clean"
+      ]
+    },
+    "renderer": { "enum": ["code", "image2", "project"] },
+    "placement": { "enum": ["code", "background", "layered", "container"] },
+    "generationScope": { "enum": ["none", "asset-only"] },
+    "requiresTransparency": { "type": "boolean" },
+    "participatesInOverlap": { "type": "boolean" },
+    "containsCodeOwnedText": { "type": "boolean" },
+    "notes": { "type": "string" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "role": { "enum": ["code-ui", "graphic-primitive"] } }, "required": ["role"] },
+      "then": {
+        "properties": {
+          "renderer": { "const": "code" },
+          "placement": { "const": "code" },
+          "generationScope": { "const": "none" }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "role": { "const": "cutout-subject" } }, "required": ["role"] },
+      "then": {
+        "properties": {
+          "placement": { "const": "layered" },
+          "requiresTransparency": { "const": true },
+          "generationScope": { "const": "asset-only" }
+        },
+        "required": ["requiresTransparency", "generationScope"]
+      }
+    },
+    {
+      "if": { "properties": { "role": { "const": "background-plate" } }, "required": ["role"] },
+      "then": { "properties": { "placement": { "const": "background" }, "generationScope": { "const": "asset-only" } } }
+    },
+    {
+      "if": { "properties": { "role": { "const": "inline-photo" } }, "required": ["role"] },
+      "then": { "properties": { "placement": { "const": "container" }, "generationScope": { "const": "asset-only" } } }
+    },
+    {
+      "if": { "properties": { "renderer": { "const": "image2" } }, "required": ["renderer"] },
+      "then": { "properties": { "generationScope": { "const": "asset-only" } }, "required": ["generationScope"] }
+    },
+    {
+      "if": { "properties": { "role": { "enum": ["background-plate", "cutout-subject", "inline-photo", "generated-clean"] } }, "required": ["role"] },
+      "then": { "properties": { "containsCodeOwnedText": { "const": false } } }
+    }
+  ]
+}
