@@ -5,6 +5,7 @@ import { AGENT_ROLES, phaseIndex, rolesForTier } from "./roles.mjs";
 import { implementationSource, normalizeWorkflowMode } from "../workflow-modes.mjs";
 
 export const SCHEDULER_SCHEMA_VERSION = 1;
+const DEFAULT_AGENT_TIER = "medium";
 
 export function schedulerPaths(target, runId) {
   const root = path.join(target, ".image2-ui", "runs", runId, "scheduler");
@@ -20,9 +21,9 @@ export async function executeAgentDag({ state, tools, target = state?.task?.targ
   if (!state?.runId || !target) throw new TypeError("executeAgentDag requires a Runtime state and target");
   if (!has(tools, "agent.execute")) throw schedulerError("capability-unavailable", "Runtime DAG Scheduler requires agent.execute", true);
 
-  const tier = state.runtime?.agentTier || "medium";
-  const mode = state.runtime?.schedulerMode || "parallel";
+  const tier = DEFAULT_AGENT_TIER;
   const maxParallel = state.limits?.maxParallel || 1;
+  const mode = maxParallel === 1 ? "sequential" : "parallel";
   const fullPlan = buildDagPlan({ tier, mode, maxParallel, throughPhase: "release" });
   const activePlan = buildDagPlan({ tier, mode, maxParallel, throughPhase });
   const paths = schedulerPaths(target, state.runId);
@@ -31,7 +32,7 @@ export async function executeAgentDag({ state, tools, target = state?.task?.targ
 
   let manifest = await loadSchedulerManifest(paths.manifest);
   if (!manifest) manifest = createSchedulerManifest({ state, target, tier, mode, maxParallel, plan: fullPlan, paths });
-  validateManifestIdentity(manifest, { state, target, tier });
+  validateManifestIdentity(manifest, { state, target, tier, mode, maxParallel });
   manifest = reconcileInterruptedRoles(manifest);
 
   for (const batch of activePlan.batches) {
@@ -115,6 +116,7 @@ export async function invalidateSchedulerFromPhase({ target, runId, phase = "rev
   const from = phaseIndex(phase);
   for (const [role, entry] of Object.entries(manifest.roles || {})) {
     if (phaseIndex(AGENT_ROLES[role].phase) < from) continue;
+    for (const file of [...(entry.outputs || []), entry.outputFile].filter(Boolean)) await safeUnlink(file);
     entry.status = "pending";
     entry.startedAt = null;
     entry.finishedAt = null;
@@ -131,8 +133,7 @@ export async function invalidateSchedulerFromPhase({ target, runId, phase = "rev
 
 export async function loadSchedulerManifest(file) {
   try {
-    const value = JSON.parse(await fs.readFile(file, "utf8"));
-    return value;
+    return JSON.parse(await fs.readFile(file, "utf8"));
   } catch (error) {
     if (error?.code === "ENOENT") return null;
     throw error;
@@ -177,11 +178,14 @@ function createSchedulerManifest({ state, target, tier, mode, maxParallel, plan,
   };
 }
 
-function validateManifestIdentity(manifest, { state, target, tier }) {
+function validateManifestIdentity(manifest, { state, target, tier, mode, maxParallel }) {
   if (manifest.schemaVersion !== SCHEDULER_SCHEMA_VERSION) throw new Error(`Unsupported scheduler schema: ${manifest.schemaVersion}`);
   if (manifest.runId !== state.runId) throw new Error("Scheduler manifest runId does not match Runtime state");
   if (path.resolve(manifest.target) !== path.resolve(target)) throw new Error("Scheduler manifest target does not match Runtime target");
   if (manifest.tier !== tier) throw new Error(`Cannot change agent tier mid-run (${manifest.tier} -> ${tier})`);
+  if (manifest.mode !== mode || manifest.maxParallel !== maxParallel) {
+    throw new Error(`Cannot change scheduler concurrency mid-run (${manifest.mode}/${manifest.maxParallel} -> ${mode}/${maxParallel})`);
+  }
 }
 
 function reconcileInterruptedRoles(manifest) {
@@ -236,6 +240,10 @@ async function runRole({ role, state, tools, target, signal, operation, paths, s
     }
     if (missing.length) {
       return { role, status: "failed", error: `${role} did not create required outputs: ${missing.join(", ")}`, outputFile, outputs: outputPaths };
+    }
+    const outputError = await validateRoleOutputs(role, outputPaths);
+    if (outputError) {
+      return { role, status: "failed", error: outputError, outputFile, outputs: outputPaths };
     }
     return { role, status: "complete", error: null, outputFile, outputs: outputPaths };
   } catch (error) {
@@ -299,6 +307,29 @@ async function readHandoff(file) {
   }
 }
 
+async function validateRoleOutputs(role, outputPaths) {
+  if (role !== "qa-auditor") return null;
+  const file = outputPaths.find((item) => path.basename(item) === "qa-findings.json");
+  if (!file) return "qa-auditor is missing the qa-findings.json output contract";
+  try {
+    const value = JSON.parse(await fs.readFile(file, "utf8"));
+    if (!Array.isArray(value.mustFix) || !Array.isArray(value.shouldFix)) {
+      return "qa-findings.json must contain mustFix and shouldFix arrays";
+    }
+    for (const finding of [...value.mustFix, ...value.shouldFix]) {
+      if (!finding || typeof finding.rule !== "string" || !finding.rule || typeof finding.message !== "string" || !finding.message) {
+        return "qa-findings.json contains a finding without a non-empty rule and message";
+      }
+      if (finding.location !== undefined && typeof finding.location !== "string") {
+        return "qa-findings.json finding.location must be a string when present";
+      }
+    }
+    return null;
+  } catch (error) {
+    return `qa-findings.json is invalid JSON: ${error.message}`;
+  }
+}
+
 async function readQaFindings(artifactsDir) {
   try {
     const value = JSON.parse(await fs.readFile(path.join(artifactsDir, "qa-findings.json"), "utf8"));
@@ -306,8 +337,9 @@ async function readQaFindings(artifactsDir) {
       mustFix: normalizeFindings(value.mustFix),
       shouldFix: normalizeFindings(value.shouldFix),
     };
-  } catch {
-    return { mustFix: [], shouldFix: [] };
+  } catch (error) {
+    if (error?.code === "ENOENT") return { mustFix: [], shouldFix: [] };
+    throw error;
   }
 }
 
@@ -343,6 +375,10 @@ function schedulerArtifacts(manifest, paths, operation) {
     }
   }
   return artifacts;
+}
+
+async function safeUnlink(file) {
+  try { await fs.unlink(file); } catch (error) { if (error?.code !== "ENOENT") throw error; }
 }
 
 function has(tools, name) {
