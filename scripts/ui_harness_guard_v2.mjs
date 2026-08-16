@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { runHarnessGuard as runBaseHarnessGuard } from "./ui_harness_guard.mjs";
 import { runAssetPlanGuard } from "./ui_asset_plan_guard.mjs";
+import { runReferenceAssetGuard } from "./ui_reference_asset_guard.mjs";
 
 export function runHarnessGuard(options = {}) {
   const base = runBaseHarnessGuard(options);
@@ -17,7 +18,12 @@ export function runHarnessGuard(options = {}) {
     workflowMode: options.workflowMode,
     originalReference: options.originalReference,
   });
-  const findings = [...(base.findings || []), ...assetFindings];
+  const referenceFindings = runReferenceAssetGuard({
+    files,
+    workflowMode: options.workflowMode,
+    originalReference: options.originalReference,
+  });
+  const findings = [...(base.findings || []), ...assetFindings, ...referenceFindings];
   const fail = findings.filter((item) => item.level === "fail").length;
   const warn = findings.filter((item) => item.level === "warn").length;
   const info = findings.filter((item) => item.level === "info").length;
