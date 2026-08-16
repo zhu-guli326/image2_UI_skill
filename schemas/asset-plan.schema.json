@@ -21,9 +21,10 @@
           "kind": {
             "enum": ["background-plate", "cutout", "inline-photo", "generated-clean", "project-existing"]
           },
-          "source": { "enum": ["reference", "image2", "project"] },
+          "source": { "enum": ["image2", "project"] },
           "output": { "type": "string", "minLength": 1 },
           "referenceRegion": {
+            "description": "Visual region in the screenshot used only to identify/guide what image2 must recreate. It is never a shippable crop.",
             "type": "array",
             "prefixItems": [
               { "type": "number" },
@@ -34,6 +35,9 @@
             "minItems": 4,
             "maxItems": 4
           },
+          "referenceRole": { "const": "visual-guide-only" },
+          "image2Action": { "enum": ["generate", "edit"] },
+          "image2Prompt": { "type": "string", "minLength": 1 },
           "operations": {
             "type": "array",
             "items": { "type": "string" },
@@ -54,7 +58,13 @@
           },
           "allowEmbeddedText": { "type": "boolean" },
           "embeddedTextReason": { "type": "string" }
-        }
+        },
+        "allOf": [
+          {
+            "if": { "properties": { "source": { "const": "image2" } }, "required": ["source"] },
+            "then": { "required": ["referenceRegion", "referenceRole", "image2Action", "image2Prompt"] }
+          }
+        ]
       }
     },
     "referenceElements": {
