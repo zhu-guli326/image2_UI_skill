@@ -48,7 +48,7 @@ gallery and its own site contract live in the separate `ui_case` repository.
 
 ## Three Workflow Modes
 
-Every implementation run resolves to one canonical workflow mode:
+Every implementation run resolves to one canonical workflow mode.
 
 ### Recreate
 
@@ -117,8 +117,8 @@ image2-ui resume ./my-output --latest
 Runtime snapshots live under `<project>/.image2-ui/runs/<run-id>/`. `state.json`
 stores the current durable state; `events.jsonl` records the ordered event trail.
 Unresolved Must Fix findings become `blocked` after the iteration budget. An
-interrupted workspace mutation is reconciled by verification before another
-write-capable Agent may run.
+interrupted workspace mutation is reconciled before another write-capable Agent
+may proceed.
 
 New Runtime runs persist the canonical modes `recreate`, `redesign`, and
 `create`. The loader continues to understand legacy persisted aliases such as
@@ -143,48 +143,129 @@ init -> preflight -> generate-effect -> review-effect -> decompose -> implement 
 returns to `generate-effect`; an explicit approval policy may pause a run in
 `waiting-input`.
 
-## Multi-Agent Execution
+## Runtime-Owned Multi-Agent Scheduling
 
-Use `orchestrate` only when a task genuinely benefits from specialist roles:
+Multi-Agent is an execution mode inside the same Runtime lifecycle, not a second
+orchestrator lifecycle.
+
+Preferred entry:
+
+```bash
+image2-ui run ./my-output \
+  --mode recreate \
+  --task "Recreate this production UI" \
+  --reference ./reference.png \
+  --execution multi-agent \
+  --max-parallel 2
+```
+
+The control hierarchy is:
+
+```text
+Runtime
+├── State Machine
+├── Runner / Resume
+├── Policies / Event Log
+├── Verify -> Fix -> Verify
+└── DAG Scheduler
+    ├── Role Catalog
+    ├── Dependency Planner
+    └── Specialist Agent Executor
+```
+
+The Runtime state remains canonical:
+
+```text
+<project>/.image2-ui/runs/<run-id>/state.json
+<project>/.image2-ui/runs/<run-id>/events.jsonl
+```
+
+The DAG Scheduler persists only subordinate node progress and handoffs inside the
+same Runtime run:
+
+```text
+<project>/.image2-ui/runs/<run-id>/scheduler/scheduler.json
+<project>/.image2-ui/runs/<run-id>/scheduler/artifacts/
+<project>/.image2-ui/runs/<run-id>/scheduler/roles/
+```
+
+The default Multi-Agent graph is intentionally medium-sized rather than invoking
+every possible specialist. It includes visual analysis, asset engineering, UI
+architecture, implementation, code review, accessibility, QA, and release.
+Backend-contract and product-state-machine roles are retained in the role catalog
+for more complex graphs, but should not be activated merely because Multi-Agent
+is available.
+
+### Runtime Stage Ownership
+
+The Runtime decides when scheduler nodes execute:
+
+```text
+implement
+  -> discovery
+  -> architecture
+  -> implementation
+
+verify
+  -> review
+  -> accessibility / QA
+  -> merge qa-findings.json into Runtime findings
+  -> run normal validator
+
+fix
+  -> mutate workspace
+  -> invalidate review / QA / release scheduler nodes
+
+finalize
+  -> release handoff
+```
+
+`qa-auditor` writes both a human-readable `qa-report.md` and machine-readable
+`qa-findings.json`. Runtime merges its `mustFix` and `shouldFix` findings into the
+same bounded Verify/Fix contract used by the normal validator. A successful fix
+invalidates downstream review/verification/release nodes so they cannot remain
+stale after workspace mutation.
+
+Scheduler stages use the Agent timeout budget rather than the shorter ordinary
+Tool timeout because one Runtime stage may contain several specialist Agent
+invocations.
+
+### Compatibility `orchestrate`
+
+The command remains available for existing callers:
 
 ```bash
 image2-ui orchestrate ./my-output \
   --task "Turn the reference into a production-shaped clickable demo" \
-  --reference ./reference.png
+  --reference ./reference.png \
+  --workflow recreate \
+  --mode parallel
 ```
 
-The current orchestrator maintains a DAG of roles and handoff artifacts under
-`<project>/.image2-ui/agents/<run-id>/`. Independent roles may run in parallel;
-dependent roles wait for their prerequisites. Use `--mode sequential` when
-agents cannot safely share a workspace. Use `--dry-run --json` to inspect the
-DAG without starting agents.
+It is now an argument adapter into `image2-ui run --execution multi-agent`.
+`--mode parallel|sequential` keeps its historical scheduling meaning;
+`--workflow recreate|redesign|create` selects the UI workflow. Sequential mode
+maps to a scheduler concurrency of one.
 
-The architectural direction is explicit: **Runtime owns the run lifecycle; the
-Agent DAG is a scheduler beneath Runtime.** Until that consolidation is complete,
-`orchestrate` remains a compatibility execution surface and must not redefine
-the canonical Recreate/Redesign/Create workflow contract.
-
-Agents never commit or push. The lead agent remains responsible for scope, merge
-decisions, and final validation.
+New `orchestrate` runs **do not** create `.image2-ui/agents/<run-id>` or a second
+`run.json` lifecycle.
 
 ### Legacy Orchestrator State
 
-The standalone orchestrator currently persists its own compatibility state in
-each `run.json`. Workflow states are `created`, `planned`, `running`, `complete`,
-`failed`, and `blocked`; role states are `pending`, `running`, `complete`,
-`failed`, and `blocked`.
+Historical standalone orchestrator manifests remain inspectable:
 
 ```bash
-image2-ui state ./my-output/.image2-ui/agents/<run-id>/run.json
-image2-ui state ./my-output/.image2-ui/agents/<run-id>/run.json --json
+image2-ui state ./old-project/.image2-ui/agents/<run-id>/run.json
+image2-ui state ./old-project/.image2-ui/agents/<run-id>/run.json --json
 ```
 
-The state command replays persisted snapshots and exits with status `2` when a
-state alias, transition, or history entry is invalid.
+The `state` command exists only for those pre-Runtime-scheduler manifests. It
+replays their persisted snapshots and exits with status `2` when a state alias,
+transition, or history entry is invalid.
 
-The production DAG includes a dedicated analysis-only `code-reviewer` between
-implementation and QA. QA waits for code review and accessibility reports before
-producing the final fix queue.
+Agents never commit or push. Runtime remains responsible for scope, lifecycle,
+iteration budgets, recovery, and final validation; specialist nodes own only
+their declared DAG work and handoff artifacts.
 
 ## Verification Policy
 
@@ -204,6 +285,9 @@ image2-ui loop <demo-dir> --reference <workflow-source-of-truth> --build "<build
 
 `validate` must have zero `fail` findings. Warnings should either be fixed or
 recorded as explicit design tradeoffs in the delivery notes.
+
+For Multi-Agent runs, machine-readable QA findings are additional evidence; they
+do not replace the existing browser/asset validator.
 
 ## Motion Quality
 
@@ -247,15 +331,19 @@ to the output image unless `--provenance` is provided.
 
 - `npm test` passes.
 - Recreate, Redesign, and Create routing tests pass.
+- Runtime Scheduler DAG/topology tests pass.
+- Runtime-owned Multi-Agent dry-run proves no new `.image2-ui/agents` lifecycle is created.
+- QA findings are covered by Verify/Fix integration tests.
 - CLI and fixture tests pass with `npm test`.
 - A representative output is checked with `image2-ui validate` when validation
   behavior changes.
 - `npm run doctor` reports at least one available image channel, or release notes
   state that image generation is intentionally unavailable in CI.
-- `npm run pack:check` includes `runtime/` and `schemas/`.
+- `npm run pack:check` includes `runtime/`, `runtime/scheduler/`, and `schemas/`.
 - `scripts/image2-ui` and `scripts/image2_asset.py` are executable.
 - README, `SKILL.md`, `PRODUCTION.md`, and relevant `references/` describe the
-  same three workflow modes and Effect Image policy.
-- Generated loop artifacts are not committed.
+  same three workflow modes, Effect Image policy, and Runtime-owned scheduler model.
+- Any `.image2-ui/agents` reference is explicitly labeled legacy-only.
+- Generated loop and Runtime run artifacts are not committed.
 - The package has an explicit license and release metadata; publishing is done
   through the manual GitHub Actions release workflow after a dry run.

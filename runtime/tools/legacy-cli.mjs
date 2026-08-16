@@ -206,6 +206,7 @@ export function buildCodexArgs(input, model = null) {
     input.target,
   ];
   if (model) args.push("--model", model);
+  if (input.outputFile) args.push("-o", input.outputFile);
   args.push(input.prompt);
   return args;
 }

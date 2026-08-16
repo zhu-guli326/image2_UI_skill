@@ -154,6 +154,67 @@ image2-ui resume <project-dir> --latest --decision approved
 
 <https://zhu-guli326.github.io/ui_case/launcher.html?intent=explore>
 
+## Runtime-Owned Multi-Agent
+
+简单任务默认用单 Agent。任务确实需要视觉分析、资产工程、架构、代码审查、可访问性和 QA 等专业角色时，直接让同一个 Runtime 开启 Multi-Agent：
+
+```bash
+image2-ui run <project-dir> \
+  --mode recreate \
+  --task "Recreate this production UI" \
+  --reference reference.png \
+  --execution multi-agent \
+  --max-parallel 2
+```
+
+架构关系是：
+
+```text
+Runtime
+├── State Machine
+├── Runner / Resume / Event Log
+├── Verify -> Fix -> Verify
+└── DAG Scheduler
+    ├── Role Catalog
+    ├── Dependency Planner
+    └── Specialist Agents
+```
+
+**Runtime 是唯一顶层控制面。** Canonical run 状态始终写在：
+
+```text
+<project>/.image2-ui/runs/<run-id>/state.json
+<project>/.image2-ui/runs/<run-id>/events.jsonl
+```
+
+Scheduler 只是这个 run 内部的子系统，节点状态和 handoff 写在：
+
+```text
+<project>/.image2-ui/runs/<run-id>/scheduler/scheduler.json
+<project>/.image2-ui/runs/<run-id>/scheduler/artifacts/
+```
+
+`image2-ui orchestrate` 继续保留，但现在只是兼容入口，会转交给 Runtime 的 `--execution multi-agent`；新任务不会再创建第二套 `.image2-ui/agents/<run-id>` 生命周期。旧 `.image2-ui/agents/.../run.json` 只用于历史 manifest 的兼容读取。
+
+Multi-Agent 在 Runtime 中分阶段工作：
+
+```text
+Implement
+  → discovery / architecture / ui-implementer
+
+Verify
+  → code review / accessibility / QA
+  → qa-findings.json
+  → merge into Runtime Must Fix / Should Fix
+
+Fix
+  → mutate workspace
+  → invalidate downstream review / QA / release
+
+Finalize
+  → release handoff
+```
+
 ## UI Case Gallery
 
 网页、案例数据、设计系统实验室、截图、GIF、视频和可点击 demo 由独立仓库维护：
@@ -185,18 +246,19 @@ image2-ui doctor
 image2-ui validate <demo-dir> --reference <reference-image>
 image2-ui compare --reference <reference-image> --actual <output-image>
 image2-ui loop <demo-dir> --reference <reference-image>
-image2-ui orchestrate <project-dir> --task "Build a clickable UI"
-image2-ui state <run.json> --json
 image2-ui run <project-dir> --mode recreate --task "Recreate UI" --reference reference.png
 image2-ui run <project-dir> --mode redesign --task "Redesign UI" --reference reference.png
 image2-ui run <project-dir> --mode create --task "Create UI"
+image2-ui run <project-dir> --mode recreate --task "Recreate UI" --reference reference.png --execution multi-agent --max-parallel 2
+image2-ui orchestrate <project-dir> --task "Build a clickable UI" --workflow recreate
 image2-ui inspect <project-dir> --latest --json
 image2-ui resume <project-dir> --latest
+image2-ui state <legacy-run.json> --json
 ```
 
 `run` 会在 `<project>/.image2-ui/runs/<run-id>/` 持久化 `state.json` 和 `events.jsonl`，并执行有界的 `verify -> fix -> verify` 闭环。`inspect` 查看快照，`resume` 恢复执行；写入型操作中断后会先验证当前工作区，不会盲目重复修改。
 
-`orchestrate` 用于需要多 Agent 的任务图；Runtime 仍应作为顶层控制层，Agent DAG 负责依赖与并行，不应成为第二套互相竞争的生命周期。
+`orchestrate` 是 Multi-Agent 的兼容命令；实际生命周期仍由 Runtime 管理。`state` 只用于检查旧 standalone orchestrator 留下的历史 `run.json`。
 
 开发检查：
 
@@ -218,6 +280,7 @@ Windows PowerShell：
 - Recreate：`reference -> decompose -> implement -> compare -> fix`。
 - Redesign：`reference -> effect image -> review -> decompose -> implement -> verify`。
 - Create：`description -> effect image -> review -> decompose -> implement -> verify`。
+- Multi-Agent 只是 Runtime 内部执行策略，不是第二套 Workflow 或第二套 Run 状态。
 - 需要生图时必须调用项目指定的 `image2`；没有可用通道时明确说明缺口。
 - 文案、按钮、导航、表单、状态栏和常用图标由代码渲染。
 - 照片、商品、人物、插画、纹理、背景和对象抠图使用真实位图资产。
@@ -231,6 +294,7 @@ Windows PowerShell：
 image2_UI_skill
 |-- SKILL.md
 |-- runtime/
+|   `-- scheduler/
 |-- schemas/
 |-- references/
 |-- scripts/

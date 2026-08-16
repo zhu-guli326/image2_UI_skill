@@ -182,9 +182,11 @@ export async function executeUntilPause(ctx) {
 }
 
 export function createOperation(state, tools, clock = Date) {
-  const tool = stageTool(state.stage);
-  let access = "read";
-  if (tool) {
+  const schedulerStage = state.runtime?.executionMode === "multi-agent"
+    && ["implement", "verify", "finalize"].includes(state.stage);
+  const tool = schedulerStage ? "runtime.scheduler" : stageTool(state.stage);
+  let access = schedulerStage ? "write" : "read";
+  if (tool && !schedulerStage) {
     try { access = tools?.get(tool)?.access || access; } catch { /* Missing tools are classified by executeStage. */ }
   }
   const mutationPossible = access === "write" || ["generate-effect", "implement", "fix"].includes(state.stage);
@@ -195,7 +197,7 @@ export function createOperation(state, tools, clock = Date) {
     attempt: 1,
     startedAt: nowIso(clock),
     mutationPossible,
-    timeoutMs: tool === "agent.execute" ? state.limits.agentTimeoutMs : state.limits.toolTimeoutMs,
+    timeoutMs: schedulerStage || tool === "agent.execute" ? state.limits.agentTimeoutMs : state.limits.toolTimeoutMs,
   };
 }
 

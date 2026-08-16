@@ -1,226 +1,375 @@
 # Multi-Agent Orchestration
 
-This reference defines how `image-to-ui-skill` can be reused by another Codex session or agent host with multi-agent support.
+This reference defines the Runtime-owned Multi-Agent model for `image-to-ui-skill`.
 
-The repository includes an executable adapter: `image2-ui orchestrate`. It
-invokes `codex exec` by default, accepts `--agent-command` for another
-compatible non-interactive agent CLI, and stores each run under the target
-project's `.image2-ui/agents/<run-id>/` directory. Use `--dry-run --json` to
-inspect the graph without launching agents.
+## Control Plane Rule
+
+There is exactly one top-level run lifecycle:
+
+```text
+User request
+   ↓
+Workflow mode: Recreate | Redesign | Create
+   ↓
+Runtime
+├── State Machine
+├── Runner
+├── Policies
+├── Event Log / Resume
+├── Verify -> Fix -> Verify
+└── DAG Scheduler
+    ├── Role Catalog
+    ├── Dependency Planner
+    └── Specialist Agent Executor
+```
+
+The Scheduler is subordinate to Runtime. It may decide which DAG nodes are ready,
+which can run in parallel, and which artifacts are required, but it never owns a
+second workflow status, iteration budget, source-of-truth policy, or run ID.
+
+Canonical Runtime files:
+
+```text
+<project>/.image2-ui/runs/<run-id>/state.json
+<project>/.image2-ui/runs/<run-id>/events.jsonl
+```
+
+Scheduler files inside the same run:
+
+```text
+<project>/.image2-ui/runs/<run-id>/scheduler/scheduler.json
+<project>/.image2-ui/runs/<run-id>/scheduler/artifacts/
+<project>/.image2-ui/runs/<run-id>/scheduler/roles/<role>/final-message.md
+```
+
+New runs must not create `.image2-ui/agents/<run-id>` as a competing lifecycle.
+That path is legacy-only and may still be inspected with `image2-ui state` when a
+historical standalone orchestrator manifest exists.
+
+## Entry Points
+
+Preferred:
+
+```bash
+image2-ui run <project-dir> \
+  --mode recreate \
+  --task "Recreate this production UI" \
+  --reference reference.png \
+  --execution multi-agent \
+  --max-parallel 2
+```
+
+Compatibility entry:
+
+```bash
+image2-ui orchestrate <project-dir> \
+  --task "Recreate this production UI" \
+  --reference reference.png \
+  --workflow recreate \
+  --mode parallel
+```
+
+`orchestrate` translates its arguments into Runtime Multi-Agent execution.
+Historical `--mode parallel|sequential` keeps its scheduler meaning, while
+`--workflow recreate|redesign|create` selects the UI workflow. Sequential mode
+uses a concurrency of one.
+
+Use `--dry-run --json` to inspect the Runtime state plus scheduler plan without
+launching specialist agents.
 
 ## Capability Detection
 
-Before delegating, the lead agent should detect:
+Before Multi-Agent execution, Runtime preflight must establish that:
 
-1. Whether subagent or multi-agent tools are available.
-2. Whether the current host allows parallel execution.
-3. Whether agents share a workspace or use isolated worktrees.
-4. Whether image generation and browser verification are available to specialist agents.
+1. `agent.execute` is available.
+2. The selected image channel is available when the active workflow requires it.
+3. `ui.validate` is available.
+4. The output workspace is writable when mutation is allowed.
+5. Browser verification is available unless the run explicitly disables it.
 
-Do not assume every user has the same agent tools. The skill remains usable in a single-agent environment.
+Multi-Agent availability is not itself a reason to use it. Single-Agent remains
+the default and is preferred when delegation does not materially improve quality
+or clarity.
 
-## Lead Agent
+## Workflow Source Of Truth
 
-The lead agent owns user intent, repository discovery, task decomposition, shared artifact paths, merge decisions, final validation, and the delivery report.
+Every specialist receives the same canonical workflow mode and source-of-truth
+policy from Runtime:
 
-Give coding agents disjoint write scopes. Use analysis-only roles before implementation when scopes cannot be isolated.
+- **Recreate:** original reference is primary.
+- **Redesign:** approved/inspected Effect Image is primary; original reference is secondary direction context.
+- **Create:** approved/inspected Effect Image is primary.
 
-## Complexity Tiers
+A specialist must not silently change Recreate into Redesign, regenerate a new
+primary design source, or reinterpret the user's workflow mode.
 
-Choose the smallest useful graph before delegating:
+## Default Role Graph
 
-- **Simple**: visual decomposition, implementation, QA. Use for a small clickable demo with local state and no backend contract.
-- **Medium**: simple tier plus asset engineering and accessibility. Use when several generated assets, responsive variants, or meaningful keyboard/screen-reader behavior are involved.
-- **Complex product**: medium tier plus architecture, backend contract, state machine, code review, and release. Use only when the product actually has APIs, permissions, asynchronous business states, or release requirements.
+The current Runtime Multi-Agent default is a medium graph:
 
-Multi-agent availability is not itself a reason to use the complex tier. Single-agent execution is acceptable for simple and medium tasks, and it does not need to simulate inactive roles.
+```text
+visual-analyst -----\
+                     +--> ui-architect --\
+asset-engineer -----/                    +--> ui-implementer --> code-reviewer --> accessibility --> qa-auditor --> release
+```
 
-When Component References or their owning Brand Profile are selected, the active tier also owns these shared artifacts:
+Effective dependencies are calculated only among active roles. The role catalog
+also contains `backend-contract` and `state-machine` for complex products, but
+those roles should be activated only when API contracts, permissions, async
+business states, rollback, offline behavior, or similar concerns actually exist.
 
-- `artifacts/brand-profile.json`
-- `artifacts/brand-tokens.json`
-- `artifacts/brand-compliance.md`
+The scheduler validates that the active graph is acyclic and builds dependency-
+safe batches. Independent ready nodes may run concurrently up to
+`limits.maxParallel`.
+
+## Runtime Stage Mapping
+
+Runtime determines when the DAG advances.
+
+### Implement
+
+Multi-Agent `implement` runs the graph through the implementation phase:
+
+```text
+discovery -> architecture -> ui-implementer
+```
+
+The implementation node is the only default node expected to intentionally edit
+application source. Analysis roles may write their declared scheduler artifacts
+but must not silently modify product code.
+
+### Verify
+
+Multi-Agent `verify` advances the graph through verification:
+
+```text
+code-reviewer -> accessibility -> qa-auditor
+```
+
+`qa-auditor` must produce:
+
+```text
+qa-report.md
+qa-findings.json
+```
+
+Machine-readable contract:
+
+```json
+{
+  "mustFix": [
+    {
+      "rule": "example-rule",
+      "message": "Blocking finding",
+      "location": "optional file or UI region"
+    }
+  ],
+  "shouldFix": []
+}
+```
+
+Runtime normalizes these findings and merges them into the same Must Fix / Should
+Fix result used by `ui.validate`. The specialist QA layer therefore contributes
+to, but does not replace, the normal build/browser/asset validator.
+
+### Fix
+
+Runtime owns the bounded fix loop. After a successful workspace mutation in a
+Multi-Agent run, scheduler nodes from the review phase onward are invalidated:
+
+```text
+code-reviewer
+accessibility
+qa-auditor
+release
+```
+
+They must rerun against the updated workspace. Completed discovery,
+architecture, and implementation handoffs are retained unless the Runtime later
+introduces a stronger invalidation policy.
+
+### Finalize
+
+The release node runs during Runtime `finalize`. It summarizes changed files,
+checks, scheduler participation, known risks, and unresolved findings. It does
+not commit or push.
+
+## Scheduler Persistence And Recovery
+
+`scheduler.json` is subordinate durable node state. It records:
+
+- Runtime `runId` and target.
+- Workflow mode.
+- Active role plan and batches.
+- Node dependencies.
+- Node status: `pending | running | complete | blocked | failed`.
+- Attempts and timestamps.
+- Required output paths.
+
+Writes use a temporary file plus rename.
+
+If a process stops while a scheduler node is `running`, the next scheduler
+execution reconciles that node back to `pending` and retries it from the current
+workspace state. Runtime still owns the top-level interruption policy and the
+canonical `currentOperation` record.
+
+Scheduler-heavy Runtime stages use the Agent timeout budget because a single
+Runtime stage may execute multiple specialist nodes.
 
 ## Specialist Roles
 
 ### visual-analyst
 
-Input:
+Purpose:
 
-- Reference images, videos, existing screenshots, and user constraints.
+- Inspect the workflow source of truth and repository.
+- Name major UI regions and visual patterns.
+- Split code-rendered UI from bitmap/image2 assets.
+- Record fidelity risks without editing product source.
 
-Output:
+Outputs:
 
-- `artifacts/ui-audit.md`
-- `artifacts/code-ui-inventory.md`
-- `artifacts/image2-assets.md`
-- `artifacts/visual-risks.md`
-
-Identify readable UI text, controls, status glyphs, layout chrome, product imagery, and decorative imagery separately.
+```text
+ui-audit.md
+code-ui-inventory.md
+image2-assets.md
+visual-risks.md
+```
 
 ### asset-engineer
 
-Input:
+Purpose:
 
-- `artifacts/image2-assets.md`
-- Project asset conventions.
+- Build or verify the image asset manifest.
+- Define image2 prompts, crop strategy, local paths, alt text, and provenance.
+- Keep UI text, common controls, status bars, logos, and tiny functional glyphs out of generated bitmap assets.
 
-Output:
+Outputs:
 
-- `artifacts/asset-manifest.json`
-- `artifacts/image2-prompts.md`
-- Generated or verified image files under the project asset directory.
-- `artifacts/asset-provenance.md`
-
-Do not generate UI text, logos, status bars, buttons, or tiny functional icons inside bitmap assets.
+```text
+asset-manifest.json
+image2-prompts.md
+asset-provenance.md
+```
 
 ### ui-architect
 
-Input:
+Purpose:
 
-- `artifacts/ui-audit.md`
-- `artifacts/code-ui-inventory.md`
-- Existing repository conventions.
+- Define route and feature boundaries.
+- Define component APIs, tokens, responsive behavior, i18n structure, and test surface.
+- Prefer existing repository conventions over framework churn.
 
 Output:
 
-- `artifacts/ui-architecture.md`
-- Route and feature boundaries.
-- Component API notes.
-- Design token and i18n plan.
-- Test surface map.
-
-Prefer existing project patterns over introducing a new framework or state library.
+```text
+ui-architecture.md
+```
 
 ### backend-contract
 
-Input:
+Complex-tier purpose:
 
-- UI inventory and architecture.
-- Existing API clients, schemas, or backend documentation when available.
+- Define request/response schemas, error envelopes, permissions, auth assumptions, caching, retries, cancellation, and mock boundaries.
 
 Output:
 
-- `artifacts/backend-contract.md`
-- Request and response schemas.
-- Error envelope and status-code rules.
-- Permission and authentication assumptions.
-- Mock or fixture data boundaries.
+```text
+backend-contract.md
+```
 
-If no backend exists, define a stable mock contract without pretending that a real API has been integrated. Keep network, caching, retries, and cancellation assumptions explicit.
+Do not pretend a real backend exists when the project only has mocks.
 
 ### state-machine
 
-Input:
+Complex-tier purpose:
 
-- UI architecture.
-- Backend contract.
-- User flows and device or form requirements.
+- Model **the generated product's** user-flow state, not the Harness Runtime.
+- Cover loading, empty, error, offline, disabled, retry, optimistic update, and rollback states.
 
 Output:
 
-- `artifacts/state-machine.md`
-- State diagrams or transition tables.
-- Event names and side effects.
-- Loading, empty, error, offline, disabled, retry, optimistic-update, and rollback behavior.
-
-Do not reduce asynchronous business behavior to a single boolean when multiple states affect user actions or data integrity.
+```text
+state-machine.md
+```
 
 ### ui-implementer
 
-Input:
+Purpose:
 
-- Architecture artifact.
-- Backend contract.
-- State machine.
-- Asset manifest.
-- Existing project conventions.
+- Implement the production-shaped clickable UI in the existing project.
+- Respect the Runtime-selected source of truth and dependency handoffs.
+- Wire real text, controls, local assets, responsive behavior, and interaction states.
 
 Output:
 
-- Production-shaped source code.
-- Component, feature, hook, locale, token, and test files within the assigned write scope.
-- `artifacts/implementation-notes.md`
+```text
+implementation-notes.md
+```
 
-Include loading, empty, error, disabled, and responsive states when the feature has asynchronous or variable data.
-
-### accessibility
-
-Input:
-
-- Implemented source.
-- User flows and state machine.
-- Reference screenshots when visual comparison affects semantics.
-
-Output:
-
-- `artifacts/accessibility-report.md`
-- Keyboard and focus findings.
-- Accessible-name and ARIA findings.
-- Contrast, reduced-motion, touch-target, and screen-reader findings.
-
-Do not treat visual similarity as a reason to remove semantic labels, focus indicators, zoom support, or keyboard access.
+It may edit application source but must not commit or push.
 
 ### code-reviewer
 
-Input:
+Purpose:
 
-- Implemented source.
-- Architecture, backend, state, and asset artifacts.
-- Repository standards and the originating task/specification.
+- Review correctness, regressions, security, maintainability, scope, standards, and missing tests.
+- Report findings first and remain analysis-only.
 
 Output:
 
-- `artifacts/code-review-report.md`
-- Findings first, ordered by severity, with file/line references.
-- Correctness, regression, security, maintainability, scope, and missing-test findings.
+```text
+code-review-report.md
+```
 
-The reviewer is analysis-only. It must not silently edit source files or mark a
-change ready when required checks are missing.
+### accessibility
+
+Purpose:
+
+- Audit keyboard flow, focus, accessible names, ARIA, contrast, reduced motion, touch targets, and screen-reader semantics.
+
+Output:
+
+```text
+accessibility-report.md
+```
 
 ### qa-auditor
 
-Input:
+Purpose:
 
-- Implemented source.
-- Reference images.
-- Architecture, backend, state, asset, and accessibility artifacts.
+- Run appropriate build/tests/browser/asset/visual checks.
+- Distinguish Must Fix from Should Fix.
+- Produce both human and machine-readable evidence for Runtime verification.
 
-Output:
+Outputs:
 
-- `artifacts/qa-report.md`
-- Browser screenshots and visual comparison artifacts.
-- Test and audit results.
-- A prioritized fix queue.
-
-Distinguish blocking failures from acceptable visual differences. Do not silently edit implementation files unless explicitly assigned that scope.
+```text
+qa-report.md
+qa-findings.json
+```
 
 ### release
 
-Input:
+Purpose:
 
-- All artifacts and test reports.
-- Git status and project metadata.
+- Review final artifacts, git status, validation evidence, changed files, and known risks.
+- Produce a release handoff without committing or pushing.
 
 Output:
 
-- `artifacts/release-report.md`
-- Final validation summary.
-- Changed-file summary.
-- Execution mode and agent list.
-- Known risks and deferred work.
-- Commit or pull-request handoff details.
-
-The release agent must not claim production readiness when required checks were skipped. It must report unavailable tools, unrun tests, and unresolved warnings.
+```text
+release-report.md
+```
 
 ## Handoff Contract
 
-Every specialist handoff should use:
+Every specialist final message must end with:
 
 ```markdown
 ## Agent Handoff
-- Role:
-- Status: ready | needs-input | blocked | complete
+- Role: <role>
+- Status: complete | needs-input | blocked
 - Scope:
 - Files created:
 - Files changed:
@@ -230,38 +379,42 @@ Every specialist handoff should use:
 - Next agent:
 ```
 
-Use stable artifact paths so another agent can continue without reconstructing hidden context.
+Runtime Scheduler treats missing or malformed handoffs as node failure. A
+`needs-input` or `blocked` handoff becomes a scheduler blocker and therefore a
+Runtime blocker rather than being hidden in free-form prose.
 
-## Recommended Execution Graph
+Use stable artifact paths so another node or a resumed run can continue without
+reconstructing hidden context.
 
-```text
-visual-analyst ----\
-asset-engineer -----+--> ui-architect ----\
-backend-contract ---+                     +--> ui-implementer --> code-reviewer --\
-state-machine ------/                     |                    accessibility --\
-                                         +---------------------- qa-auditor ----+--> release
-```
+## Safety And Scope
 
-`visual-analyst` and `asset-engineer` may run in parallel after repository discovery. `ui-architect`, `backend-contract`, and `state-machine` may run in parallel after the initial UI inventory, but the state machine should consume the backend contract when business behavior depends on APIs. `ui-implementer` starts after the contracts are available. `code-reviewer` and `accessibility` run after implementation; `qa-auditor` waits for both review tracks. `release` runs last.
+- Do not commit or push from specialist nodes.
+- Do not delete unrelated files.
+- Do not broaden the product scope without Runtime/user direction.
+- Do not claim checks that were not run.
+- Do not use multiple roles merely to simulate complexity.
+- Analysis-only roles may write their declared scheduler artifacts, but should not mutate application source.
+- When multiple agents share one workspace, parallelize only nodes whose declared work does not conflict.
 
 ## Single-Agent Fallback
 
-When multi-agent tools are unavailable:
+If Multi-Agent is unavailable or unnecessary, stay in normal Runtime
+`single-agent` execution. Do not simulate a multi-agent graph sequentially just
+to satisfy a checklist.
 
-1. Create the same artifact directory.
-2. Perform the roles in graph order, sequentially.
-3. Keep the same handoff headings.
-4. Do not claim parallel execution.
-5. Report `execution_mode: single-agent-sequential`.
-
-When multi-agent tools are available, report `execution_mode: multi-agent` and list the roles that actually ran.
+The three UI workflow modes, Effect Image policy, State Machine, persistence,
+Verify/Fix loop, and source-of-truth rules are identical in single- and
+multi-agent execution.
 
 ## Reuse By Other Users
 
-Another user can install the skill into their Codex skills directory and invoke it with:
+Another user can install the skill into their Codex skills directory and invoke
+it with:
 
 ```text
 Use $image-to-ui-skill to turn this reference into a production-shaped clickable demo.
 ```
 
-The skill must not depend on private paths, private credentials, a particular machine, or an undeclared agent host. Project-specific credentials and image channels must come from the active project instructions or environment.
+The Skill must not depend on private paths, private credentials, a particular
+machine, or an undeclared agent host. Project-specific credentials and image
+channels must come from active project instructions or environment configuration.

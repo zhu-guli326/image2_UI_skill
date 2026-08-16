@@ -115,12 +115,15 @@ test("skill exposes the three workflow contracts and standalone gallery", () => 
   assert.match(guide, /Redesign \/ Create：先生成并检查完整 Effect Image/);
 });
 
-test("multi-agent orchestrator exposes its production DAG", () => {
+test("orchestrate delegates to Runtime and exposes the scheduler DAG", () => {
   const target = fs.mkdtempSync(path.join(os.tmpdir(), "image2-ui-orchestrate-"));
   const stdout = execFileSync(node, ["scripts/image2-ui", "orchestrate", target, "--task", "Build a production UI", "--dry-run", "--json"], { cwd: repoRoot, encoding: "utf8" });
   const report = JSON.parse(stdout);
-  assert.equal(report.manifest.executionMode, "multi-agent");
-  assert.deepEqual(report.plan.map((phase) => phase.name), ["discovery", "architecture", "implementation", "review", "verification", "release"]);
+  assert.equal(report.runtime.executionMode, "multi-agent");
+  assert.equal(report.status, "created");
+  assert.deepEqual(report.schedulerPlan.phases.map((phase) => phase.phase), ["discovery", "architecture", "implementation", "review", "verification", "release"]);
+  assert.equal(fs.existsSync(path.join(target, ".image2-ui", "agents")), false);
+  assert.equal(fs.existsSync(path.join(target, ".image2-ui", "runs", report.runId, "state.json")), true);
 });
 
 test("npm package contains Skill tooling and excludes gallery sources", () => {
@@ -132,7 +135,7 @@ test("npm package contains Skill tooling and excludes gallery sources", () => {
     { cwd: repoRoot, encoding: "utf8" },
   );
   const files = new Set(JSON.parse(stdout)[0].files.map((file) => file.path));
-  for (const required of ["SKILL.md", "README.md", "PRODUCTION.md", "validate.ps1", "agents/openai.yaml", "scripts/image2-ui", "scripts/image2_asset.py", "scripts/image2_orchestrate.mjs", "scripts/workflow_state_machine.mjs", "scripts/ui_compare.mjs", "scripts/ui_loop.mjs", "scripts/ui_output_audit.mjs", "runtime/runner.mjs", "runtime/state-store.mjs", "runtime/tools/registry.mjs", "schemas/state.schema.json", "assets/readme/hero.png"]) {
+  for (const required of ["SKILL.md", "README.md", "PRODUCTION.md", "validate.ps1", "agents/openai.yaml", "scripts/image2-ui", "scripts/image2_asset.py", "scripts/image2_orchestrate.mjs", "scripts/workflow_state_machine.mjs", "scripts/ui_compare.mjs", "scripts/ui_loop.mjs", "scripts/ui_output_audit.mjs", "runtime/runner.mjs", "runtime/state-store.mjs", "runtime/tools/registry.mjs", "runtime/scheduler/roles.mjs", "runtime/scheduler/dag.mjs", "runtime/scheduler/executor.mjs", "schemas/state.schema.json", "assets/readme/hero.png"]) {
     assert.ok(files.has(required), required);
   }
   assert.ok([...files].some((file) => file.startsWith("references/")));

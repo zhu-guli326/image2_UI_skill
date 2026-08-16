@@ -1,4 +1,5 @@
 import { implementationSource, normalizeWorkflowMode, verificationReference } from "./workflow-modes.mjs";
+import { executeAgentDag, invalidateSchedulerFromPhase } from "./scheduler/executor.mjs";
 
 export const STAGES = [
   "init",
@@ -27,8 +28,12 @@ export async function executeStage({ state, tools, signal, target, operation, st
   const stage = state?.stage;
   if (!stage) throw new TypeError("executeStage requires state.stage");
   if (stageHandlers[stage]) return normalize(await stageHandlers[stage]({ state, tools, signal, target, operation }));
-  if (["init", "analyze-reference", "review-effect", "decompose", "finalize"].includes(stage)) return executeNonIoStage(state);
+  if (["init", "analyze-reference", "review-effect", "decompose"].includes(stage)) return executeNonIoStage(state);
   if (stage === "verify") return executeVerify({ state, tools, signal, target, operation });
+  if (stage === "finalize") {
+    if (state.runtime?.executionMode !== "multi-agent") return executeNonIoStage(state);
+    return executeAgentDag({ state, tools, signal, target: target || state.task.target, operation, throughPhase: "release" });
+  }
 
   if (["implement", "fix"].includes(stage) && state.policy?.allowWorkspaceMutation === false) {
     return {
@@ -51,6 +56,11 @@ export async function executeStage({ state, tools, signal, target, operation, st
     };
   }
 
+  const effectiveTarget = target || state.task.target;
+  if (stage === "implement" && state.runtime?.executionMode === "multi-agent") {
+    return executeAgentDag({ state, tools, signal, target: effectiveTarget, operation, throughPhase: "implementation" });
+  }
+
   const name = STAGE_TOOLS[stage];
   if (!has(tools, name)) {
     const required = (stage === "preflight" && state.runtime?.requirePreflight)
@@ -65,7 +75,6 @@ export async function executeStage({ state, tools, signal, target, operation, st
     return { ok: true, data: { skipped: true } };
   }
 
-  const effectiveTarget = target || state.task.target;
   const input = stage === "fix"
     ? buildFixRequest(state, effectiveTarget)
     : stage === "implement"
@@ -97,6 +106,9 @@ export async function executeStage({ state, tools, signal, target, operation, st
     const artifact = (result?.artifacts || []).find((item) => item?.kind === "effect-image" && item?.path);
     if (!artifact) throw blocked("effect-image-required", "Image generation did not produce an effect-image artifact");
   }
+  if (stage === "fix" && state.runtime?.executionMode === "multi-agent" && result?.ok !== false) {
+    await invalidateSchedulerFromPhase({ target: effectiveTarget, runId: state.runId, phase: "review" });
+  }
   return normalize(result);
 }
 
@@ -105,6 +117,22 @@ export async function executeVerify({ state, tools, signal, target, operation } 
   const effectiveTarget = target || state.task.target;
   const context = { state, signal, operation, timeoutMs: operation?.timeoutMs };
   const results = [];
+  let schedulerFindings = { mustFix: [], shouldFix: [] };
+  let schedulerArtifacts = [];
+
+  if (state.runtime?.executionMode === "multi-agent") {
+    const schedulerResult = await executeAgentDag({
+      state,
+      tools,
+      signal,
+      target: effectiveTarget,
+      operation,
+      throughPhase: "verification",
+    });
+    schedulerFindings = unwrap(schedulerResult).findings || schedulerFindings;
+    schedulerArtifacts = schedulerResult.artifacts || [];
+  }
+
   if (has(tools, "ui.build") && state.runtime?.verifyBuild !== false) {
     results.push(await tools.invoke("ui.build", { target: effectiveTarget, command: state.task.buildCommand }, context));
   }
@@ -118,14 +146,20 @@ export async function executeVerify({ state, tools, signal, target, operation } 
 
   const all = results.map(unwrap);
   const validation = all.find((item) => item.mustFix || item.fixQueue?.mustFix || item.findings) || {};
-  const mustFix = all.flatMap((item) => {
-    const source = item.fixQueue || item;
-    return source.mustFix || (source.findings || []).filter((finding) => finding.level === "fail");
-  });
-  const shouldFix = all.flatMap((item) => {
-    const source = item.fixQueue || item;
-    return source.shouldFix || (source.findings || []).filter((finding) => finding.level === "warn");
-  });
+  const mustFix = [
+    ...(schedulerFindings.mustFix || []),
+    ...all.flatMap((item) => {
+      const source = item.fixQueue || item;
+      return source.mustFix || (source.findings || []).filter((finding) => finding.level === "fail");
+    }),
+  ];
+  const shouldFix = [
+    ...(schedulerFindings.shouldFix || []),
+    ...all.flatMap((item) => {
+      const source = item.fixQueue || item;
+      return source.shouldFix || (source.findings || []).filter((finding) => finding.level === "warn");
+    }),
+  ];
   return {
     ok: true,
     data: {
@@ -136,7 +170,10 @@ export async function executeVerify({ state, tools, signal, target, operation } 
       visual: { score: null, method: "unavailable" },
       lastVerifiedAt: new Date().toISOString(),
     },
-    artifacts: results.flatMap((item) => item.artifacts || []),
+    artifacts: [
+      ...schedulerArtifacts,
+      ...results.flatMap((item) => item.artifacts || []),
+    ],
   };
 }
 

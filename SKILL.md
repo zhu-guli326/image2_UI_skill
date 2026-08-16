@@ -228,23 +228,67 @@ artifacts/brand-compliance.md
 
 `brand-profile.json` must include selected `componentReferenceIds`. `brand-compliance.md` must cover component anatomy, states, behavior, tokens, accessibility, source provenance, and logo/trademark/font authorization boundaries. Public guidelines never imply affiliation or endorsement.
 
-## Multi-Agent Orchestration
+## Runtime-Owned Multi-Agent Orchestration
 
-Do not invoke the full role graph by default. Choose the smallest tier that matches the work and use `references/multi-agent-orchestration.md` only when delegation is actually needed.
+Do not invoke the full role graph by default. Single-agent Runtime is the default. Use Multi-Agent only when specialist decomposition materially improves the result.
 
-This repository exposes `image2-ui orchestrate`, which invokes a compatible non-interactive agent CLI and persists role handoffs, logs, and run manifests under `.image2-ui/agents/<run-id>/`.
+Activate it through the canonical Runtime:
 
-The **Runtime is the authoritative top-level control plane**. The Agent DAG is a scheduler/dependency graph underneath it; it must not become a second competing lifecycle.
+```bash
+image2-ui run <project-dir> \
+  --mode recreate \
+  --task "..." \
+  --reference reference.png \
+  --execution multi-agent \
+  --max-parallel 2
+```
 
-Use `image2-ui run`, `resume`, and `inspect` for durable top-level execution and the bounded Verify/Fix loop. Runtime state lives under `.image2-ui/runs/`.
+The **Runtime is the only top-level control plane**. Multi-Agent is an execution strategy inside the same durable run:
 
-The lead agent owns the user request, repository architecture, task decomposition, merge decisions, and final report. Specialist agents return structured artifacts and must not silently redefine product scope.
+```text
+Runtime
+├── State Machine
+├── Runner
+├── Policies
+├── Event Log / Resume
+├── Verify -> Fix -> Verify
+└── DAG Scheduler
+    ├── Role Catalog
+    ├── Dependency Planner
+    └── Specialist Agents
+```
 
-- Simple demo: visual decomposition, implementation, QA.
-- Medium demo: add asset engineering and accessibility.
-- Complex product: add architecture, backend contract, state machine, code review, and release only when those concerns are present.
+Canonical Runtime state lives under:
 
-Single-agent execution is valid for simple and medium work. Do not simulate many roles sequentially just to satisfy a process checklist.
+```text
+.image2-ui/runs/<run-id>/state.json
+.image2-ui/runs/<run-id>/events.jsonl
+```
+
+Scheduler node progress and handoffs live under the **same run**:
+
+```text
+.image2-ui/runs/<run-id>/scheduler/scheduler.json
+.image2-ui/runs/<run-id>/scheduler/artifacts/
+.image2-ui/runs/<run-id>/scheduler/roles/
+```
+
+`image2-ui orchestrate` is retained only as a compatibility command. It translates its arguments into `image2-ui run --execution multi-agent`; new runs must not create a separate `.image2-ui/agents/<run-id>` lifecycle. `image2-ui state` is only for inspecting historical standalone orchestrator manifests created before Runtime-owned scheduling.
+
+Runtime owns when DAG roles run:
+
+- `implement`: run required discovery / architecture / implementation nodes.
+- `verify`: run code review / accessibility / QA nodes, then merge machine-readable `qa-findings.json` into Runtime Must Fix / Should Fix before the normal validator result is finalized.
+- `fix`: mutate the workspace through the bounded Runtime loop, then invalidate downstream review / QA / release nodes so they run again.
+- `finalize`: run the release handoff node.
+
+The scheduler owns only dependency readiness, phase ordering, bounded parallelism, node attempts, and handoff artifacts. It must never redefine workflow mode, Runtime status, iteration budget, or source-of-truth policy.
+
+The lead Runtime owns the user request, repository architecture, task decomposition, merge decisions, and final report. Specialist agents return structured artifacts and must not silently redefine product scope.
+
+- Simple work: stay single-agent unless delegation has a clear benefit.
+- Medium multi-agent work: visual analysis, asset engineering, UI architecture, implementation, code review, accessibility, QA, release.
+- Complex role graphs should be enabled only when backend/state-machine concerns actually exist; do not invoke extra roles just to make the graph look sophisticated.
 
 ## Reference Files
 
@@ -258,7 +302,7 @@ Read only the relevant reference files for the current task:
 - `references/museum-app-case-study.md`: museum/mobile multi-screen case.
 - `references/fashion-shopping-app-case-study.md`: fashion shopping visual asset case.
 - `references/hicolor-case-study.md`: content graphic case.
-- `references/multi-agent-orchestration.md`: reusable multi-agent roles, handoff contracts, and fallback behavior.
+- `references/multi-agent-orchestration.md`: Runtime-owned DAG roles, handoff contracts, and fallback behavior.
 
 ## Design, Icons, And Layout
 
@@ -314,10 +358,12 @@ The audit tooling catches broken assets, remote assets, low contrast, text overf
 ## 最终汇报 / Final Report
 
 - Workflow mode: `recreate | redesign | create`.
+- Execution mode: `single-agent | multi-agent`.
 - Preview entry or local URL.
 - Source of truth used for implementation and verification.
 - Paths to generated `image2` assets, if any.
 - Actual image channel used, if any.
 - Which UI surfaces are code-rendered.
 - Which checks were run.
+- For multi-agent runs, summarize active scheduler roles and unresolved QA findings without exposing internal chain-of-thought.
 - Which Component References and owning Brand Profile source status were applied, plus paths to brand artifacts and compliance exceptions.
