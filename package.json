@@ -34,6 +34,8 @@
     "scripts/ui_compare.mjs",
     "scripts/ui_loop.mjs",
     "scripts/ui_output_audit.mjs",
+    "scripts/ui_output_audit_core.mjs",
+    "scripts/ui_harness_guard.mjs",
     "runtime/",
     "schemas/",
     "assets/readme/hero.png"
