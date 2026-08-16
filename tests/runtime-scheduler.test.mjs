@@ -10,6 +10,7 @@ import {
   loadSchedulerManifest,
   schedulerPaths,
 } from "../runtime/scheduler/executor.mjs";
+import { createRuntime } from "../runtime/runner.mjs";
 import { createState } from "../runtime/state-store.mjs";
 import { ToolRegistry } from "../runtime/tools/registry.mjs";
 import { executeVerify } from "../runtime/stages.mjs";
@@ -128,6 +129,45 @@ test("Runtime scheduler persists node progress under the canonical run", async (
   manifest = await loadSchedulerManifest(paths.manifest);
   assert.equal(manifest.status, "complete");
   assert.equal(manifest.roles.release.status, "complete");
+});
+
+test("Runner completes one canonical multi-agent Runtime lifecycle", async () => {
+  const target = await fs.mkdtemp(path.join(os.tmpdir(), "image2-runtime-scheduler-runner-"));
+  const reference = path.join(target, "reference.png");
+  await fs.writeFile(reference, "reference", "utf8");
+  const tools = fakeTools();
+  const runtime = createRuntime({ target, tools });
+
+  const state = await runtime.run({
+    target,
+    task: {
+      target,
+      prompt: "Recreate this UI faithfully",
+      intent: "recreate",
+      reference,
+    },
+    policy: {
+      requireEffectImage: false,
+      requireEffectReview: false,
+      requireHumanFinalReview: false,
+      allowWorkspaceMutation: true,
+    },
+    limits: { maxParallel: 2 },
+    runtime: {
+      executionMode: "multi-agent",
+      requirePreflight: false,
+      noBrowser: true,
+    },
+  });
+
+  assert.equal(state.status, "completed");
+  assert.equal(state.stage, "finalize");
+  assert.equal(state.verification.status, "pass");
+  assert.ok(Object.values(state.artifacts).some((artifact) => artifact.kind === "scheduler-manifest"));
+  const manifest = await loadSchedulerManifest(schedulerPaths(target, state.runId).manifest);
+  assert.equal(manifest.status, "complete");
+  assert.equal(manifest.roles.release.status, "complete");
+  await assert.rejects(fs.access(path.join(target, ".image2-ui", "agents")));
 });
 
 test("scheduler QA findings feed the Runtime Verify/Fix contract", async () => {
