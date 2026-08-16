@@ -3,7 +3,7 @@
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import { runHarnessGuard } from "./ui_harness_guard.mjs";
+import { runHarnessGuard } from "./ui_harness_guard_v2.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const args = process.argv.slice(2);
@@ -16,7 +16,7 @@ if (!target || args.includes("--help") || args.includes("-h")) {
   console.log(`Usage:
   node scripts/ui_output_audit.mjs <demo-dir-or-html> [--reference reference.png] [--workflow-mode recreate|redesign|create] [--original-reference reference.png] [--json] [--no-browser]
 
-Runs the legacy output audit plus Harness hard guards for real icons and generated-visual provenance.`);
+Runs the legacy output audit plus Harness hard guards for icon integrity, generated-visual provenance, and Recreate asset preparation.`);
   process.exit(target ? 0 : 1);
 }
 
