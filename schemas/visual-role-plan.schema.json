@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://zhu-guli326.github.io/image2_UI_skill/schemas/visual-role-plan.schema.json",
+  "title": "Image2 UI Visual Role Plan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "workflow", "elements"],
+  "properties": {
+    "version": { "const": 1 },
+    "workflow": { "enum": ["recreate", "redesign", "create"] },
+    "reference": { "type": "string" },
+    "elements": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "assetRole", "overlayRole"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "referenceRegion": {
+            "type": "array",
+            "prefixItems": [
+              { "type": "number" },
+              { "type": "number" },
+              { "type": "number", "exclusiveMinimum": 0 },
+              { "type": "number", "exclusiveMinimum": 0 }
+            ],
+            "minItems": 4,
+            "maxItems": 4
+          },
+          "assetId": { "type": "string", "minLength": 1 },
+          "assetRole": { "$ref": "asset-role.schema.json" },
+          "overlayRole": { "$ref": "overlay-role.schema.json" },
+          "cropPolicy": { "$ref": "#/$defs/cropPolicy" },
+          "semanticPriority": { "enum": ["primary", "secondary", "supporting", "decorative"] },
+          "notes": { "type": "string" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "point": {
+      "type": "array",
+      "prefixItems": [
+        { "type": "number", "minimum": 0, "maximum": 100 },
+        { "type": "number", "minimum": 0, "maximum": 100 }
+      ],
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "rect": {
+      "type": "array",
+      "prefixItems": [
+        { "type": "number", "minimum": 0, "maximum": 100 },
+        { "type": "number", "minimum": 0, "maximum": 100 },
+        { "type": "number", "exclusiveMinimum": 0, "maximum": 100 },
+        { "type": "number", "exclusiveMinimum": 0, "maximum": 100 }
+      ],
+      "minItems": 4,
+      "maxItems": 4
+    },
+    "cropPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fit"],
+      "properties": {
+        "fit": { "enum": ["cover", "contain", "natural", "not-applicable"] },
+        "focalPoint": { "$ref": "#/$defs/point" },
+        "safeCropBox": { "$ref": "#/$defs/rect" },
+        "minBleedTop": { "type": "number", "minimum": 0, "maximum": 50 },
+        "minBleedSides": { "type": "number", "minimum": 0, "maximum": 50 },
+        "minBleedBottom": { "type": "number", "minimum": 0, "maximum": 50 },
+        "criticalCropMaxPercent": { "type": "number", "minimum": 0, "maximum": 100 },
+        "targetAspectRatio": { "type": "number", "exclusiveMinimum": 0 },
+        "notes": { "type": "string" }
+      }
+    }
+  }
+}

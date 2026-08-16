@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://zhu-guli326.github.io/image2_UI_skill/schemas/overlay-role.schema.json",
+  "title": "Image2 UI Overlay Role",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["mode"],
+  "properties": {
+    "mode": {
+      "enum": ["none", "side-by-side", "safe-overlap", "masked-overlay", "cutout-layered", "card-overlay"]
+    },
+    "zOrder": { "enum": ["disjoint", "text-over-image", "image-over-text"] },
+    "textOnImage": { "type": "boolean" },
+    "mask": { "enum": ["none", "gradient", "solid-backplate", "blur"] },
+    "textSafeZones": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/rect" }
+    },
+    "subjectCriticalZones": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/rect" }
+    },
+    "persistentControlZones": {
+      "description": "Normalized rectangles occupied by persistent CTA/nav/status overlays that must remain clear of subject-critical content.",
+      "type": "array",
+      "items": { "$ref": "#/$defs/rect" }
+    },
+    "allowTextOverSubject": { "type": "boolean" },
+    "allowControlOverSubject": { "type": "boolean" },
+    "referenceBackedOverlapReason": { "type": "string" },
+    "referenceBackedControlOverlapReason": { "type": "string" },
+    "maxOverlapRatio": { "type": "number", "minimum": 0, "maximum": 1 },
+    "safeArea": { "enum": ["inside", "not-applicable"] },
+    "notes": { "type": "string" }
+  },
+  "$defs": {
+    "rect": {
+      "type": "array",
+      "prefixItems": [
+        { "type": "number" },
+        { "type": "number" },
+        { "type": "number", "exclusiveMinimum": 0 },
+        { "type": "number", "exclusiveMinimum": 0 }
+      ],
+      "minItems": 4,
+      "maxItems": 4
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "mode": { "enum": ["none", "side-by-side"] } }, "required": ["mode"] },
+      "then": { "properties": { "zOrder": { "const": "disjoint" }, "textOnImage": { "const": false } } }
+    },
+    {
+      "if": { "properties": { "mode": { "const": "safe-overlap" } }, "required": ["mode"] },
+      "then": {
+        "properties": { "textOnImage": { "const": true }, "textSafeZones": { "minItems": 1 } },
+        "required": ["zOrder", "textOnImage", "textSafeZones"]
+      }
+    },
+    {
+      "if": { "properties": { "mode": { "const": "masked-overlay" } }, "required": ["mode"] },
+      "then": {
+        "properties": { "textOnImage": { "const": true }, "mask": { "not": { "const": "none" } } },
+        "required": ["zOrder", "textOnImage", "mask"]
+      }
+    },
+    {
+      "if": { "properties": { "mode": { "const": "cutout-layered" } }, "required": ["mode"] },
+      "then": {
+        "properties": { "subjectCriticalZones": { "minItems": 1 } },
+        "required": ["zOrder", "subjectCriticalZones"]
+      }
+    },
+    {
+      "if": { "properties": { "allowTextOverSubject": { "const": true } }, "required": ["allowTextOverSubject"] },
+      "then": { "required": ["referenceBackedOverlapReason"] }
+    },
+    {
+      "if": { "properties": { "allowControlOverSubject": { "const": true } }, "required": ["allowControlOverSubject"] },
+      "then": { "required": ["referenceBackedControlOverlapReason"] }
+    }
+  ]
+}

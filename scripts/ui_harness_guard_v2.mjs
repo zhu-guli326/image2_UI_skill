@@ -4,6 +4,7 @@ import { runHarnessGuard as runBaseHarnessGuard } from "./ui_harness_guard.mjs";
 import { runAssetPlanGuard } from "./ui_asset_plan_guard.mjs";
 import { runReferenceAssetGuard } from "./ui_reference_asset_guard.mjs";
 import { runRecreateImage2PolicyGuard } from "./ui_recreate_image2_policy_guard.mjs";
+import { runVisualRoleGuard } from "./ui_visual_role_guard.mjs";
 
 export function runHarnessGuard(options = {}) {
   const base = runBaseHarnessGuard(options);
@@ -28,7 +29,17 @@ export function runHarnessGuard(options = {}) {
     rootDir,
     workflowMode: options.workflowMode,
   });
-  const findings = [...(base.findings || []), ...assetFindings, ...referenceFindings, ...image2PolicyFindings];
+  const visualRoleFindings = runVisualRoleGuard({
+    rootDir,
+    workflowMode: options.workflowMode,
+  });
+  const findings = [
+    ...(base.findings || []),
+    ...assetFindings,
+    ...referenceFindings,
+    ...image2PolicyFindings,
+    ...visualRoleFindings,
+  ];
   const fail = findings.filter((item) => item.level === "fail").length;
   const warn = findings.filter((item) => item.level === "warn").length;
   const info = findings.filter((item) => item.level === "info").length;
