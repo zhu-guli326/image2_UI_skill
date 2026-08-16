@@ -77,6 +77,27 @@ Example:
 
 Schema: `schemas/asset-plan.schema.json`.
 
+## Portable preview delivery
+
+The canonical implementation and the user-facing standalone preview are different artifacts.
+
+- **Canonical implementation:** keep normal traceable files such as `index.html`, CSS/JS, and `assets/*`. Recreate guards continue to reject hidden base64 raster shortcuts in canonical source.
+- **Portable preview:** when an HTML file may be opened or attached by itself (for example in chat, an artifact viewer, email, or a file handoff that does not preserve sibling paths), generate a self-contained preview with:
+
+```bash
+image2-ui preview <demo-dir-or-html> --out preview.html
+```
+
+The preview bundler inlines local CSS, JS, images, fonts, and media and marks the output with `data-image2-ui-artifact="preview-only"`. This marker is the only reason inline raster data is allowed there.
+
+Delivery rules:
+
+1. Never hand off canonical `index.html` by itself when it still references sibling local assets.
+2. For a clickable single-file handoff, provide the generated preview-only HTML as the primary preview and provide the canonical project/ZIP separately.
+3. Never use the preview-only file as implementation source, verification source, or a replacement for `asset-plan.json` / provenance.
+4. The preview bundler must fail rather than silently drop missing or root-escaping local assets.
+5. Do not manually base64-encode assets into the canonical implementation to solve a delivery-path problem.
+
 ## Recreate QA findings
 
 The QA pass must compare the rendered UI to the original reference and use these rule IDs for visible failures:
