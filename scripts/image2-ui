@@ -78,35 +78,40 @@ function printHelp() {
   image2-ui validate <demo-dir-or-html> [--reference reference.png] [--json] [--no-browser]
   image2-ui compare --reference reference.png --actual output.png [--out comparison.png]
   image2-ui loop <demo-dir-or-html> --reference reference.png [--build "npm run build"]
-  image2-ui orchestrate <project-dir> --task "..." [--reference reference.png]
-  image2-ui state <run.json> [--json]
-  image2-ui run <project-dir> --mode recreate --task "..." --reference reference.png
-  image2-ui run <project-dir> --mode redesign --task "..." --reference reference.png [--require-effect-review]
-  image2-ui run <project-dir> --mode create --task "..." [--require-effect-review]
+  image2-ui run <project-dir> --mode recreate --task "..." --reference reference.png [--execution single-agent|multi-agent]
+  image2-ui run <project-dir> --mode redesign --task "..." --reference reference.png [--require-effect-review] [--execution single-agent|multi-agent]
+  image2-ui run <project-dir> --mode create --task "..." [--require-effect-review] [--execution single-agent|multi-agent]
+  image2-ui orchestrate <project-dir> --task "..." [--reference reference.png] [--workflow recreate|redesign|create] [--mode parallel|sequential]
   image2-ui resume <project-dir> (--run RUN_ID | --latest) [--decision approved|rejected]
   image2-ui inspect <project-dir> (--run RUN_ID | --latest) [--json]
+  image2-ui state <legacy-run.json> [--json]
   image2-ui doctor
   image2-ui version
 
-Modes:
+Workflow modes:
   recreate   Screenshot/reference -> UI. Original reference is the source of truth and Effect Image is skipped by default.
   redesign   Reference -> new design -> UI. Effect Image is generated before implementation.
   create     Description -> new design -> UI. Effect Image is generated before implementation.
+
+Execution:
+  single-agent  Runtime invokes one implementation/fix agent at a time (default).
+  multi-agent   Runtime owns a subordinate DAG Scheduler for specialist analysis, implementation, review, QA, and release.
 
 Defaults:
   With --reference and no --mode: recreate.
   Without --reference and no --mode: create.
   Redesign must be selected explicitly.
+  Multi-agent execution defaults to maxParallel=2.
 
 Commands:
   validate    Audit a generated demo for broken assets, render issues, text overflow, contrast, and common visual anti-patterns.
   compare     Build a reference/output comparison board.
   loop        Run build, screenshot capture, validate, compare, and write a fix queue.
-  orchestrate Run the multi-agent workflow with artifact handoffs and phase-aware parallelism.
-  state       Inspect and validate a persisted orchestrator state-machine snapshot.
-  run         Start a durable UI Harness Runtime run using recreate, redesign, or create.
+  run         Start the durable UI Harness Runtime; add --execution multi-agent to activate the Runtime-owned DAG Scheduler.
+  orchestrate Compatibility entry that delegates to Runtime multi-agent execution; it no longer owns a separate run lifecycle.
   resume      Resume a saved Runtime run with interruption reconciliation.
-  inspect     Inspect a Runtime state snapshot and event history.
+  inspect     Inspect Runtime state and event history. Scheduler progress is stored under the same Runtime run directory.
+  state       Inspect old standalone orchestrator manifests created before Runtime-owned scheduling.
   doctor      Show image channels, runtime versions, browser capture, fonts/media, and output permissions.`);
 }
 
