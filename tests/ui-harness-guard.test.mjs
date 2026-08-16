@@ -43,14 +43,36 @@ test("Harness Guard fails Unicode placeholder glyphs in functional navigation", 
   assert.ok(report.findings.some((finding) => finding.rule === "placeholder-ui-glyph"));
 });
 
-test("Harness Guard accepts a real inline SVG icon system", () => {
+test("Harness Guard accepts a declared inline SVG icon system", () => {
   const dir = makeDemo(`<!doctype html><html><head><meta name="viewport" content="width=device-width"></head><body>
     <img src="photo.png" alt="Editorial visual">
-    <svg width="0" height="0" aria-hidden="true"><symbol id="home" viewBox="0 0 24 24"><path d="M3 11 12 3l9 8"/></symbol></svg>
+    <svg width="0" height="0" aria-hidden="true" data-icon-family="lucide"><symbol id="home" viewBox="0 0 24 24"><path d="M3 11 12 3l9 8"/></symbol></svg>
     <nav class="bottom-nav"><button class="nav-item active"><svg aria-hidden="true"><use href="#home"></use></svg>Home</button></nav>
   </body></html>`);
   const { report } = validate(dir);
   assert.equal(report.findings.some((finding) => finding.rule === "placeholder-ui-glyph"), false);
+  assert.equal(report.findings.some((finding) => finding.rule === "ad-hoc-functional-svg"), false);
+});
+
+test("Harness Guard rejects ad-hoc handwritten SVG action glyphs", () => {
+  const dir = makeDemo(`<!doctype html><html><head><meta name="viewport" content="width=device-width"></head><body>
+    <img src="photo.png" alt="Editorial visual">
+    <button class="cta">Get Tickets <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 7l5 5-5 5"/></svg></button>
+  </body></html>`);
+  const { result, report } = validate(dir);
+  assert.equal(result.status, 2);
+  assert.ok(report.findings.some((finding) => finding.rule === "ad-hoc-functional-svg"));
+});
+
+test("Harness Guard rejects untracked local SVG sprites in controls", () => {
+  const dir = makeDemo(`<!doctype html><html><head><meta name="viewport" content="width=device-width"></head><body>
+    <img src="photo.png" alt="Editorial visual">
+    <svg width="0" height="0" aria-hidden="true"><symbol id="arrow-right" viewBox="0 0 24 24"><path d="M5 12h13M13 7l5 5-5 5"/></symbol></svg>
+    <button class="cta">Get Tickets <svg aria-hidden="true"><use href="#arrow-right"></use></svg></button>
+  </body></html>`);
+  const { result, report } = validate(dir);
+  assert.equal(result.status, 2);
+  assert.ok(report.findings.some((finding) => finding.rule === "ad-hoc-functional-svg"));
 });
 
 test("Harness Guard requires image2 provenance for generated visual assets", () => {
