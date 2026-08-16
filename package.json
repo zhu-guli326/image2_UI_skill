@@ -39,6 +39,7 @@
     "scripts/ui_harness_guard_v2.mjs",
     "scripts/ui_asset_plan_guard.mjs",
     "scripts/ui_reference_asset_guard.mjs",
+    "scripts/ui_recreate_image2_policy_guard.mjs",
     "runtime/",
     "schemas/",
     "assets/readme/hero.png"
