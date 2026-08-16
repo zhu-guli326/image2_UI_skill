@@ -12,7 +12,7 @@ const GENERATED_PATH_RE = /(?:^|[/\\])(?:generated|generated-assets|ai-assets|im
 const ICON_CONTEXT_RE = /(?:^|[-_\s])(?:icon|glyph|dot|symbol|status|signal|wifi|battery|nav|tab|toolbar|menu|control|action|circle)(?:[-_\s]|$)/i;
 const PLACEHOLDER_SYMBOL_RE = /[⌂◉♟●◎☰♡▣⌁◆◇○◈◦•▪▫▮▯♢♧♤♠♣♥♦★☆✦]/u;
 const PROCEDURAL_VISUAL_RE = /(?:ImageDraw\.Draw|Image\.new\s*\(|PIL\.Image\.new\s*\(|createElement\s*\(\s*["']canvas["']\s*\)|getContext\s*\(\s*["']2d["']\s*\)|toDataURL\s*\(|canvas\.toBlob\s*\()/i;
-const SEMANTIC_DRAW_RE = /(?:ImageDraw\.(?:text|rectangle|ellipse|polygon)|\.fillText\s*\(|\.strokeText\s*\(|\.fillRect\s*\(|\.strokeRect\s*\(|\.drawImage\s*\()/i;
+const SEMANTIC_DRAW_RE = /(?:ImageDraw\.(?:text|rectangle|ellipse|polygon)|\b(?:draw|ctx|context)\.(?:text|rectangle|ellipse|polygon|fillText|strokeText|fillRect|strokeRect|drawImage)\s*\(|\.fillText\s*\(|\.strokeText\s*\(|\.fillRect\s*\(|\.strokeRect\s*\(|\.drawImage\s*\()/i;
 
 export function runHarnessGuard({ target, workflowMode = null, originalReference = null } = {}) {
   if (!target) throw new TypeError("runHarnessGuard requires target");
