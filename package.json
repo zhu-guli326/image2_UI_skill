@@ -43,6 +43,7 @@
     "scripts/ui_visual_role_guard.mjs",
     "scripts/ui_freeform_layout_guard.mjs",
     "scripts/ui_screen_safe_area_guard.mjs",
+    "scripts/ui_design_system_guard.mjs",
     "runtime/",
     "schemas/",
     "assets/readme/hero.png"
