@@ -18,6 +18,12 @@ jobs:
         with:
           ref: agent/readme-capabilities-real-output
 
+      - name: Install ffmpeg
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+
       - name: Build looping GIF previews
         shell: bash
         run: |
