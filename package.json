@@ -1,16 +1,32 @@
 {
   "name": "image2-ui-skill",
   "version": "0.1.0",
-  "description": "A reusable Harness/Skill for turning visual references or product intent into production-shaped UI workflows.",
+  "description": "Production-grade Codex skill and CLI toolkit for turning UI references into code-rendered demos with image2 bitmap assets.",
   "type": "module",
+  "private": false,
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zhu-guli326/image2_UI_skill.git"
+  },
+  "bugs": {
+    "url": "https://github.com/zhu-guli326/image2_UI_skill/issues"
+  },
+  "homepage": "https://github.com/zhu-guli326/image2_UI_skill#readme",
   "bin": {
     "image2-ui": "scripts/image2-ui"
   },
   "files": [
-    "README.md",
     "SKILL.md",
+    "README.md",
     "PRODUCTION.md",
+    "CONTRIBUTING.md",
+    "CHANGELOG.md",
+    "LICENSE",
+    "validate.ps1",
+    "agents/",
     "references/",
+    "scripts/doctor.mjs",
     "scripts/image2-ui",
     "scripts/image2_asset.py",
     "scripts/image2_orchestrate.mjs",
@@ -43,9 +59,7 @@
     "codex",
     "image2",
     "image-to-ui",
-    "ui",
-    "harness",
-    "agent"
-  ],
-  "license": "MIT"
+    "ui-generation",
+    "design-to-code"
+  ]
 }
