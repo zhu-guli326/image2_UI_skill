@@ -9,10 +9,11 @@ function fixture() {
   return fs.mkdtempSync(path.join(os.tmpdir(), "image2-ui-visual-role-"));
 }
 
-function writePlan(dir, elements) {
+function writePlan(dir, elements, compositionPolicy = undefined) {
   fs.writeFileSync(path.join(dir, "visual-role-plan.json"), JSON.stringify({
     version: 1,
     workflow: "recreate",
+    ...(compositionPolicy ? { compositionPolicy } : {}),
     elements,
   }, null, 2));
 }
@@ -29,6 +30,9 @@ function baseElement(overrides = {}) {
       renderer: "image2",
       placement: "background",
       generationScope: "asset-only",
+      needsCutout: false,
+      generationBackground: "full-scene",
+      keyingMode: "none",
       containsCodeOwnedText: false,
     },
     overlayRole: {
@@ -37,6 +41,33 @@ function baseElement(overrides = {}) {
       textOnImage: false,
       safeArea: "inside",
     },
+    ...overrides,
+  };
+}
+
+function cutoutAsset(overrides = {}) {
+  return {
+    role: "cutout-subject",
+    renderer: "image2",
+    placement: "layered",
+    generationScope: "asset-only",
+    needsCutout: true,
+    generationBackground: "transparent",
+    keyingMode: "native-alpha",
+    requiresTransparency: true,
+    participatesInOverlap: true,
+    containsCodeOwnedText: false,
+    ...overrides,
+  };
+}
+
+function tightComposition(overrides = {}) {
+  return {
+    densityIntent: "tight",
+    preserveReferenceDensity: true,
+    allowLargeEmptyRegions: false,
+    maxUnassignedWhitespaceRatio: 0.2,
+    maxDensityDriftPercent: 10,
     ...overrides,
   };
 }
@@ -85,19 +116,57 @@ test("graphic primitives must stay code-rendered instead of going through image2
   assert.ok(findings.some((finding) => finding.rule === "placeholder-renderer-violation"));
 });
 
+test("image2 assets require a background/cutout strategy before generation", () => {
+  const dir = fixture();
+  writePlan(dir, [baseElement({
+    assetRole: {
+      role: "background-plate",
+      renderer: "image2",
+      placement: "background",
+      generationScope: "asset-only",
+      containsCodeOwnedText: false,
+    },
+  })]);
+  assert.ok(guard(dir).some((finding) => finding.rule === "asset-background-strategy-required"));
+});
+
+test("green-screen cutouts require chroma-key post-processing", () => {
+  const dir = fixture();
+  writePlan(dir, [baseElement({
+    id: "ostrich",
+    assetRole: cutoutAsset({
+      generationBackground: "green-screen",
+      keyingMode: "background-removal",
+    }),
+    overlayRole: {
+      mode: "cutout-layered",
+      zOrder: "image-over-text",
+      textOnImage: false,
+      subjectCriticalZones: [[50, 10, 40, 70]],
+      safeArea: "inside",
+    },
+  })]);
+  assert.ok(guard(dir).some((finding) => finding.rule === "green-screen-keying-required"));
+});
+
+test("background plates must stay complete scenes rather than becoming cutouts", () => {
+  const dir = fixture();
+  writePlan(dir, [baseElement({
+    assetRole: {
+      ...baseElement().assetRole,
+      needsCutout: true,
+      generationBackground: "green-screen",
+      keyingMode: "chroma-key",
+    },
+  })]);
+  assert.ok(guard(dir).some((finding) => finding.rule === "background-plate-cutout-violation"));
+});
+
 test("overlapping cutouts require transparency and cutout-layered overlay", () => {
   const dir = fixture();
   writePlan(dir, [baseElement({
     id: "hero-ostrich",
-    assetRole: {
-      role: "cutout-subject",
-      renderer: "image2",
-      placement: "layered",
-      generationScope: "asset-only",
-      requiresTransparency: false,
-      participatesInOverlap: true,
-      containsCodeOwnedText: false,
-    },
+    assetRole: cutoutAsset({ requiresTransparency: false }),
     overlayRole: {
       mode: "side-by-side",
       zOrder: "disjoint",
@@ -142,15 +211,7 @@ test("cutout-layered overlays require z-order and protected subject zones", () =
   const dir = fixture();
   writePlan(dir, [baseElement({
     id: "gorilla",
-    assetRole: {
-      role: "cutout-subject",
-      renderer: "image2",
-      placement: "layered",
-      generationScope: "asset-only",
-      requiresTransparency: true,
-      participatesInOverlap: true,
-      containsCodeOwnedText: false,
-    },
+    assetRole: cutoutAsset(),
     overlayRole: {
       mode: "cutout-layered",
       subjectCriticalZones: [],
@@ -166,11 +227,8 @@ test("image2 jobs must generate one asset rather than a full UI composition", ()
   const dir = fixture();
   writePlan(dir, [baseElement({
     assetRole: {
-      role: "background-plate",
-      renderer: "image2",
-      placement: "background",
+      ...baseElement().assetRole,
       generationScope: "none",
-      containsCodeOwnedText: false,
     },
   })]);
   assert.ok(guard(dir).some((finding) => finding.rule === "full-ui-image2-generation"));
@@ -222,6 +280,35 @@ test("text-safe zones cannot be declared through protected focal content", () =>
   assert.ok(guard(dir).some((finding) => finding.rule === "subject-critical-overlap"));
 });
 
+test("tight editorial compositions reject large unassigned whitespace budgets", () => {
+  const dir = fixture();
+  writePlan(dir, [validPrimaryHero()], tightComposition({ maxUnassignedWhitespaceRatio: 0.4 }));
+  assert.ok(guard(dir).some((finding) => finding.rule === "excessive-unreferenced-whitespace"));
+});
+
+test("large empty regions require a reference-backed reason", () => {
+  const dir = fixture();
+  writePlan(dir, [validPrimaryHero()], {
+    densityIntent: "reference-matched",
+    preserveReferenceDensity: true,
+    allowLargeEmptyRegions: true,
+    maxDensityDriftPercent: 10,
+  });
+  assert.ok(guard(dir).some((finding) => finding.rule === "excessive-unreferenced-whitespace"));
+});
+
+test("recreate cannot opt out of preserving reference density", () => {
+  const dir = fixture();
+  writePlan(dir, [validPrimaryHero()], tightComposition({ preserveReferenceDensity: false }));
+  assert.ok(guard(dir).some((finding) => finding.rule === "composition-density-drift"));
+});
+
+test("a valid tight composition preserves breathing room without dead space", () => {
+  const dir = fixture();
+  writePlan(dir, [validPrimaryHero()], tightComposition());
+  assert.equal(guard(dir).filter((finding) => finding.level === "fail").length, 0);
+});
+
 test("a valid primary hero crop and overlay contract passes", () => {
   const dir = fixture();
   writePlan(dir, [validPrimaryHero()]);
@@ -232,15 +319,7 @@ test("a valid cutout layering contract passes the visual-role guard", () => {
   const dir = fixture();
   writePlan(dir, [baseElement({
     id: "hero-ostrich",
-    assetRole: {
-      role: "cutout-subject",
-      renderer: "image2",
-      placement: "layered",
-      generationScope: "asset-only",
-      requiresTransparency: true,
-      participatesInOverlap: true,
-      containsCodeOwnedText: false,
-    },
+    assetRole: cutoutAsset(),
     overlayRole: {
       mode: "cutout-layered",
       zOrder: "image-over-text",
@@ -251,6 +330,14 @@ test("a valid cutout layering contract passes the visual-role guard", () => {
     },
   })]);
   assert.equal(guard(dir).filter((finding) => finding.level === "fail").length, 0);
+});
+
+test("recreate plans without composition policy warn instead of breaking old artifacts", () => {
+  const dir = fixture();
+  writePlan(dir, [validPrimaryHero()]);
+  const findings = guard(dir);
+  assert.ok(findings.some((finding) => finding.rule === "composition-policy-missing" && finding.level === "warn"));
+  assert.equal(findings.filter((finding) => finding.level === "fail").length, 0);
 });
 
 test("existing projects get a warning instead of a breaking failure when visual-role-plan is absent", () => {
