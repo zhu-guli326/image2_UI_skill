@@ -25,6 +25,12 @@
     },
     "keyingMode": { "enum": ["native-alpha", "background-removal", "chroma-key", "none"] },
     "solidBackgroundColor": { "type": "string", "minLength": 1 },
+    "compositionBoundary": {
+      "enum": ["rectangular-frame", "freeform-silhouette", "not-applicable"]
+    },
+    "freeformLayoutIntent": {
+      "enum": ["none", "text-flow", "text-overlap", "layer-interlock", "cross-boundary"]
+    },
     "requiresTransparency": { "type": "boolean" },
     "participatesInOverlap": { "type": "boolean" },
     "containsCodeOwnedText": { "type": "boolean" },
@@ -40,7 +46,9 @@
           "generationScope": { "const": "none" },
           "needsCutout": { "const": false },
           "generationBackground": { "const": "not-applicable" },
-          "keyingMode": { "const": "none" }
+          "keyingMode": { "const": "none" },
+          "compositionBoundary": { "const": "not-applicable" },
+          "freeformLayoutIntent": { "const": "none" }
         }
       }
     },
@@ -53,9 +61,26 @@
           "requiresTransparency": { "const": true },
           "generationScope": { "const": "asset-only" },
           "generationBackground": { "enum": ["transparent", "solid-color", "green-screen"] },
-          "keyingMode": { "enum": ["native-alpha", "background-removal", "chroma-key"] }
+          "keyingMode": { "enum": ["native-alpha", "background-removal", "chroma-key"] },
+          "compositionBoundary": { "const": "freeform-silhouette" }
         },
-        "required": ["needsCutout", "requiresTransparency", "generationScope", "generationBackground", "keyingMode"]
+        "required": ["needsCutout", "requiresTransparency", "generationScope", "generationBackground", "keyingMode", "compositionBoundary", "freeformLayoutIntent"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "role": { "const": "cutout-subject" },
+          "participatesInOverlap": { "const": true }
+        },
+        "required": ["role", "participatesInOverlap"]
+      },
+      "then": {
+        "properties": {
+          "freeformLayoutIntent": {
+            "enum": ["text-flow", "text-overlap", "layer-interlock", "cross-boundary"]
+          }
+        }
       }
     },
     {
@@ -72,9 +97,11 @@
           "generationScope": { "const": "asset-only" },
           "needsCutout": { "const": false },
           "generationBackground": { "const": "full-scene" },
-          "keyingMode": { "const": "none" }
+          "keyingMode": { "const": "none" },
+          "compositionBoundary": { "const": "rectangular-frame" },
+          "freeformLayoutIntent": { "const": "none" }
         },
-        "required": ["needsCutout", "generationBackground", "keyingMode"]
+        "required": ["needsCutout", "generationBackground", "keyingMode", "compositionBoundary", "freeformLayoutIntent"]
       }
     },
     {
@@ -91,16 +118,18 @@
           "generationScope": { "const": "asset-only" },
           "needsCutout": { "const": false },
           "generationBackground": { "const": "full-scene" },
-          "keyingMode": { "const": "none" }
+          "keyingMode": { "const": "none" },
+          "compositionBoundary": { "const": "rectangular-frame" },
+          "freeformLayoutIntent": { "const": "none" }
         },
-        "required": ["needsCutout", "generationBackground", "keyingMode"]
+        "required": ["needsCutout", "generationBackground", "keyingMode", "compositionBoundary", "freeformLayoutIntent"]
       }
     },
     {
       "if": { "properties": { "renderer": { "const": "image2" } }, "required": ["renderer"] },
       "then": {
         "properties": { "generationScope": { "const": "asset-only" } },
-        "required": ["generationScope", "needsCutout", "generationBackground", "keyingMode"]
+        "required": ["generationScope", "needsCutout", "generationBackground", "keyingMode", "compositionBoundary", "freeformLayoutIntent"]
       }
     },
     {
