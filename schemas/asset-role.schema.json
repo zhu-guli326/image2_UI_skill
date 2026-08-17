@@ -19,6 +19,12 @@
     "renderer": { "enum": ["code", "image2", "project"] },
     "placement": { "enum": ["code", "background", "layered", "container"] },
     "generationScope": { "enum": ["none", "asset-only"] },
+    "needsCutout": { "type": "boolean" },
+    "generationBackground": {
+      "enum": ["transparent", "solid-color", "green-screen", "full-scene", "not-applicable"]
+    },
+    "keyingMode": { "enum": ["native-alpha", "background-removal", "chroma-key", "none"] },
+    "solidBackgroundColor": { "type": "string", "minLength": 1 },
     "requiresTransparency": { "type": "boolean" },
     "participatesInOverlap": { "type": "boolean" },
     "containsCodeOwnedText": { "type": "boolean" },
@@ -31,7 +37,10 @@
         "properties": {
           "renderer": { "const": "code" },
           "placement": { "const": "code" },
-          "generationScope": { "const": "none" }
+          "generationScope": { "const": "none" },
+          "needsCutout": { "const": false },
+          "generationBackground": { "const": "not-applicable" },
+          "keyingMode": { "const": "none" }
         }
       }
     },
@@ -40,23 +49,71 @@
       "then": {
         "properties": {
           "placement": { "const": "layered" },
+          "needsCutout": { "const": true },
           "requiresTransparency": { "const": true },
-          "generationScope": { "const": "asset-only" }
+          "generationScope": { "const": "asset-only" },
+          "generationBackground": { "enum": ["transparent", "solid-color", "green-screen"] },
+          "keyingMode": { "enum": ["native-alpha", "background-removal", "chroma-key"] }
         },
-        "required": ["requiresTransparency", "generationScope"]
+        "required": ["needsCutout", "requiresTransparency", "generationScope", "generationBackground", "keyingMode"]
       }
     },
     {
-      "if": { "properties": { "role": { "const": "background-plate" } }, "required": ["role"] },
-      "then": { "properties": { "placement": { "const": "background" }, "generationScope": { "const": "asset-only" } } }
+      "if": {
+        "properties": {
+          "role": { "const": "background-plate" },
+          "renderer": { "const": "image2" }
+        },
+        "required": ["role", "renderer"]
+      },
+      "then": {
+        "properties": {
+          "placement": { "const": "background" },
+          "generationScope": { "const": "asset-only" },
+          "needsCutout": { "const": false },
+          "generationBackground": { "const": "full-scene" },
+          "keyingMode": { "const": "none" }
+        },
+        "required": ["needsCutout", "generationBackground", "keyingMode"]
+      }
     },
     {
-      "if": { "properties": { "role": { "const": "inline-photo" } }, "required": ["role"] },
-      "then": { "properties": { "placement": { "const": "container" }, "generationScope": { "const": "asset-only" } } }
+      "if": {
+        "properties": {
+          "role": { "const": "inline-photo" },
+          "renderer": { "const": "image2" }
+        },
+        "required": ["role", "renderer"]
+      },
+      "then": {
+        "properties": {
+          "placement": { "const": "container" },
+          "generationScope": { "const": "asset-only" },
+          "needsCutout": { "const": false },
+          "generationBackground": { "const": "full-scene" },
+          "keyingMode": { "const": "none" }
+        },
+        "required": ["needsCutout", "generationBackground", "keyingMode"]
+      }
     },
     {
       "if": { "properties": { "renderer": { "const": "image2" } }, "required": ["renderer"] },
-      "then": { "properties": { "generationScope": { "const": "asset-only" } }, "required": ["generationScope"] }
+      "then": {
+        "properties": { "generationScope": { "const": "asset-only" } },
+        "required": ["generationScope", "needsCutout", "generationBackground", "keyingMode"]
+      }
+    },
+    {
+      "if": { "properties": { "generationBackground": { "const": "green-screen" } }, "required": ["generationBackground"] },
+      "then": { "properties": { "keyingMode": { "const": "chroma-key" } } }
+    },
+    {
+      "if": { "properties": { "generationBackground": { "const": "transparent" } }, "required": ["generationBackground"] },
+      "then": { "properties": { "keyingMode": { "const": "native-alpha" } } }
+    },
+    {
+      "if": { "properties": { "generationBackground": { "const": "solid-color" } }, "required": ["generationBackground"] },
+      "then": { "required": ["solidBackgroundColor"] }
     },
     {
       "if": { "properties": { "role": { "enum": ["background-plate", "cutout-subject", "inline-photo", "generated-clean"] } }, "required": ["role"] },
