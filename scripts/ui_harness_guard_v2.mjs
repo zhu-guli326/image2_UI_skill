@@ -5,6 +5,9 @@ import { runAssetPlanGuard } from "./ui_asset_plan_guard.mjs";
 import { runReferenceAssetGuard } from "./ui_reference_asset_guard.mjs";
 import { runRecreateImage2PolicyGuard } from "./ui_recreate_image2_policy_guard.mjs";
 import { runVisualRoleGuard } from "./ui_visual_role_guard.mjs";
+import { runFreeformLayoutGuard } from "./ui_freeform_layout_guard.mjs";
+import { runScreenSafeAreaGuard } from "./ui_screen_safe_area_guard.mjs";
+import { runDesignSystemGuard } from "./ui_design_system_guard.mjs";
 
 export function runHarnessGuard(options = {}) {
   const base = runBaseHarnessGuard(options);
@@ -33,12 +36,27 @@ export function runHarnessGuard(options = {}) {
     rootDir,
     workflowMode: options.workflowMode,
   });
+  const freeformLayoutFindings = runFreeformLayoutGuard({
+    rootDir,
+    workflowMode: options.workflowMode,
+  });
+  const screenSafeAreaFindings = runScreenSafeAreaGuard({
+    rootDir,
+    workflowMode: options.workflowMode,
+  });
+  const designSystemFindings = runDesignSystemGuard({
+    rootDir,
+    workflowMode: options.workflowMode,
+  });
   const findings = [
     ...(base.findings || []),
     ...assetFindings,
     ...referenceFindings,
     ...image2PolicyFindings,
     ...visualRoleFindings,
+    ...freeformLayoutFindings,
+    ...screenSafeAreaFindings,
+    ...designSystemFindings,
   ];
   const fail = findings.filter((item) => item.level === "fail").length;
   const warn = findings.filter((item) => item.level === "warn").length;

@@ -8,9 +8,13 @@ const OVERLAYS = new Set(["none", "side-by-side", "safe-overlap", "masked-overla
 const MASKS = new Set(["none", "gradient", "solid-backplate", "blur"]);
 const CODE_ROLES = new Set(["code-ui", "graphic-primitive"]);
 const RASTER_ROLES = new Set(["background-plate", "cutout-subject", "inline-photo", "generated-clean"]);
+const CUTOUT_BACKGROUNDS = new Set(["transparent", "solid-color", "green-screen"]);
+const CUTOUT_KEYING = new Set(["native-alpha", "background-removal", "chroma-key"]);
 
 const HERO_BLEED_MIN = Object.freeze({ top: 10, sides: 8, bottom: 12 });
 const HERO_CRITICAL_CROP_MAX = 3;
+const TIGHT_MAX_UNASSIGNED_WHITESPACE = 0.25;
+const RECREATE_MAX_DENSITY_DRIFT_PERCENT = 15;
 
 export function runVisualRoleGuard({ rootDir, workflowMode = null } = {}) {
   if (!rootDir) return [];
@@ -40,6 +44,7 @@ export function runVisualRoleGuard({ rootDir, workflowMode = null } = {}) {
     return [fail("visual-role-plan-invalid", "visual-role-plan.json must be a JSON object.", planFile)];
   }
   if (plan.version !== 1) findings.push(fail("visual-role-plan-version", "visual-role-plan.json must use version 1.", planFile));
+  validateCompositionPolicy(plan, planFile, findings, workflowMode || plan.workflow);
   if (!Array.isArray(plan.elements) || plan.elements.length === 0) {
     findings.push(fail("visual-role-plan-elements", "visual-role-plan.json requires a non-empty elements array.", planFile));
     return findings;
@@ -48,6 +53,54 @@ export function runVisualRoleGuard({ rootDir, workflowMode = null } = {}) {
   const seen = new Set();
   for (const element of plan.elements) validateElement(element, planFile, findings, seen);
   return findings;
+}
+
+function validateCompositionPolicy(plan, planFile, findings, workflowMode) {
+  const policy = plan.compositionPolicy;
+  if (!policy || typeof policy !== "object" || Array.isArray(policy)) {
+    if (workflowMode === "recreate") {
+      findings.push(warn(
+        "composition-policy-missing",
+        "Recreate should declare compositionPolicy so whitespace and information density are matched to the reference instead of being improvised during implementation.",
+        planFile,
+      ));
+    }
+    return;
+  }
+
+  if (workflowMode === "recreate" && policy.preserveReferenceDensity !== true) {
+    findings.push(fail(
+      "composition-density-drift",
+      "Recreate must preserve the reference information density. Do not turn a tight editorial composition into a sparse layout just to make image placement easier.",
+      planFile,
+    ));
+  }
+
+  if (policy.allowLargeEmptyRegions === true && !nonEmpty(policy.referenceBackedWhitespaceReason)) {
+    findings.push(fail(
+      "excessive-unreferenced-whitespace",
+      "Large empty regions require an explicit reference-backed reason. Breathing room around a focal subject is not permission to create large unassigned blank areas.",
+      planFile,
+    ));
+  }
+
+  const whitespaceRatio = finiteNumber(policy.maxUnassignedWhitespaceRatio);
+  if (policy.densityIntent === "tight" && (whitespaceRatio === null || whitespaceRatio > TIGHT_MAX_UNASSIGNED_WHITESPACE)) {
+    findings.push(fail(
+      "excessive-unreferenced-whitespace",
+      `Tight compositions must cap unassigned whitespace at ${Math.round(TIGHT_MAX_UNASSIGNED_WHITESPACE * 100)}% or less. Keep local breathing room, but do not shrink content into a large empty canvas.`,
+      planFile,
+    ));
+  }
+
+  const densityDrift = finiteNumber(policy.maxDensityDriftPercent);
+  if (workflowMode === "recreate" && densityDrift !== null && densityDrift > RECREATE_MAX_DENSITY_DRIFT_PERCENT) {
+    findings.push(fail(
+      "composition-density-drift",
+      `Recreate density drift must stay within ${RECREATE_MAX_DENSITY_DRIFT_PERCENT}% unless the reference itself changes across responsive breakpoints.`,
+      planFile,
+    ));
+  }
 }
 
 function validateElement(element, planFile, findings, seen) {
@@ -101,6 +154,8 @@ function validateElement(element, planFile, findings, seen) {
       findings.push(fail("bitmap-code-content", `Element ${id} declares code-owned text/UI inside a semantic bitmap. Text and controls must be code-rendered.`, planFile));
     }
   }
+
+  if (renderer === "image2") validateImage2BackgroundStrategy(asset, role, id, planFile, findings);
 
   if (role === "cutout-subject") {
     if (placement !== "layered") findings.push(fail("asset-role-renderer-mismatch", `Cutout ${id} must use placement=layered.`, planFile));
@@ -160,6 +215,53 @@ function validateElement(element, planFile, findings, seen) {
   }
 
   validateHeroCrop(element, planFile, findings, id, role, criticalZones);
+}
+
+function validateImage2BackgroundStrategy(asset, role, id, planFile, findings) {
+  if (typeof asset.needsCutout !== "boolean" || !nonEmpty(asset.generationBackground) || !nonEmpty(asset.keyingMode)) {
+    findings.push(fail(
+      "asset-background-strategy-required",
+      `Image2 asset ${id} must decide before generation whether it is a cutout or a complete rectangular/full-scene asset, including generationBackground and keyingMode.`,
+      planFile,
+    ));
+    return;
+  }
+
+  if (role === "cutout-subject") {
+    if (asset.needsCutout !== true || !CUTOUT_BACKGROUNDS.has(asset.generationBackground) || !CUTOUT_KEYING.has(asset.keyingMode)) {
+      findings.push(fail(
+        "cutout-background-strategy-invalid",
+        `Cutout ${id} must be generated for extraction: transparent preferred, or solid-color/green-screen for background removal. Its final implementation must have a freeform transparent silhouette.`,
+        planFile,
+      ));
+    }
+    if (asset.generationBackground === "green-screen" && asset.keyingMode !== "chroma-key") {
+      findings.push(fail("green-screen-keying-required", `Cutout ${id} uses green-screen generation and must use keyingMode=chroma-key.`, planFile));
+    }
+    if (asset.generationBackground === "transparent" && asset.keyingMode !== "native-alpha") {
+      findings.push(fail("transparent-alpha-required", `Cutout ${id} requests transparent generation and must preserve native alpha.`, planFile));
+    }
+  }
+
+  if (role === "background-plate") {
+    if (asset.needsCutout !== false || asset.generationBackground !== "full-scene" || asset.keyingMode !== "none") {
+      findings.push(fail(
+        "background-plate-cutout-violation",
+        `Background plate ${id} must stay a complete composed scene. Do not green-screen or remove its background merely to make layout easier.`,
+        planFile,
+      ));
+    }
+  }
+
+  if (role === "inline-photo") {
+    if (asset.needsCutout !== false || asset.generationBackground !== "full-scene" || asset.keyingMode !== "none") {
+      findings.push(fail(
+        "inline-photo-keying-overkill",
+        `Inline photo ${id} is container-bound and should be generated as a complete frame, not as a green-screen/transparent cutout.`,
+        planFile,
+      ));
+    }
+  }
 }
 
 function validateHeroCrop(element, planFile, findings, id, role, criticalZones) {
@@ -258,4 +360,8 @@ function rectsOverlap(a, b) {
 
 function fail(rule, message, file) {
   return { level: "fail", rule, message, file };
+}
+
+function warn(rule, message, file) {
+  return { level: "warn", rule, message, file };
 }

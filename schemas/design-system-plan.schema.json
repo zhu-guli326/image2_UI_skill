@@ -1,0 +1,145 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://zhu-guli326.github.io/image2_UI_skill/schemas/design-system-plan.schema.json",
+  "title": "Image2 UI Design System Plan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "workflow", "platformIntent", "productClass", "selection", "tokens", "reusePolicy", "iconPolicy", "components", "icons"],
+  "properties": {
+    "version": { "const": 1 },
+    "workflow": { "enum": ["recreate", "redesign", "create"] },
+    "platformIntent": { "enum": ["ios", "android", "web", "generic"] },
+    "productClass": { "enum": ["mobile-app", "device-mockup", "dashboard", "web-app", "landing-page", "unknown"] },
+    "selection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["primarySystem", "reason", "allowMixedSystems"],
+      "properties": {
+        "primarySystem": { "enum": ["ios-hig", "material-3", "ant-design", "arco-design", "semi-design", "shadcn-radix", "fluent-2", "carbon", "primer", "spectrum", "atlassian", "project-existing", "custom"] },
+        "reason": { "enum": ["user-specified", "reference-detected", "project-detected", "product-default", "fallback-default"] },
+        "allowMixedSystems": { "type": "boolean" },
+        "mixedSystemReason": { "type": "string", "minLength": 1 }
+      }
+    },
+    "tokens": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "categories"],
+      "properties": {
+        "source": { "enum": ["design-system-default", "reference-extracted", "project-existing", "hybrid"] },
+        "categories": {
+          "type": "array",
+          "minItems": 4,
+          "uniqueItems": true,
+          "items": { "enum": ["color", "typography", "spacing", "radius", "elevation", "motion"] }
+        },
+        "notes": { "type": "string" }
+      }
+    },
+    "reusePolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reuseBeforeCustomDraw", "customDrawOnlyWhenMissing", "sharedComponentDriftForbidden", "componentFallbackOrder"],
+      "properties": {
+        "reuseBeforeCustomDraw": { "const": true },
+        "customDrawOnlyWhenMissing": { "const": true },
+        "sharedComponentDriftForbidden": { "const": true },
+        "componentFallbackOrder": {
+          "type": "array",
+          "minItems": 5,
+          "maxItems": 5,
+          "prefixItems": [
+            { "const": "design-system" },
+            { "const": "platform" },
+            { "const": "project-shared" },
+            { "const": "compatible-library" },
+            { "const": "custom-draw" }
+          ]
+        }
+      }
+    },
+    "iconPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["primaryIconSystem", "fallbackOrder", "functionalIconsMustUseLibrary", "referenceUnspecifiedDecorativeIconsForbidden"],
+      "properties": {
+        "primaryIconSystem": { "enum": ["sf-symbols", "material-symbols", "ant-icons", "arco-icons", "semi-icons", "fluent-icons", "primer-octicons", "lucide", "project-icon-registry", "custom"] },
+        "fallbackOrder": {
+          "type": "array",
+          "minItems": 5,
+          "maxItems": 5,
+          "prefixItems": [
+            { "const": "design-system-icons" },
+            { "const": "platform-icons" },
+            { "const": "project-icon-registry" },
+            { "const": "compatible-library" },
+            { "const": "custom-draw" }
+          ]
+        },
+        "functionalIconsMustUseLibrary": { "const": true },
+        "referenceUnspecifiedDecorativeIconsForbidden": { "const": true },
+        "notes": { "type": "string" }
+      }
+    },
+    "iosSkeleton": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["enabled", "systemChromeShared", "components"],
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "systemChromeShared": { "type": "boolean" },
+        "components": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "enum": ["IOSScreenRoot", "IOSSafeArea", "IOSStatusBar", "IOSDynamicIsland", "IOSHomeIndicator", "IOSNavBar", "IOSBottomNav", "IOSPrimaryButton", "IOSSearchBar", "IOSFilterChip", "IOSCard"] }
+        }
+      }
+    },
+    "components": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/component" }
+    },
+    "icons": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/icon" }
+    }
+  },
+  "$defs": {
+    "customReason": { "enum": ["brand-specific", "campaign-specific", "hero-visual", "library-missing", "reference-specific"] },
+    "component": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "semanticRole", "reuseKey", "source", "lookupStatus", "shared", "instances"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "semanticRole": { "type": "string", "minLength": 1 },
+        "reuseKey": { "type": "string", "minLength": 1 },
+        "source": { "enum": ["design-system", "platform", "project-shared", "compatible-library", "custom"] },
+        "systemRef": { "type": "string", "minLength": 1 },
+        "componentRef": { "type": "string", "minLength": 1 },
+        "lookupStatus": { "enum": ["matched", "missing"] },
+        "shared": { "type": "boolean" },
+        "instances": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+        "variants": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+        "customReason": { "$ref": "#/$defs/customReason" },
+        "notes": { "type": "string" }
+      }
+    },
+    "icon": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "semanticRole", "functional", "source", "lookupStatus", "referencePresence"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "semanticRole": { "type": "string", "minLength": 1 },
+        "functional": { "type": "boolean" },
+        "source": { "enum": ["design-system", "platform", "project-registry", "compatible-library", "custom"] },
+        "iconRef": { "type": "string", "minLength": 1 },
+        "lookupStatus": { "enum": ["matched", "missing"] },
+        "referencePresence": { "enum": ["present", "absent", "unknown"] },
+        "customReason": { "$ref": "#/$defs/customReason" },
+        "notes": { "type": "string" }
+      }
+    }
+  }
+}
