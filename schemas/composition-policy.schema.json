@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://zhu-guli326.github.io/image2_UI_skill/schemas/composition-policy.schema.json",
+  "title": "Image2 UI Composition Density Policy",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["densityIntent", "preserveReferenceDensity", "allowLargeEmptyRegions"],
+  "properties": {
+    "densityIntent": {
+      "enum": ["reference-matched", "tight", "balanced", "spacious"]
+    },
+    "preserveReferenceDensity": { "type": "boolean" },
+    "allowLargeEmptyRegions": { "type": "boolean" },
+    "maxUnassignedWhitespaceRatio": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "maxDensityDriftPercent": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "referenceBackedWhitespaceReason": { "type": "string", "minLength": 1 },
+    "notes": { "type": "string" }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "allowLargeEmptyRegions": { "const": true } },
+        "required": ["allowLargeEmptyRegions"]
+      },
+      "then": { "required": ["referenceBackedWhitespaceReason"] }
+    }
+  ]
+}
