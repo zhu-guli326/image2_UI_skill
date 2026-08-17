@@ -9,6 +9,7 @@
     "version": { "const": 1 },
     "workflow": { "enum": ["recreate", "redesign", "create"] },
     "reference": { "type": "string" },
+    "compositionPolicy": { "$ref": "composition-policy.schema.json" },
     "elements": {
       "type": "array",
       "minItems": 1,
