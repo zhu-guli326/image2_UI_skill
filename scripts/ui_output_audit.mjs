@@ -4,10 +4,12 @@ import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { runHarnessGuard } from "./ui_harness_guard_v2.mjs";
+import { runRenderContractAudit } from "../runtime/render_contract_audit.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const args = process.argv.slice(2);
 const jsonMode = args.includes("--json");
+const noBrowser = args.includes("--no-browser");
 const workflowMode = readOption("--workflow-mode");
 const originalReference = readOption("--original-reference");
 const target = positionalArgs()[0];
@@ -16,7 +18,7 @@ if (!target || args.includes("--help") || args.includes("-h")) {
   console.log(`Usage:
   node scripts/ui_output_audit.mjs <demo-dir-or-html> [--reference reference.png] [--workflow-mode recreate|redesign|create] [--original-reference reference.png] [--json] [--no-browser]
 
-Runs the legacy output audit plus Harness hard guards for icon integrity, generated-visual provenance, and Recreate asset preparation.`);
+Runs the legacy output audit, Harness hard guards, and rendered geometry contracts for screen safe areas and declared UI placement.`);
   process.exit(target ? 0 : 1);
 }
 
@@ -52,8 +54,17 @@ const guard = runHarnessGuard({
   workflowMode,
   originalReference,
 });
+const renderContractFindings = await runRenderContractAudit({
+  target,
+  workflowMode,
+  noBrowser,
+});
 
-const findings = [...(audit.findings || []), ...(guard.findings || [])];
+const findings = [
+  ...(audit.findings || []),
+  ...(guard.findings || []),
+  ...renderContractFindings,
+];
 const result = {
   ...audit,
   ok: findings.every((item) => item.level !== "fail"),
@@ -71,6 +82,18 @@ const result = {
   harnessGuard: {
     status: guard.status,
     counts: guard.counts,
+  },
+  renderContract: {
+    status: renderContractFindings.some((item) => item.level === "fail")
+      ? "fail"
+      : renderContractFindings.some((item) => item.level === "warn")
+        ? "pass-with-warnings"
+        : "pass",
+    counts: {
+      fail: renderContractFindings.filter((item) => item.level === "fail").length,
+      warn: renderContractFindings.filter((item) => item.level === "warn").length,
+      info: renderContractFindings.filter((item) => item.level === "info").length,
+    },
   },
 };
 
