@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://zhu-guli326.github.io/image2_UI_skill/schemas/screen-safe-area.schema.json",
+  "title": "Image2 UI Screen Safe Area Contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["platform", "surface", "edgeToEdge", "insetSource", "contentPolicy", "backgroundPolicy"],
+  "properties": {
+    "platform": { "enum": ["ios", "android", "web", "generic"] },
+    "surface": { "enum": ["native-runtime", "web-runtime", "device-mockup", "generic-viewport"] },
+    "edgeToEdge": { "type": "boolean" },
+    "insetSource": { "enum": ["runtime-safe-area", "window-insets", "css-env", "reference-measured", "not-applicable"] },
+    "viewportFitCover": { "type": "boolean" },
+    "contentPolicy": { "enum": ["inside-safe-content", "reference-matched", "not-applicable"] },
+    "backgroundPolicy": { "enum": ["screen-bounds", "safe-content-bounds", "reference-matched"] },
+    "contentSafeRect": { "$ref": "#/$defs/rect" },
+    "systemZones": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "statusBar": { "$ref": "#/$defs/systemZone" },
+        "displayCutout": { "$ref": "#/$defs/systemZone" },
+        "homeIndicator": { "$ref": "#/$defs/systemZone" },
+        "navigationBar": { "$ref": "#/$defs/systemZone" },
+        "gestureArea": { "$ref": "#/$defs/systemZone" }
+      }
+    },
+    "notes": { "type": "string" }
+  },
+  "$defs": {
+    "rect": {
+      "type": "array",
+      "prefixItems": [
+        { "type": "number", "minimum": 0, "maximum": 100 },
+        { "type": "number", "minimum": 0, "maximum": 100 },
+        { "type": "number", "exclusiveMinimum": 0, "maximum": 100 },
+        { "type": "number", "exclusiveMinimum": 0, "maximum": 100 }
+      ],
+      "minItems": 4,
+      "maxItems": 4
+    },
+    "systemZone": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["visibility", "ownership"],
+      "properties": {
+        "visibility": { "enum": ["visible", "hidden", "not-applicable"] },
+        "ownership": { "enum": ["system", "code-simulated", "not-applicable"] },
+        "rect": { "$ref": "#/$defs/rect" },
+        "notes": { "type": "string" }
+      }
+    }
+  }
+}

@@ -10,6 +10,7 @@
     "workflow": { "enum": ["recreate", "redesign", "create"] },
     "reference": { "type": "string" },
     "compositionPolicy": { "$ref": "composition-policy.schema.json" },
+    "screenSafeArea": { "$ref": "screen-safe-area.schema.json" },
     "elements": {
       "type": "array",
       "minItems": 1,
@@ -33,6 +34,7 @@
           "assetId": { "type": "string", "minLength": 1 },
           "assetRole": { "$ref": "asset-role.schema.json" },
           "overlayRole": { "$ref": "overlay-role.schema.json" },
+          "screenPlacement": { "$ref": "#/$defs/screenPlacement" },
           "cropPolicy": { "$ref": "#/$defs/cropPolicy" },
           "semanticPriority": { "enum": ["primary", "secondary", "supporting", "decorative"] },
           "notes": { "type": "string" }
@@ -60,6 +62,31 @@
       ],
       "minItems": 4,
       "maxItems": 4
+    },
+    "screenPlacement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["behavior"],
+      "properties": {
+        "behavior": {
+          "enum": ["critical-content", "persistent-control", "system-chrome", "background-bleed", "decorative-bleed", "reference-only"]
+        },
+        "bounds": { "$ref": "#/$defs/rect" },
+        "systemChromeKind": {
+          "enum": ["status-bar", "display-cutout", "home-indicator", "navigation-bar", "gesture-area"]
+        },
+        "notes": { "type": "string" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "behavior": { "const": "system-chrome" } }, "required": ["behavior"] },
+          "then": { "required": ["systemChromeKind", "bounds"] }
+        },
+        {
+          "if": { "properties": { "behavior": { "enum": ["critical-content", "persistent-control", "background-bleed"] } }, "required": ["behavior"] },
+          "then": { "required": ["bounds"] }
+        }
+      ]
     },
     "cropPolicy": {
       "type": "object",
