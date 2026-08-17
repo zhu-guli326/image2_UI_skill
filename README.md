@@ -29,28 +29,35 @@
 
 ### Featured image2 output
 
-这不是案例库页面截图，而是实际生成出来的视觉资产。它可以继续作为 Hero、卡片主视觉、背景或抠图主体进入真实 UI。
-
 <p align="center">
   <img src="./assets/readme/featured-dog-output.jpg" width="360" alt="Actual generated dog image2 output — golden retriever wearing sunglasses in a pink pool float">
 </p>
 
 <p align="center"><sub>Actual generated output · Golden retriever / summer pool visual</sub></p>
 
-### 在线可预览 UI 案例
+## Demo Videos
 
-这些不是视频截图，而是 `ui_case` 中带 `index.html` 的真实可运行页面；优先点「在线预览」直接体验页面，视频只作为快速浏览补充。
+### Mimo Activities
 
-| 案例 | 能看到什么 | 在线预览 | 视频 |
-| --- | --- | --- | --- |
-| **Mimo Activities** | 移动端活动流、卡片层级、浏览节奏 | [打开页面](https://zhu-guli326.github.io/ui_case/demo/mimo-activities/) | [播放](./assets/video-cases/mimo-activities-demo.mp4) |
-| **Softly Reflections** | 日记产品、柔和转场、空状态 | [打开页面](https://zhu-guli326.github.io/ui_case/demo/softly-reflections/) | [播放](./assets/video-cases/softly-reflections-demo.mp4) |
-| **Cleanbite Scanner** | 扫码、识别结果、状态反馈 | [打开页面](https://zhu-guli326.github.io/ui_case/demo/cleanbite-scanner/) | [播放](./assets/video-cases/cleanbite-scanner-demo.mp4) |
-| **Artmuse iOS** | iOS 多屏内容浏览、导航与详情交互 | [打开页面](https://zhu-guli326.github.io/ui_case/demo/artmuse-ios/) | — |
-| **Museum App** | 多屏导航、作品列表与详情页 | — | [播放](./assets/video-cases/museum-app-demo.mp4) |
-| **Fashion Shopping App** | 商品视觉、筛选、商品详情 | — | [播放](./assets/video-cases/fashion-shopping-app-demo.mp4) |
+https://raw.githubusercontent.com/zhu-guli326/image2_UI_skill/agent/readme-capabilities-real-output/assets/video-cases/mimo-activities-demo.mp4
 
-更多可视化案例：**[UI Case Gallery](https://zhu-guli326.github.io/ui_case/library.html?lang=zh)**
+### Softly Reflections
+
+https://raw.githubusercontent.com/zhu-guli326/image2_UI_skill/agent/readme-capabilities-real-output/assets/video-cases/softly-reflections-demo.mp4
+
+### Cleanbite Scanner
+
+https://raw.githubusercontent.com/zhu-guli326/image2_UI_skill/agent/readme-capabilities-real-output/assets/video-cases/cleanbite-scanner-demo.mp4
+
+### Museum App
+
+https://raw.githubusercontent.com/zhu-guli326/image2_UI_skill/agent/readme-capabilities-real-output/assets/video-cases/museum-app-demo.mp4
+
+### Fashion Shopping App
+
+https://raw.githubusercontent.com/zhu-guli326/image2_UI_skill/agent/readme-capabilities-real-output/assets/video-cases/fashion-shopping-app-demo.mp4
+
+更多案例：**[UI Case Gallery](https://zhu-guli326.github.io/ui_case/library.html?lang=zh)**
 
 ## 输出不是“图片版 UI”
 
