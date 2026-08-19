@@ -108,21 +108,91 @@ With `--reference` and no explicit mode, Runtime defaults to `recreate`. Without
 
 ## 首轮入口 / First-turn entry
 
-When a new UI generation request starts, resolve the task toward the three modes above. If the host exposes a native structured choice UI, prefer these primary choices:
+When a new UI generation request starts and the workflow mode is not already clear, first navigate the user to the Chinese visual launcher:
 
-- `截图还原 / Recreate`
-- `参考重设计 / Redesign`
-- `从零创建 / Create`
+`https://zhu-guli326.github.io/ui_case/launcher.html?lang=zh`
+
+Use the host's in-app browser or navigation capability when available. If automatic navigation is unavailable, provide the URL as a clickable link and continue with the structured workflow choice; do not block the task on navigation.
+
+Then ask **one structured follow-up question with exactly three mutually exclusive choices**. If the host exposes a native structured choice UI such as `request_user_input`, use it instead of rendering the choices as a Markdown list. Use this contract:
+
+```json
+{
+  "questions": [
+    {
+      "header": "制作方式",
+      "id": "workflow_mode",
+      "question": "你希望用哪种方式制作这个界面？",
+      "options": [
+        {
+          "label": "截图还原 (Recommended)",
+          "description": "以你提供的截图或设计稿为准，尽量忠实还原成可点击界面。"
+        },
+        {
+          "label": "参考重设计",
+          "description": "保留参考图的视觉语言，但重新优化布局、内容或体验。"
+        },
+        {
+          "label": "从零创建",
+          "description": "根据产品描述和风格要求设计并实现一个全新界面。"
+        }
+      ]
+    }
+  ]
+}
+```
+
+The recommended option may change when the available context clearly favors another mode, but there must still be exactly one recommended option. Do not ask this question when the user has already explicitly selected `recreate`, `redesign`, or `create`; proceed with that mode.
 
 Utility actions such as exploring an existing project, switching a design system, or browsing examples are supporting choices, not separate implementation modes.
 
-If a visual launcher is useful, use:
+The canonical first-turn visual launcher is:
 
-`https://zhu-guli326.github.io/ui_case/launcher.html?intent=explore`
+`https://zhu-guli326.github.io/ui_case/launcher.html?lang=zh`
 
 Treat the launcher's generated prompt as structured user intent. Preserve target, scope, permission boundary, output depth, reference source, design-system choice, and verification requirements unless the user overrides them. When the launcher says a local reference file will be attached, use the image attached in the conversation; the browser preview itself never uploads that file.
 
 Use `https://zhu-guli326.github.io/ui_case/` when the user wants more cases. The gallery is maintained separately from the installable Skill.
+
+## 可见工作台与渐进式确认 / Visible Workbench And Progressive Alignment
+
+Use a ChatCut-inspired interaction model adapted for UI work:
+
+1. **Surface the workbench early.** When the mode is unresolved, open the localized launcher before asking the workflow question. Once a runnable preview exists, surface its exact local URL or entry file early so the user can review progress without waiting for final delivery.
+2. **Ask only load-bearing questions.** Do not run a fixed questionnaire. Infer device format, stack, existing assets, and project structure from available context when safe. Ask only about choices that materially change scope, source of truth, creative direction, or delivery.
+3. **Group related choices.** Prefer one localized structured form over a long paragraph of questions. Use stable field ids and mutually exclusive values. After submission, verify that every required answer is present before continuing; never infer consent or a missing required choice from another field.
+4. **Avoid repeated alignment.** Do not ask the workflow question again after the user has chosen a mode, supplied a complete launcher prompt, asked to continue, or provided a narrow correction. Re-align only when a new request introduces a material fork.
+5. **Stage creative commitments.** For Redesign/Create, settle the load-bearing direction before spending an image-generation call. When consistency matters across several screens or assets, establish one inspected sample or Effect Image before batching related outputs.
+6. **Keep the deliverable editable.** The live code project is the primary artifact. A screenshot, Effect Image, or flattened mockup is review evidence, never a substitute for editable code UI.
+
+### Progressive workflow
+
+```text
+localized launcher / existing project context
+  ↓
+one structured mode choice when needed
+  ↓
+targeted discovery (do not rediscover known state)
+  ↓
+direction checkpoint only for Redesign/Create or a material creative fork
+  ↓
+implement in dependency order: structure → layout → assets → polish
+  ↓
+structural verification + rendered visual verification
+  ↓
+bounded fix of the failed scope only → re-verify
+  ↓
+editable preview handoff
+```
+
+### Verification and recovery contract
+
+- A successful file write, build, image-generation response, or validator exit is not by itself visual proof. Inspect the latest rendered UI pixels before claiming visual success.
+- Re-read only the affected project scope before a meaningful mutation when local state may have changed; do not rely on stale paths, ids, assets, or preview state.
+- For visible changes, require both structural evidence (files, routes, components, assets, interactions) and visual evidence (current rendered screenshot compared with the workflow source of truth).
+- If verification is blocked, report the exact blocked stage and preserve the editable preview. Do not claim completion from metadata alone.
+- On a structured failure, change only the rejected or failing scope and preserve unrelated user state. Do not repeat an identical paid or time-consuming image generation after a provider, policy, or validation failure; revise the request or ask for the missing decision.
+- Execute only the requested UI scope. Suggest optional additions separately instead of silently adding screens, features, branding, or content.
 
 ## 对外表达 / User-facing language
 
