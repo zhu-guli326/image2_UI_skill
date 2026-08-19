@@ -37,27 +37,19 @@
 
 ## Demo Videos
 
-### Mimo Activities
-
-https://raw.githubusercontent.com/zhu-guli326/image2_UI_skill/agent/readme-capabilities-real-output/assets/video-cases/mimo-activities-demo.mp4
-
-### Softly Reflections
-
-https://raw.githubusercontent.com/zhu-guli326/image2_UI_skill/agent/readme-capabilities-real-output/assets/video-cases/softly-reflections-demo.mp4
-
-### Cleanbite Scanner
-
-https://raw.githubusercontent.com/zhu-guli326/image2_UI_skill/agent/readme-capabilities-real-output/assets/video-cases/cleanbite-scanner-demo.mp4
-
-### Museum App
-
-https://raw.githubusercontent.com/zhu-guli326/image2_UI_skill/agent/readme-capabilities-real-output/assets/video-cases/museum-app-demo.mp4
-
-### Fashion Shopping App
-
-https://raw.githubusercontent.com/zhu-guli326/image2_UI_skill/agent/readme-capabilities-real-output/assets/video-cases/fashion-shopping-app-demo.mp4
-
-更多案例：**[UI Case Gallery](https://zhu-guli326.github.io/ui_case/library.html?lang=zh)**
+<table>
+  <tr>
+    <td width="50%"><img src="./assets/readme/video-previews/mimo-activities-demo.gif" width="100%" alt="Mimo Activities demo"></td>
+    <td width="50%"><img src="./assets/readme/video-previews/softly-reflections-demo.gif" width="100%" alt="Softly Reflections demo"></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="./assets/readme/video-previews/cleanbite-scanner-demo.gif" width="100%" alt="Cleanbite Scanner demo"></td>
+    <td width="50%"><img src="./assets/readme/video-previews/museum-app-demo.gif" width="100%" alt="Museum App demo"></td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center"><img src="./assets/readme/video-previews/fashion-shopping-app-demo.gif" width="50%" alt="Fashion Shopping App demo"></td>
+  </tr>
+</table>
 
 ## 输出不是“图片版 UI”
 
