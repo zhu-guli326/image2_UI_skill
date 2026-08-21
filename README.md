@@ -37,19 +37,48 @@
 
 ## Demo Videos
 
-<table>
-  <tr>
-    <td width="50%"><img src="./assets/readme/video-previews/mimo-activities-demo.gif" width="100%" alt="Mimo Activities demo"></td>
-    <td width="50%"><img src="./assets/readme/video-previews/softly-reflections-demo.gif" width="100%" alt="Softly Reflections demo"></td>
-  </tr>
-  <tr>
-    <td width="50%"><img src="./assets/readme/video-previews/cleanbite-scanner-demo.gif" width="100%" alt="Cleanbite Scanner demo"></td>
-    <td width="50%"><img src="./assets/readme/video-previews/museum-app-demo.gif" width="100%" alt="Museum App demo"></td>
-  </tr>
-  <tr>
-    <td colspan="2" align="center"><img src="./assets/readme/video-previews/fashion-shopping-app-demo.gif" width="50%" alt="Fashion Shopping App demo"></td>
-  </tr>
-</table>
+<div align="center">
+  <table>
+    <tr>
+      <td align="center" width="50%">
+        <strong>Mimo Activities</strong><br>
+        <sub>活动流、卡片层级与移动端浏览节奏</sub>
+        <br>
+        <img src="./assets/readme/video-previews/mimo-activities-demo.gif" width="100%" alt="Mimo Activities demo">
+      </td>
+      <td align="center" width="50%">
+        <strong>Softly Reflections</strong><br>
+        <sub>日记记录、柔和过渡与空状态</sub>
+        <br>
+        <img src="./assets/readme/video-previews/softly-reflections-demo.gif" width="100%" alt="Softly Reflections demo">
+      </td>
+    </tr>
+    <tr>
+      <td align="center" width="50%">
+        <strong>Cleanbite Scanner</strong><br>
+        <sub>扫码识别流程、结果状态与操作反馈</sub>
+        <br>
+        <img src="./assets/readme/video-previews/cleanbite-scanner-demo.gif" width="100%" alt="Cleanbite Scanner demo">
+      </td>
+      <td align="center" width="50%">
+        <strong>Museum App</strong><br>
+        <sub>多屏导航、作品缩略图与详情页串联</sub>
+        <br>
+        <img src="./assets/readme/video-previews/museum-app-demo.gif" width="100%" alt="Museum App demo">
+      </td>
+    </tr>
+    <tr>
+      <td align="center" colspan="2">
+        <strong>Fashion Shopping App</strong><br>
+        <sub>商品视觉资产、筛选流程与详情展示</sub>
+        <br>
+        <img src="./assets/readme/video-previews/fashion-shopping-app-demo.gif" width="50%" alt="Fashion Shopping App demo">
+      </td>
+    </tr>
+  </table>
+</div>
+
+<p align="center">更多案例：<strong><a href="https://zhu-guli326.github.io/ui_case/library.html?lang=zh">UI Case Gallery</a></strong></p>
 
 ## 输出不是“图片版 UI”
 
