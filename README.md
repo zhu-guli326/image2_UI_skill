@@ -40,24 +40,22 @@ These are rendered, clickable UI demos—not static concept images. The animated
 <div align="center">
   <table>
     <tr>
-      <td align="center" width="50%">
+      <td align="center" width="25%">
         <strong>Fashion Shopping App</strong><br>
         <sub>Product imagery, onboarding, filters, catalog, and product details</sub><br>
         <img src="./assets/readme/video-previews/fashion-shopping-app-demo.gif" width="100%" alt="Interactive AI-generated fashion ecommerce mobile app">
       </td>
-      <td align="center" width="50%">
+      <td align="center" width="25%">
         <strong>Cleanbite Scanner</strong><br>
         <sub>Generated food imagery, scanning flow, result states, and feedback</sub><br>
         <img src="./assets/readme/video-previews/cleanbite-scanner-demo.gif" width="100%" alt="Interactive scanner app with generated product imagery and nutrition results">
       </td>
-    </tr>
-    <tr>
-      <td align="center" width="50%">
+      <td align="center" width="25%">
         <strong>Softly Reflections</strong><br>
         <sub>Journal interactions, card transitions, and personalized states</sub><br>
         <img src="./assets/readme/video-previews/softly-reflections-demo.gif" width="100%" alt="Interactive journal mobile app generated with Image2 UI">
       </td>
-      <td align="center" width="50%">
+      <td align="center" width="25%">
         <strong>Mimo Activities</strong><br>
         <sub>Activity feed, mobile cards, progress states, and browsing rhythm</sub><br>
         <img src="./assets/readme/video-previews/mimo-activities-demo.gif" width="100%" alt="Interactive mobile activity feed generated with Image2 UI">
