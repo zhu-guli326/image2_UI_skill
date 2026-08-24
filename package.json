@@ -1,7 +1,7 @@
 {
   "name": "image2-ui-skill",
   "version": "0.1.0",
-  "description": "Production-grade Codex skill and CLI toolkit for turning UI references into code-rendered demos with image2 bitmap assets.",
+  "description": "Open-source OpenAI Codex skill and CLI for screenshot-to-code, image-to-UI, design-to-code, and interactive AI frontend generation.",
   "type": "module",
   "private": false,
   "license": "MIT",
@@ -46,7 +46,8 @@
     "scripts/ui_design_system_guard.mjs",
     "runtime/",
     "schemas/",
-    "assets/readme/hero.png"
+    "assets/readme/hero.svg",
+    "assets/readme/video-previews/"
   ],
   "scripts": {
     "test": "node --test",
@@ -59,9 +60,18 @@
   },
   "keywords": [
     "codex",
+    "openai-codex",
+    "codex-skill",
     "image2",
     "image-to-ui",
+    "screenshot-to-code",
+    "screenshot-to-ui",
+    "figma-to-code",
     "ui-generation",
-    "design-to-code"
+    "design-to-code",
+    "ai-ui-generator",
+    "frontend-generation",
+    "ui-recreation",
+    "visual-regression"
   ]
 }

@@ -1,0 +1,117 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="620" viewBox="0 0 1600 620" role="img" aria-labelledby="title desc">
+  <title id="title">Image2 UI screenshot-to-code workflow</title>
+  <desc id="desc">A reference interface is separated into editable components and visual assets, then rebuilt as an interactive product.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#090d14"/>
+      <stop offset="1" stop-color="#111823"/>
+    </linearGradient>
+    <linearGradient id="mint" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#9af0d1"/>
+      <stop offset="1" stop-color="#61d6b5"/>
+    </linearGradient>
+    <linearGradient id="pink" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f39ac8"/>
+      <stop offset="1" stop-color="#c866a0"/>
+    </linearGradient>
+    <pattern id="grid" width="42" height="42" patternUnits="userSpaceOnUse">
+      <path d="M 42 0 L 0 0 0 42" fill="none" stroke="#ffffff" stroke-opacity=".055" stroke-width="1"/>
+    </pattern>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="16" stdDeviation="22" flood-color="#000000" flood-opacity=".34"/>
+    </filter>
+    <filter id="soft" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="32"/>
+    </filter>
+  </defs>
+
+  <rect width="1600" height="620" rx="42" fill="url(#bg)"/>
+  <rect width="1600" height="620" rx="42" fill="url(#grid)"/>
+  <circle cx="1425" cy="92" r="118" fill="#c866a0" opacity=".08" filter="url(#soft)"/>
+  <circle cx="1130" cy="540" r="135" fill="#61d6b5" opacity=".07" filter="url(#soft)"/>
+  <rect x="44" y="44" width="1512" height="532" rx="32" fill="none" stroke="#ffffff" stroke-opacity=".12"/>
+
+  <g font-family="Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif">
+    <rect x="82" y="78" width="286" height="48" rx="24" fill="#c866a0" fill-opacity=".18" stroke="#f39ac8" stroke-opacity=".7"/>
+    <circle cx="111" cy="102" r="6" fill="#f39ac8"/>
+    <text x="130" y="109" fill="#f7c7df" font-size="18" font-weight="700" letter-spacing="1.6">OPEN-SOURCE CODEX SKILL</text>
+
+    <text x="82" y="225" fill="#f7f9fc" font-size="82" font-weight="780" letter-spacing="-3">Screenshot to code.</text>
+    <text x="86" y="278" fill="#c5ceda" font-size="27" font-weight="520">Build editable UI with real components and visual assets.</text>
+
+    <g transform="translate(82 348)">
+      <rect width="238" height="116" rx="24" fill="#ffffff" fill-opacity=".075" stroke="#ffffff" stroke-opacity=".16"/>
+      <text x="24" y="34" fill="#9af0d1" font-size="16" font-weight="750" letter-spacing="1">01  REFERENCE</text>
+      <rect x="24" y="53" width="54" height="42" rx="10" fill="#dfe7f1"/>
+      <rect x="88" y="55" width="118" height="8" rx="4" fill="#f7f9fc" opacity=".92"/>
+      <rect x="88" y="73" width="94" height="7" rx="3.5" fill="#8995a5"/>
+      <rect x="88" y="89" width="72" height="7" rx="3.5" fill="#8995a5" opacity=".72"/>
+    </g>
+
+    <path d="M334 406 H385" stroke="#9af0d1" stroke-width="5" stroke-linecap="round"/>
+    <path d="M372 391 L389 406 L372 421" fill="none" stroke="#9af0d1" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <g transform="translate(410 348)">
+      <rect width="254" height="116" rx="24" fill="#ffffff" fill-opacity=".075" stroke="#ffffff" stroke-opacity=".16"/>
+      <text x="24" y="34" fill="#f39ac8" font-size="16" font-weight="750" letter-spacing="1">02  DECOMPOSE</text>
+      <rect x="24" y="54" width="72" height="42" rx="10" fill="#c866a0" fill-opacity=".45"/>
+      <path d="M39 68 H81 M39 78 H72 M39 88 H62" stroke="#ffd8ea" stroke-width="4" stroke-linecap="round"/>
+      <circle cx="128" cy="75" r="21" fill="url(#mint)"/>
+      <rect x="160" y="57" width="68" height="8" rx="4" fill="#f7f9fc" opacity=".9"/>
+      <rect x="160" y="75" width="53" height="7" rx="3.5" fill="#8995a5"/>
+      <rect x="160" y="91" width="42" height="7" rx="3.5" fill="#8995a5" opacity=".72"/>
+    </g>
+
+    <path d="M677 406 H728" stroke="#f39ac8" stroke-width="5" stroke-linecap="round"/>
+    <path d="M715 391 L732 406 L715 421" fill="none" stroke="#f39ac8" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <g transform="translate(753 348)">
+      <rect width="238" height="116" rx="24" fill="#ffffff" fill-opacity=".075" stroke="#ffffff" stroke-opacity=".16"/>
+      <text x="24" y="34" fill="#f9dc78" font-size="16" font-weight="750" letter-spacing="1">03  BUILD + VERIFY</text>
+      <rect x="24" y="55" width="52" height="40" rx="12" fill="#f9dc78" fill-opacity=".9"/>
+      <path d="M39 75 L49 85 L64 66" fill="none" stroke="#151b24" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+      <rect x="91" y="58" width="118" height="8" rx="4" fill="#f7f9fc" opacity=".92"/>
+      <rect x="91" y="76" width="91" height="7" rx="3.5" fill="#8995a5"/>
+      <rect x="91" y="92" width="106" height="7" rx="3.5" fill="#8995a5" opacity=".72"/>
+    </g>
+
+    <text x="84" y="518" fill="#8995a5" font-size="18" font-weight="650" letter-spacing=".8">RECREATE  ·  REDESIGN  ·  CREATE  ·  VALIDATE  ·  COMPARE</text>
+  </g>
+
+  <g transform="translate(1070 70)" filter="url(#shadow)">
+    <rect width="374" height="482" rx="58" fill="#f5f7fb"/>
+    <rect x="24" y="28" width="326" height="426" rx="40" fill="#12151d"/>
+    <rect x="119" y="44" width="136" height="27" rx="14" fill="#05070a"/>
+
+    <rect x="50" y="92" width="274" height="108" rx="24" fill="#202632"/>
+    <circle cx="103" cy="146" r="34" fill="url(#mint)"/>
+    <rect x="154" y="121" width="126" height="13" rx="6.5" fill="#f7f9fc"/>
+    <rect x="154" y="145" width="94" height="10" rx="5" fill="#788496"/>
+    <rect x="154" y="166" width="68" height="10" rx="5" fill="#788496" opacity=".72"/>
+
+    <rect x="50" y="220" width="127" height="132" rx="24" fill="#c866a0" fill-opacity=".34"/>
+    <rect x="197" y="220" width="127" height="132" rx="24" fill="#213b37"/>
+    <circle cx="113" cy="272" r="25" fill="url(#pink)"/>
+    <path d="M242 260 H280 M242 278 H294 M242 296 H271" stroke="#b7f4df" stroke-width="8" stroke-linecap="round"/>
+    <rect x="76" y="316" width="74" height="9" rx="4.5" fill="#ffd8ea"/>
+
+    <rect x="50" y="373" width="274" height="52" rx="20" fill="url(#mint)"/>
+    <circle cx="80" cy="399" r="8" fill="#10221d"/>
+    <rect x="101" y="393" width="128" height="12" rx="6" fill="#10221d" opacity=".84"/>
+    <path d="M274 390 L284 399 L274 408" fill="none" stroke="#10221d" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <g font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="16" font-weight="720">
+    <rect x="1363" y="150" width="153" height="52" rx="18" fill="#4b2b40" stroke="#f39ac8" stroke-opacity=".55"/>
+    <text x="1384" y="182" fill="#ffd8ea">EDITABLE UI</text>
+    <path d="M1340 175 H1363" stroke="#f39ac8" stroke-width="3"/>
+
+    <rect x="1363" y="248" width="153" height="52" rx="18" fill="#203d37" stroke="#9af0d1" stroke-opacity=".55"/>
+    <text x="1382" y="280" fill="#c9f8e8">REAL ASSETS</text>
+    <path d="M1340 274 H1363" stroke="#9af0d1" stroke-width="3"/>
+
+    <rect x="1363" y="346" width="153" height="52" rx="18" fill="#443d23" stroke="#f9dc78" stroke-opacity=".55"/>
+    <text x="1380" y="378" fill="#fff0b2">VERIFY + FIX</text>
+    <path d="M1340 372 H1363" stroke="#f9dc78" stroke-width="3"/>
+  </g>
+</svg>

@@ -1,141 +1,234 @@
-# image2_UI_skill
+# Image2 UI — Screenshot to Code & AI UI Generation for OpenAI Codex
 
 <p align="center">
-  <img src="./assets/readme/hero.png" width="100%" alt="image2_UI_skill — turn UI references and ideas into real interactive interfaces">
+  <strong>Turn screenshots, design references, Figma exports, or text prompts into editable, interactive frontend UI.</strong>
 </p>
 
 <p align="center">
-  <strong>把参考图、设计稿或一句描述，变成真正可运行、可点击、可继续修改的 UI。</strong>
+  面向 Codex 的开源 Image-to-UI Skill 与 CLI：把截图、设计稿、参考图或一句产品描述，变成真正可运行、可点击、可继续修改的前端界面。
 </p>
 
 <p align="center">
-  不是把整页做成一张图：界面结构、文字、按钮、导航和交互由代码与组件实现；人物、产品、动物、照片、插画和复杂背景等视觉资产由 image2 生成并融入真实布局。
+  <a href="./LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
+  <img alt="Node.js 20+" src="https://img.shields.io/badge/Node.js-20%2B-339933?logo=node.js&logoColor=white">
+  <img alt="Python 3.10+" src="https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white">
+  <img alt="OpenAI Codex Skill" src="https://img.shields.io/badge/OpenAI_Codex-Skill-111111">
 </p>
-
-## 能实现什么
-
-| 能力 | 最终效果 |
-| --- | --- |
-| **UI 忠实复刻** | 从截图、设计稿或 App 页面还原成可运行的真实界面，保留版式、比例、层级和视觉关系。 |
-| **参考图重新设计** | 保留参考图的视觉语言、构图气质或品牌感觉，生成新的页面，而不是简单照抄。 |
-| **从零创建 UI** | 从产品描述直接生成移动端、Web、Dashboard、Landing Page 等完整界面。 |
-| **复杂视觉资产生成** | 为页面生成真实可用的人物、动物、产品、照片、插画、背景与 cutout subject，并与文字和组件自由组合。 |
-| **Design System / 组件复用** | iOS、Material、Ant Design、shadcn/Radix 等体系优先复用现有组件与 icon，同类页面保持一致的设计 DNA。 |
-| **强视觉图文排版** | 支持抠图、自由叠层、文字穿插、Hero、卡片、海报式构图，不被矩形图片框限制。 |
-| **移动端细节** | 处理 Safe Area、Dynamic Island、Status Bar、Home Indicator、Bottom Nav 与 CTA 等真实设备细节。 |
-| **可点击交付** | 输出 HTML / 前端项目，而不是只有效果图；可以继续改代码、接数据、补交互。 |
-
-## 实际效果
-
-### Featured image2 output
 
 <p align="center">
-  <img src="./assets/readme/featured-dog-output.jpg" width="360" alt="Actual generated dog image2 output — golden retriever wearing sunglasses in a pink pool float">
+  <img src="./assets/readme/hero.svg" width="100%" alt="Image2 UI workflow: screenshot reference to editable code, reusable assets, and an interactive frontend">
 </p>
 
-<p align="center"><sub>Actual generated output · Golden retriever / summer pool visual</sub></p>
+**Image2 UI** is an open-source **OpenAI Codex skill and CLI toolkit** for **screenshot-to-code**, **image-to-UI**, **design-to-code**, and **AI frontend generation**. Common workflows include UI-to-code, image-to-code, screenshot-to-HTML, and Figma-to-code. It separates editable interface structure from complex bitmap artwork: text, buttons, navigation, forms, layout, and interactions stay in code, while photos, people, products, illustrations, cutouts, and backgrounds can be generated as reusable image assets.
 
-## Demo Videos
+它不是把整张设计稿塞进网页当背景图，而是用真实前端代码实现 UI，用独立图像资产完成高视觉表现，并通过渲染、对比和验证循环提高还原度。
+
+## Why Image2 UI
+
+- **Real code, not a flattened mockup** — 文案、按钮、导航、表单、状态和交互都可编辑、可继续开发。
+- **Three explicit workflows** — 支持忠实还原、参考重设计，以及从产品描述创建全新 UI。
+- **Visual asset generation** — 人物、商品、动物、摄影、插画、纹理、背景和透明抠图可作为独立资产融入布局。
+- **Screenshot fidelity loop** — 支持浏览器渲染、参考图对比、视觉审计和有界修复循环。
+- **Design-system aware** — 可优先复用 iOS、Material Design、Ant Design、shadcn/ui、Radix 等现有组件与图标体系。
+- **Production-oriented runtime** — 运行状态可持久化，可检查、恢复，并支持单 Agent 或多 Agent 执行。
+- **Mobile UI details** — 覆盖 Safe Area、Dynamic Island、Status Bar、Home Indicator、Bottom Navigation 和 CTA 等设备细节。
+
+## Demos
+
+These are rendered, clickable UI demos—not static concept images. The animated previews show navigation, state changes, generated bitmap assets, and code-rendered controls working together.
 
 <div align="center">
   <table>
     <tr>
       <td align="center" width="50%">
-        <strong>Mimo Activities</strong><br>
-        <sub>活动流、卡片层级与移动端浏览节奏</sub>
-        <br>
-        <img src="./assets/readme/video-previews/mimo-activities-demo.gif" width="100%" alt="Mimo Activities demo">
+        <strong>Fashion Shopping App</strong><br>
+        <sub>Product imagery, onboarding, filters, catalog, and product details</sub><br>
+        <img src="./assets/readme/video-previews/fashion-shopping-app-demo.gif" width="100%" alt="Interactive AI-generated fashion ecommerce mobile app">
       </td>
       <td align="center" width="50%">
-        <strong>Softly Reflections</strong><br>
-        <sub>日记记录、柔和过渡与空状态</sub>
-        <br>
-        <img src="./assets/readme/video-previews/softly-reflections-demo.gif" width="100%" alt="Softly Reflections demo">
+        <strong>Cleanbite Scanner</strong><br>
+        <sub>Generated food imagery, scanning flow, result states, and feedback</sub><br>
+        <img src="./assets/readme/video-previews/cleanbite-scanner-demo.gif" width="100%" alt="Interactive scanner app with generated product imagery and nutrition results">
       </td>
     </tr>
     <tr>
       <td align="center" width="50%">
-        <strong>Cleanbite Scanner</strong><br>
-        <sub>扫码识别流程、结果状态与操作反馈</sub>
-        <br>
-        <img src="./assets/readme/video-previews/cleanbite-scanner-demo.gif" width="100%" alt="Cleanbite Scanner demo">
+        <strong>Softly Reflections</strong><br>
+        <sub>Journal interactions, card transitions, and personalized states</sub><br>
+        <img src="./assets/readme/video-previews/softly-reflections-demo.gif" width="100%" alt="Interactive journal mobile app generated with Image2 UI">
       </td>
       <td align="center" width="50%">
         <strong>Museum App</strong><br>
-        <sub>多屏导航、作品缩略图与详情页串联</sub>
-        <br>
-        <img src="./assets/readme/video-previews/museum-app-demo.gif" width="100%" alt="Museum App demo">
+        <sub>Multi-screen navigation, artwork thumbnails, and details</sub><br>
+        <img src="./assets/readme/video-previews/museum-app-demo.gif" width="100%" alt="Interactive museum app with multi-screen navigation">
       </td>
     </tr>
     <tr>
       <td align="center" colspan="2">
-        <strong>Fashion Shopping App</strong><br>
-        <sub>商品视觉资产、筛选流程与详情展示</sub>
-        <br>
-        <img src="./assets/readme/video-previews/fashion-shopping-app-demo.gif" width="50%" alt="Fashion Shopping App demo">
+        <strong>Mimo Activities</strong><br>
+        <sub>Activity feed, mobile cards, progress states, and browsing rhythm</sub><br>
+        <img src="./assets/readme/video-previews/mimo-activities-demo.gif" width="50%" alt="Interactive mobile activity feed generated with Image2 UI">
       </td>
     </tr>
   </table>
 </div>
 
-<p align="center">更多案例：<strong><a href="https://zhu-guli326.github.io/ui_case/library.html?lang=zh">UI Case Gallery</a></strong></p>
+<p align="center">
+  <strong><a href="https://zhu-guli326.github.io/ui_case/library.html?lang=zh">Explore the complete UI Case Gallery →</a></strong>
+</p>
 
-## 输出不是“图片版 UI”
+## Three Workflow Modes
 
-最终结果强调四件事：
+| Mode | Input | Source of truth | Best for |
+| --- | --- | --- | --- |
+| `recreate` | Screenshot, mockup, or design reference | Original reference | Screenshot-to-code, UI replication, faithful frontend recreation |
+| `redesign` | Visual reference + new product requirements | Reviewed Effect Image | Applying a visual language to a new layout, brand, or experience |
+| `create` | Text description | Reviewed Effect Image | AI UI generation, product prototypes, landing pages, dashboards, and mobile apps |
 
-- **真实代码 UI** — 文案、按钮、导航、表单、状态、交互都能继续编辑。
-- **真实视觉资产** — 人物、产品、动物、摄影、插画和背景可以用 image2 独立生成，不把整张截图当页面。
-- **组件一致性** — 同一个 Status Bar、Bottom Nav、Button、Icon 不会每个页面重新画一套。
-- **视觉完成度** — 关注构图密度、裁切、Safe Area、图文关系、层级和最终浏览器 Render，而不只关注“代码能运行”。
+```text
+recreate: reference  → analyze → implement → render and compare → fix
+redesign: reference  → visual direction → effect image → implement → verify
+create:   description → visual direction → effect image → implement → verify
+```
 
-## 适合什么场景
-
-- App / Web 页面复刻
-- Figma / Screenshot to UI
-- Landing Page / Campaign Page
-- Dashboard / SaaS
-- 电商、内容、社交、工具型产品
-- 强视觉 Hero / Editorial Layout
-- Design System 对比与组件化生成
-- 快速做可点击产品原型
+With `--reference` and no explicit mode, the runtime defaults to `recreate`. Without `--reference`, it defaults to `create`. Select `redesign` explicitly when the reference should inspire a new interface instead of being copied faithfully.
 
 ## Quick Start
+
+### Requirements
+
+- Node.js 20 or newer
+- Python 3.10 or newer
+- Codex
+- Optional: Playwright/Chromium for browser render checks
+- Optional: an `image2` command or a configured image-generation API key for bitmap asset generation
+
+### Install the Codex skill and CLI
 
 Windows PowerShell:
 
 ```powershell
-git clone https://github.com/zhu-guli326/image2_UI_skill.git "$env:USERPROFILE\.codex\skills\image2_UI_skill"
+$skillDir = Join-Path $env:USERPROFILE ".codex\skills\image2_UI_skill"
+git clone https://github.com/zhu-guli326/image2_UI_skill.git $skillDir
+Set-Location $skillDir
+npm link
+image2-ui doctor
 ```
 
 macOS / Linux:
 
 ```bash
-git clone https://github.com/zhu-guli326/image2_UI_skill.git "${CODEX_HOME:-$HOME/.codex}/skills/image2_UI_skill"
+skill_dir="${CODEX_HOME:-$HOME/.codex}/skills/image2_UI_skill"
+git clone https://github.com/zhu-guli326/image2_UI_skill.git "$skill_dir"
+cd "$skill_dir"
+npm link
+image2-ui doctor
 ```
 
-示例：
+`npm link` exposes the bundled `image2-ui` command globally from the checkout. To work on the repository without installing the global command, use `node scripts/image2-ui --help`.
+
+## Usage
+
+### 1. Recreate a UI from a screenshot
 
 ```bash
-image2-ui run <project-dir> --mode recreate --task "Recreate this UI faithfully" --reference reference.png
+image2-ui run ./output \
+  --mode recreate \
+  --task "Recreate this mobile UI faithfully" \
+  --reference ./reference.png
 ```
+
+### 2. Redesign a visual reference
 
 ```bash
-image2-ui run <project-dir> --mode redesign --task "Redesign this reference for my product" --reference reference.png
+image2-ui run ./output \
+  --mode redesign \
+  --task "Keep the visual language, but redesign it for a travel app" \
+  --reference ./reference.png
 ```
+
+### 3. Generate a new UI from a description
 
 ```bash
-image2-ui run <project-dir> --mode create --task "Create a premium mobile app"
+image2-ui run ./output \
+  --mode create \
+  --task "Create a premium mobile finance dashboard"
 ```
 
-## More
+### Inspect or resume a run
 
-- **UI Case Gallery** — <https://zhu-guli326.github.io/ui_case/library.html?lang=zh>
-- **Design Systems** — <https://zhu-guli326.github.io/ui_case/brands.html?lang=zh>
-- **UI Vocabulary** — <https://zhu-guli326.github.io/ui_case/vocabulary.html?lang=zh>
-- **Skill specification** — [SKILL.md](./SKILL.md)
-- **Production / validation** — [PRODUCTION.md](./PRODUCTION.md)
-- **Video case index** — [references/video-case-previews.md](./references/video-case-previews.md)
+```bash
+image2-ui inspect ./output --latest --json
+image2-ui resume ./output --latest
+```
+
+### Validate and compare rendered output
+
+```bash
+image2-ui validate ./output --reference ./reference.png
+image2-ui compare --reference ./reference.png --actual ./output.png
+image2-ui loop ./output --reference ./reference.png
+```
+
+## Use Cases: Screenshot to Code, Figma to Code, and AI UI Generation
+
+- Screenshot to frontend code / screenshot to HTML workflows
+- Figma exports and design references to editable UI
+- Mobile apps for iOS and Android-style layouts
+- Web apps, SaaS dashboards, admin panels, and internal tools
+- Landing pages, campaign pages, and editorial layouts
+- Ecommerce catalogs, product pages, social feeds, and content apps
+- Clickable product prototypes with generated visual assets
+- Design-system-aware interface variations
+
+## How It Differs from a Screenshot Generator
+
+| Interface element | Implemented as |
+| --- | --- |
+| Text, buttons, forms, navigation, status, layout, interaction | Editable code and reusable components |
+| Photos, people, products, animals, illustrations, textures, backgrounds | Separate bitmap assets generated or prepared for the project |
+| Complete screenshot or Effect Image | Visual reference for implementation and verification, never the shipped interactive UI |
+
+This separation keeps the result searchable, accessible, responsive, interactive, and maintainable. Generated image assets must not contain UI text, buttons, logos, watermarks, status bars, or small interface icons.
+
+## CLI Commands
+
+| Command | Purpose |
+| --- | --- |
+| `image2-ui run` | Start a durable `recreate`, `redesign`, or `create` workflow |
+| `image2-ui inspect` | Inspect saved runtime state and event history |
+| `image2-ui resume` | Resume an interrupted or review-gated run |
+| `image2-ui validate` | Audit broken assets, overflow, contrast, rendering, and common visual problems |
+| `image2-ui compare` | Build a side-by-side reference/output comparison board |
+| `image2-ui loop` | Build, capture, validate, compare, and produce a bounded fix queue |
+| `image2-ui doctor` | Check runtime versions, browser capture, media tools, fonts, output access, and image channels |
+
+Run `image2-ui --help` for the complete command reference.
+
+## Documentation
+
+- [Skill specification](./SKILL.md) — Codex routing, workflow, asset, implementation, and verification rules
+- [Production guide](./PRODUCTION.md) — installation, runtime lifecycle, quality gates, and release checks
+- [Contributing](./CONTRIBUTING.md) — local checks and pull request guidance
+- [Changelog](./CHANGELOG.md) — notable changes
+- [Video case index](./references/video-case-previews.md) — case previews and source videos
+- [UI Case Gallery](https://zhu-guli326.github.io/ui_case/library.html?lang=zh) — complete examples
+- [Design Systems](https://zhu-guli326.github.io/ui_case/brands.html?lang=zh) — brand and component-system references
+- [UI Vocabulary](https://zhu-guli326.github.io/ui_case/vocabulary.html?lang=zh) — bilingual UI section vocabulary
+
+## Development
+
+```bash
+npm test
+npm run doctor
+npm run pack:check
+```
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md) before opening a pull request.
+
+## License
+
+[MIT](./LICENSE)
 
 ## Contact
 
