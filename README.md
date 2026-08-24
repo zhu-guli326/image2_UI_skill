@@ -58,16 +58,9 @@ These are rendered, clickable UI demos—not static concept images. The animated
         <img src="./assets/readme/video-previews/softly-reflections-demo.gif" width="100%" alt="Interactive journal mobile app generated with Image2 UI">
       </td>
       <td align="center" width="50%">
-        <strong>Museum App</strong><br>
-        <sub>Multi-screen navigation, artwork thumbnails, and details</sub><br>
-        <img src="./assets/readme/video-previews/museum-app-demo.gif" width="100%" alt="Interactive museum app with multi-screen navigation">
-      </td>
-    </tr>
-    <tr>
-      <td align="center" colspan="2">
         <strong>Mimo Activities</strong><br>
         <sub>Activity feed, mobile cards, progress states, and browsing rhythm</sub><br>
-        <img src="./assets/readme/video-previews/mimo-activities-demo.gif" width="50%" alt="Interactive mobile activity feed generated with Image2 UI">
+        <img src="./assets/readme/video-previews/mimo-activities-demo.gif" width="100%" alt="Interactive mobile activity feed generated with Image2 UI">
       </td>
     </tr>
   </table>
