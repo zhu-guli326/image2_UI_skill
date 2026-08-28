@@ -41,31 +41,31 @@ These are rendered, clickable UI demos—not static concept images. The animated
   <table>
     <tr>
       <td align="center" width="25%">
-        <strong>Fashion Shopping App</strong><br>
-        <sub>Product imagery, onboarding, filters, catalog, and product details</sub><br>
-        <img src="./assets/readme/video-previews/fashion-shopping-app-demo.gif" width="100%" alt="Interactive AI-generated fashion ecommerce mobile app">
+        <strong>FuFu Bakery</strong><br>
+        <sub>Hand-drawn character art, welcome flow, and bakery menu screens</sub><br>
+        <img src="./assets/readme/video-previews/fufu-bakery-demo.gif" width="100%" alt="Interactive AI-generated hand-drawn bakery mobile app">
       </td>
       <td align="center" width="25%">
-        <strong>Cleanbite Scanner</strong><br>
-        <sub>Generated food imagery, scanning flow, result states, and feedback</sub><br>
-        <img src="./assets/readme/video-previews/cleanbite-scanner-demo.gif" width="100%" alt="Interactive scanner app with generated product imagery and nutrition results">
+        <strong>Plate Play</strong><br>
+        <sub>High-color illustrated recipes, craving filters, and saved states</sub><br>
+        <img src="./assets/readme/video-previews/plate-play-demo.gif" width="100%" alt="Interactive illustrated recipe app with high-color blocks and food imagery">
       </td>
       <td align="center" width="25%">
-        <strong>Softly Reflections</strong><br>
-        <sub>Journal interactions, card transitions, and personalized states</sub><br>
-        <img src="./assets/readme/video-previews/softly-reflections-demo.gif" width="100%" alt="Interactive journal mobile app generated with Image2 UI">
+        <strong>Signal Grid</strong><br>
+        <sub>Thermal-gradient network scanning, plan tiers, and settings flow</sub><br>
+        <img src="./assets/readme/video-previews/signal-grid-demo.gif" width="100%" alt="Interactive network scanner app with a thermal gradient visual system">
       </td>
       <td align="center" width="25%">
-        <strong>Mimo Activities</strong><br>
-        <sub>Activity feed, mobile cards, progress states, and browsing rhythm</sub><br>
-        <img src="./assets/readme/video-previews/mimo-activities-demo.gif" width="100%" alt="Interactive mobile activity feed generated with Image2 UI">
+        <strong>Volt Route</strong><br>
+        <sub>Dark-mode EV charging with map routing, station details, and charge states</sub><br>
+        <img src="./assets/readme/video-previews/volt-route-demo.gif" width="100%" alt="Interactive dark-mode EV charging app with map route and station screens">
       </td>
     </tr>
   </table>
 </div>
 
 <p align="center">
-  <strong><a href="https://zhu-guli326.github.io/ui_case/library.html?lang=zh">Explore the complete UI Case Gallery →</a></strong>
+  <strong><a href="https://www.ondesign.tech/library.html?lang=zh">Explore the complete UI Case Gallery →</a></strong>
 </p>
 
 ## Three Workflow Modes
@@ -203,9 +203,9 @@ Run `image2-ui --help` for the complete command reference.
 - [Contributing](./CONTRIBUTING.md) — local checks and pull request guidance
 - [Changelog](./CHANGELOG.md) — notable changes
 - [Video case index](./references/video-case-previews.md) — case previews and source videos
-- [UI Case Gallery](https://zhu-guli326.github.io/ui_case/library.html?lang=zh) — complete examples
-- [Design Systems](https://zhu-guli326.github.io/ui_case/brands.html?lang=zh) — brand and component-system references
-- [UI Vocabulary](https://zhu-guli326.github.io/ui_case/vocabulary.html?lang=zh) — bilingual UI section vocabulary
+- [UI Case Gallery](https://www.ondesign.tech/library.html?lang=zh) — complete style library
+- [Design Systems](https://www.ondesign.tech/brands.html?lang=zh) — brand and component-system references
+- [UI Vocabulary](https://www.ondesign.tech/vocabulary.html?lang=zh) — bilingual UI section vocabulary
 
 ## Development
 

@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Replaced the README demo set with five cases from the ONDesign style library (FuFu Bakery, Plate Play, Signal Grid, Today, Volt Route) and pointed the gallery links at ondesign.tech.
 - Moved the gallery pages, catalog, demos, screenshots, and media to the standalone `ui_case` repository.
 - Reduced the npm package to the installable Skill, CLI tooling, references, and README artwork.
 - Added a full-repository demo validation command and documented visual warning baseline.
