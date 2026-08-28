@@ -117,7 +117,7 @@ test("skill exposes the three workflow contracts and standalone gallery", () => 
   assert.match(skill, /"label": "从零创建"/);
   assert.match(skill, /first navigate the user to the Chinese visual launcher/);
   assert.match(skill, /host's in-app browser or navigation capability/);
-  assert.match(skill, /https:\/\/zhu-guli326\.github\.io\/ui_case\/launcher\.html\?lang=zh/);
+  assert.match(skill, /https:\/\/www\.ondesign\.tech\/launcher\.html\?lang=zh/);
   assert.match(skill, /Visible Workbench And Progressive Alignment/);
   assert.match(skill, /Ask only load-bearing questions/);
   assert.match(skill, /Group related choices/);
@@ -125,7 +125,7 @@ test("skill exposes the three workflow contracts and standalone gallery", () => 
   assert.match(skill, /both structural evidence .* and visual evidence/);
   assert.match(skill, /change only the rejected or failing scope/);
   assert.match(skill, /Do not repeat an identical paid or time-consuming image generation/);
-  assert.match(skill, /https:\/\/zhu-guli326\.github\.io\/ui_case\//);
+  assert.match(skill, /https:\/\/www\.ondesign\.tech\/library\.html\?lang=zh/);
   assert.match(guide, /Recreate：直接从原参考图拆分/);
   assert.match(guide, /Redesign \/ Create：先生成并检查完整 Effect Image/);
 });
