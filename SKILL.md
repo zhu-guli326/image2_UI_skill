@@ -110,7 +110,7 @@ With `--reference` and no explicit mode, Runtime defaults to `recreate`. Without
 
 When a new UI generation request starts and the workflow mode is not already clear, first navigate the user to the Chinese visual launcher:
 
-`https://zhu-guli326.github.io/ui_case/launcher.html?lang=zh`
+`https://www.ondesign.tech/launcher.html?lang=zh`
 
 Use the host's in-app browser or navigation capability when available. If automatic navigation is unavailable, provide the URL as a clickable link and continue with the structured workflow choice; do not block the task on navigation.
 
@@ -148,11 +148,11 @@ Utility actions such as exploring an existing project, switching a design system
 
 The canonical first-turn visual launcher is:
 
-`https://zhu-guli326.github.io/ui_case/launcher.html?lang=zh`
+`https://www.ondesign.tech/launcher.html?lang=zh`
 
 Treat the launcher's generated prompt as structured user intent. Preserve target, scope, permission boundary, output depth, reference source, design-system choice, and verification requirements unless the user overrides them. When the launcher says a local reference file will be attached, use the image attached in the conversation; the browser preview itself never uploads that file.
 
-Use `https://zhu-guli326.github.io/ui_case/` when the user wants more cases. The gallery is maintained separately from the installable Skill.
+Use `https://www.ondesign.tech/library.html?lang=zh` when the user wants more cases. The gallery is maintained separately from the installable Skill.
 
 ## 可见工作台与渐进式确认 / Visible Workbench And Progressive Alignment
 

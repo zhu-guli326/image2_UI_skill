@@ -30,7 +30,7 @@ image2-ui doctor
 The npm package intentionally contains the Skill, Runtime, schemas, scripts,
 references, and README hero. The full demo media archive and case-study videos
 live in the separate [`ui_case`](https://github.com/zhu-guli326/ui_case)
-repository and are published at <https://zhu-guli326.github.io/ui_case/>.
+repository and the case gallery, brand references, launcher, and vocabulary are published at <https://www.ondesign.tech/library.html?lang=zh>.
 
 ## Quality Gates
 

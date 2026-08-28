@@ -1,4 +1,4 @@
 interface:
   display_name: "Image2 UI"
   short_description: "用可视化选项把参考图做成可点击 UI"
-  default_prompt: "Use $image-to-ui-skill. First use the host's native structured choice UI for 探索并理解代码, 构建新功能、应用或工具, 审查代码并提出修改建议, or 修复问题和失败; if unavailable, open https://zhu-guli326.github.io/ui_case/launcher.html?intent=explore, then preserve the selected intent in the generated prompt."
+  default_prompt: "Use $image-to-ui-skill. First use the host's native structured choice UI for 探索并理解代码, 构建新功能、应用或工具, 审查代码并提出修改建议, or 修复问题和失败; if unavailable, open https://www.ondesign.tech/launcher.html?lang=zh, then preserve the selected intent in the generated prompt."
