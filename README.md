@@ -13,10 +13,6 @@
   <img alt="OpenAI Codex Skill" src="https://img.shields.io/badge/OpenAI_Codex-Skill-111111">
 </p>
 
-<p align="center">
-  <img src="./assets/readme/hero.svg" width="100%" alt="Image2 UI workflow: screenshot reference to editable code, reusable assets, and an interactive frontend">
-</p>
-
 ## Demos
 
 Rendered, clickable UI demos—navigation, state changes, generated image assets, and code-rendered controls working together.
@@ -50,6 +46,10 @@ Rendered, clickable UI demos—navigation, state changes, generated image assets
 
 <p align="center">
   <strong><a href="https://www.ondesign.tech/library.html?lang=zh">Explore the complete UI Case Gallery →</a></strong>
+</p>
+
+<p align="center">
+  <img src="./assets/readme/hero.svg" width="100%" alt="Image2 UI workflow: screenshot reference to editable code, reusable assets, and an interactive frontend">
 </p>
 
 ## Why Image2 UI
