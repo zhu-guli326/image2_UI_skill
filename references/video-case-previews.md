@@ -8,8 +8,7 @@
 | --- | --- | --- |
 | FuFu Bakery | 可爱线条角色、欢迎流程与烘焙菜单 | [播放视频](../assets/video-cases/fufu-bakery-demo.mp4) |
 | Plate Play | 高彩插画食谱、筛选与收藏状态 | [播放视频](../assets/video-cases/plate-play-demo.mp4) |
-| Signal Grid | 热成像渐变、套餐选择与设置流程 | [播放视频](../assets/video-cases/signal-grid-demo.mp4) |
 | Today | 报刊感排版、头条轮播与新闻流 | [播放视频](../assets/video-cases/today-news-demo.mp4) |
-| Volt Route | 暗色地图路线、充电站详情与状态切换 | [播放视频](../assets/video-cases/volt-route-demo.mp4) |
+| FitHub | 黑白极简布局、训练摄影与周目标卡片 | [播放视频](../assets/video-cases/fithub-demo.mp4) |
 
 在本地预览时，可直接用浏览器打开上面的 MP4 链接。需要更多案例时，继续访问 [ONDesign UI 风格案例库](https://www.ondesign.tech/library.html?lang=zh)。

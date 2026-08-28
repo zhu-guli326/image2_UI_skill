@@ -51,14 +51,14 @@ These are rendered, clickable UI demos—not static concept images. The animated
         <img src="./assets/readme/video-previews/plate-play-demo.gif" width="100%" alt="Interactive illustrated recipe app with high-color blocks and food imagery">
       </td>
       <td align="center" width="25%">
-        <strong>Signal Grid</strong><br>
-        <sub>Thermal-gradient network scanning, plan tiers, and settings flow</sub><br>
-        <img src="./assets/readme/video-previews/signal-grid-demo.gif" width="100%" alt="Interactive network scanner app with a thermal gradient visual system">
+        <strong>Today</strong><br>
+        <sub>Newspaper-inspired reading, headline carousel, and article feed</sub><br>
+        <img src="./assets/readme/video-previews/today-news-demo.gif" width="100%" alt="Interactive editorial news reader with generated photography">
       </td>
       <td align="center" width="25%">
-        <strong>Volt Route</strong><br>
-        <sub>Dark-mode EV charging with map routing, station details, and charge states</sub><br>
-        <img src="./assets/readme/video-previews/volt-route-demo.gif" width="100%" alt="Interactive dark-mode EV charging app with map route and station screens">
+        <strong>FitHub</strong><br>
+        <sub>Minimal fitness planning with workout photography and weekly goals</sub><br>
+        <img src="./assets/readme/video-previews/fithub-demo.gif" width="100%" alt="Interactive fitness planner app with workout photography and stat cards">
       </td>
     </tr>
   </table>
