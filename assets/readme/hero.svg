@@ -1,111 +1,117 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="720" viewBox="0 0 1600 720" role="img" aria-labelledby="title desc">
-  <title id="title">Image2 UI — turn any reference into real UI</title>
-  <desc id="desc">A cinematic orbital workspace showing the Image2 UI workflow from reference and layout analysis to asset planning, coded interface states, and visual verification.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="620" viewBox="0 0 1600 620" role="img" aria-labelledby="title desc">
+  <title id="title">Image2 UI screenshot-to-code workflow</title>
+  <desc id="desc">A reference interface is separated into editable components and visual assets, then rebuilt as an interactive product.</desc>
   <defs>
-    <radialGradient id="bg" cx="50%" cy="46%" r="72%"><stop stop-color="#101713"/><stop offset=".52" stop-color="#070b09"/><stop offset="1" stop-color="#020403"/></radialGradient>
-    <linearGradient id="card" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#111713" stop-opacity=".96"/><stop offset="1" stop-color="#090d0b" stop-opacity=".9"/></linearGradient>
-    <linearGradient id="mint" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#b8efc8"/><stop offset="1" stop-color="#55bd78"/></linearGradient>
-    <linearGradient id="scan"><stop stop-color="#7ed99b" stop-opacity="0"/><stop offset=".5" stop-color="#7ed99b" stop-opacity=".7"/><stop offset="1" stop-color="#7ed99b" stop-opacity="0"/></linearGradient>
-    <pattern id="grid" width="34" height="34" patternUnits="userSpaceOnUse"><path d="M34 0H0V34" fill="none" stroke="#d9f5e2" stroke-opacity=".035"/></pattern>
-    <filter id="glow" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-    <clipPath id="frame"><rect width="1600" height="720" rx="28"/></clipPath>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#090d14"/>
+      <stop offset="1" stop-color="#111823"/>
+    </linearGradient>
+    <linearGradient id="mint" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#9af0d1"/>
+      <stop offset="1" stop-color="#61d6b5"/>
+    </linearGradient>
+    <linearGradient id="pink" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f39ac8"/>
+      <stop offset="1" stop-color="#c866a0"/>
+    </linearGradient>
+    <pattern id="grid" width="42" height="42" patternUnits="userSpaceOnUse">
+      <path d="M 42 0 L 0 0 0 42" fill="none" stroke="#ffffff" stroke-opacity=".055" stroke-width="1"/>
+    </pattern>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="16" stdDeviation="22" flood-color="#000000" flood-opacity=".34"/>
+    </filter>
+    <filter id="soft" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="32"/>
+    </filter>
   </defs>
-  <g clip-path="url(#frame)">
-    <rect width="1600" height="720" fill="url(#bg)"/>
-    <rect width="1600" height="720" fill="url(#grid)"/>
-    <ellipse cx="800" cy="362" rx="742" ry="284" fill="none" stroke="#dff5e6" stroke-opacity=".11"/>
-    <ellipse cx="800" cy="360" rx="650" ry="226" fill="none" stroke="#dff5e6" stroke-opacity=".085"/>
-    <ellipse cx="800" cy="360" rx="525" ry="172" fill="none" stroke="#7ed99b" stroke-opacity=".08"/>
-    <path d="M23 465C327 174 1275 145 1577 418M19 533C366 241 1240 222 1583 495" fill="none" stroke="#7ed99b" stroke-opacity=".06"/>
-    <path d="M246 603H1352" stroke="url(#scan)" stroke-width="2"/>
-    <g fill="#7ed99b" filter="url(#glow)"><circle cx="84" cy="359" r="3"/><circle cx="236" cy="152" r="2"/><circle cx="516" cy="113" r="2"/><circle cx="1084" cy="108" r="2"/><circle cx="1448" cy="205" r="3"/><circle cx="1545" cy="450" r="2"/><circle cx="1130" cy="615" r="2"/><circle cx="518" cy="628" r="2"/></g>
 
-    <g font-family="Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif">
-      <!-- Reference -->
-      <g transform="translate(56 42) rotate(-2 176 98)">
-        <rect width="352" height="196" rx="12" fill="url(#card)" stroke="#dff5e6" stroke-opacity=".25"/>
-        <rect x="14" y="13" width="24" height="24" rx="5" fill="#7ed99b" fill-opacity=".09" stroke="#7ed99b"/><text x="26" y="30" text-anchor="middle" fill="#b7efc8" font-size="11" font-weight="800">1</text>
-        <text x="50" y="31" fill="#f3f7f4" font-size="13" font-weight="700" letter-spacing="1.2">REFERENCE</text>
-        <rect x="14" y="48" width="324" height="113" rx="8" fill="#050806" stroke="#dff5e6" stroke-opacity=".12"/>
-        <ellipse cx="176" cy="104" rx="130" ry="43" fill="none" stroke="#dff5e6" stroke-opacity=".14"/><ellipse cx="176" cy="104" rx="100" ry="31" fill="none" stroke="#7ed99b" stroke-opacity=".18"/>
-        <rect x="141" y="84" width="70" height="40" rx="6" fill="#121815" stroke="#fff" stroke-opacity=".14"/><path d="M154 95H195M154 104H188M154 113H177" stroke="#eef4f0" stroke-opacity=".6" stroke-width="3" stroke-linecap="round"/>
-        <rect x="26" y="73" width="64" height="42" rx="5" fill="#101612" stroke="#fff" stroke-opacity=".1"/><rect x="267" y="90" width="56" height="42" rx="5" fill="#101612" stroke="#fff" stroke-opacity=".1"/>
-        <g transform="translate(16 172)"><rect width="36" height="8" rx="2" fill="#111713"/><rect x="43" width="36" height="8" rx="2" fill="#212a25"/><rect x="86" width="36" height="8" rx="2" fill="#f2f4f0"/><rect x="129" width="36" height="8" rx="2" fill="#7ed99b"/><rect x="172" width="36" height="8" rx="2" fill="#080b09" stroke="#fff" stroke-opacity=".14"/></g>
-      </g>
+  <rect width="1600" height="620" rx="42" fill="url(#bg)"/>
+  <rect width="1600" height="620" rx="42" fill="url(#grid)"/>
+  <circle cx="1425" cy="92" r="118" fill="#c866a0" opacity=".08" filter="url(#soft)"/>
+  <circle cx="1130" cy="540" r="135" fill="#61d6b5" opacity=".07" filter="url(#soft)"/>
+  <rect x="44" y="44" width="1512" height="532" rx="32" fill="none" stroke="#ffffff" stroke-opacity=".12"/>
 
-      <!-- Layout map -->
-      <g transform="translate(54 268) rotate(1.5 158 88)">
-        <rect width="316" height="176" rx="12" fill="url(#card)" stroke="#dff5e6" stroke-opacity=".25"/>
-        <rect x="14" y="13" width="24" height="24" rx="5" fill="#7ed99b" fill-opacity=".09" stroke="#7ed99b"/><text x="26" y="30" text-anchor="middle" fill="#b7efc8" font-size="11" font-weight="800">2</text>
-        <text x="50" y="31" fill="#f3f7f4" font-size="13" font-weight="700" letter-spacing="1.1">LAYOUT MAP</text>
-        <rect x="15" y="49" width="286" height="108" rx="7" fill="#070a08" stroke="#fff" stroke-opacity=".1"/>
-        <rect x="28" y="62" width="52" height="82" fill="none" stroke="#7ed99b" stroke-opacity=".5"/><rect x="88" y="62" width="126" height="25" fill="none" stroke="#dff5e6" stroke-opacity=".32"/>
-        <rect x="88" y="95" width="60" height="49" fill="none" stroke="#dff5e6" stroke-opacity=".25"/><rect x="156" y="95" width="58" height="49" fill="none" stroke="#dff5e6" stroke-opacity=".25"/><rect x="222" y="62" width="66" height="82" fill="none" stroke="#7ed99b" stroke-opacity=".35"/>
-        <path d="M28 103H288M151 62V144" stroke="#fff" stroke-opacity=".06"/>
-      </g>
+  <g font-family="Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif">
+    <rect x="82" y="78" width="286" height="48" rx="24" fill="#c866a0" fill-opacity=".18" stroke="#f39ac8" stroke-opacity=".7"/>
+    <circle cx="111" cy="102" r="6" fill="#f39ac8"/>
+    <text x="130" y="109" fill="#f7c7df" font-size="18" font-weight="700" letter-spacing="1.6">OPEN-SOURCE CODEX SKILL</text>
 
-      <!-- Asset plan -->
-      <g transform="translate(205 503) rotate(-1.2 160 82)">
-        <rect width="320" height="164" rx="12" fill="url(#card)" stroke="#dff5e6" stroke-opacity=".25"/>
-        <rect x="14" y="13" width="24" height="24" rx="5" fill="#7ed99b" fill-opacity=".09" stroke="#7ed99b"/><text x="26" y="30" text-anchor="middle" fill="#b7efc8" font-size="11" font-weight="800">3</text>
-        <text x="50" y="31" fill="#f3f7f4" font-size="13" font-weight="700" letter-spacing="1.1">ASSET PLAN</text>
-        <g transform="translate(15 50)"><rect width="68" height="59" rx="7" fill="#070a08" stroke="#fff" stroke-opacity=".11"/><circle cx="34" cy="29" r="16" fill="none" stroke="#7ed99b" stroke-opacity=".55"/><path d="M34 10V48M15 29H53" stroke="#fff" stroke-opacity=".08"/>
-          <rect x="76" width="68" height="59" rx="7" fill="#101512" stroke="#fff" stroke-opacity=".11"/><rect x="85" y="9" width="50" height="41" rx="5" fill="url(#mint)" opacity=".28"/>
-          <rect x="152" width="68" height="59" rx="7" fill="#070a08" stroke="#fff" stroke-opacity=".11"/><path d="M160 48L212 10M160 35L194 10M178 50L212 24" stroke="#dff5e6" stroke-opacity=".14"/>
-          <rect x="228" width="62" height="59" rx="7" fill="#070a08" stroke="#fff" stroke-opacity=".11"/><text x="259" y="38" text-anchor="middle" fill="#e8efea" font-size="22">Aa</text></g>
-        <g transform="translate(15 120)"><rect width="86" height="26" rx="6" fill="#0d130f" stroke="#fff" stroke-opacity=".1"/><circle cx="18" cy="13" r="4" fill="#7ed99b"/><circle cx="31" cy="13" r="4" fill="#dff5e6" fill-opacity=".35"/><circle cx="44" cy="13" r="4" fill="#dff5e6" fill-opacity=".18"/>
-          <rect x="95" width="78" height="26" rx="6" fill="#0d130f" stroke="#fff" stroke-opacity=".1"/><rect x="108" y="9" width="38" height="8" rx="4" fill="#7ed99b"/><circle cx="155" cy="13" r="8" fill="#dff5e6" fill-opacity=".18"/>
-          <rect x="182" width="108" height="26" rx="6" fill="#0d130f" stroke="#fff" stroke-opacity=".1"/><path d="M196 13H271" stroke="#7ed99b" stroke-width="2"/><circle cx="241" cy="13" r="5" fill="#dff5e6"/></g>
-      </g>
+    <text x="82" y="225" fill="#f7f9fc" font-size="82" font-weight="780" letter-spacing="-3">Screenshot to code.</text>
+    <text x="86" y="278" fill="#c5ceda" font-size="27" font-weight="520">Build editable UI with real components and visual assets.</text>
 
-      <!-- Code UI -->
-      <g transform="translate(1190 44) rotate(1.2 175 100)">
-        <rect width="354" height="202" rx="12" fill="url(#card)" stroke="#dff5e6" stroke-opacity=".25"/>
-        <rect x="14" y="13" width="24" height="24" rx="5" fill="#7ed99b" fill-opacity=".09" stroke="#7ed99b"/><text x="26" y="30" text-anchor="middle" fill="#b7efc8" font-size="11" font-weight="800">4</text>
-        <text x="50" y="31" fill="#f3f7f4" font-size="13" font-weight="700" letter-spacing="1.2">CODE UI</text>
-        <rect x="15" y="49" width="324" height="117" rx="7" fill="#050806" stroke="#fff" stroke-opacity=".1"/>
-        <g font-family="ui-monospace,SFMono-Regular,Consolas,monospace" font-size="10"><text x="28" y="70" fill="#57625b">1</text><text x="47" y="70" fill="#b8efc8">export</text><text x="84" y="70" fill="#eef4f0"> default function Hero() {</text>
-          <text x="28" y="89" fill="#57625b">2</text><text x="63" y="89" fill="#c9a8ef">return</text><text x="101" y="89" fill="#eef4f0"> (</text>
-          <text x="28" y="108" fill="#57625b">3</text><text x="79" y="108" fill="#7ed99b">&lt;section</text><text x="128" y="108" fill="#d8dfda"> className=</text><text x="192" y="108" fill="#e9c97f">"workspace"</text><text x="253" y="108" fill="#7ed99b">&gt;</text>
-          <text x="28" y="127" fill="#57625b">4</text><text x="96" y="127" fill="#7ed99b">&lt;Reference /&gt;</text><text x="28" y="146" fill="#57625b">5</text><text x="79" y="146" fill="#7ed99b">&lt;/section&gt;</text><text x="142" y="146" fill="#eef4f0"> );</text></g>
-        <g transform="translate(18 176)"><rect width="54" height="13" rx="3" fill="#101512"/><rect x="63" width="54" height="13" rx="3" fill="#101512"/><rect x="126" width="54" height="13" rx="3" fill="#101512"/><circle cx="25" cy="6.5" r="3" fill="#7ed99b"/><text x="78" y="10" fill="#aeb9b1" font-size="8">HTML</text><text x="140" y="10" fill="#aeb9b1" font-size="8">CSS</text></g>
-      </g>
-
-      <!-- Component states -->
-      <g transform="translate(1215 276) rotate(-1 160 86)">
-        <rect width="322" height="172" rx="12" fill="url(#card)" stroke="#dff5e6" stroke-opacity=".25"/>
-        <rect x="14" y="13" width="24" height="24" rx="5" fill="#7ed99b" fill-opacity=".09" stroke="#7ed99b"/><text x="26" y="30" text-anchor="middle" fill="#b7efc8" font-size="11" font-weight="800">5</text>
-        <text x="50" y="31" fill="#f3f7f4" font-size="13" font-weight="700" letter-spacing="1">COMPONENT STATES</text>
-        <g transform="translate(15 52)"><g><text x="31" y="11" text-anchor="middle" fill="#86928a" font-size="8">DEFAULT</text><rect y="20" width="62" height="72" rx="7" fill="#070a08" stroke="#fff" stroke-opacity=".12"/><circle cx="31" cy="56" r="17" fill="none" stroke="#dff5e6" stroke-opacity=".2"/><circle cx="31" cy="56" r="3" fill="#dff5e6" fill-opacity=".35"/></g>
-          <g transform="translate(72)"><text x="31" y="11" text-anchor="middle" fill="#86928a" font-size="8">HOVER</text><rect y="20" width="62" height="72" rx="7" fill="#0d150f" stroke="#7ed99b" stroke-opacity=".7"/><circle cx="31" cy="56" r="17" fill="none" stroke="#7ed99b"/><circle cx="31" cy="56" r="3" fill="#7ed99b"/></g>
-          <g transform="translate(144)"><text x="31" y="11" text-anchor="middle" fill="#86928a" font-size="8">ACTIVE</text><rect y="20" width="62" height="72" rx="7" fill="#070a08" stroke="#fff" stroke-opacity=".12"/><circle cx="31" cy="56" r="17" fill="#7ed99b" fill-opacity=".12" stroke="#7ed99b"/><circle cx="31" cy="56" r="7" fill="#b8efc8"/></g>
-          <g transform="translate(216)"><text x="31" y="11" text-anchor="middle" fill="#86928a" font-size="8">DISABLED</text><rect y="20" width="62" height="72" rx="7" fill="#070a08" stroke="#fff" stroke-opacity=".07"/><circle cx="31" cy="56" r="17" fill="none" stroke="#dff5e6" stroke-opacity=".08"/></g></g>
-        <circle cx="145" cy="157" r="3" fill="#7ed99b"/><circle cx="157" cy="157" r="3" fill="#dff5e6" fill-opacity=".22"/><circle cx="169" cy="157" r="3" fill="#dff5e6" fill-opacity=".12"/>
-      </g>
-
-      <!-- Visual check -->
-      <g transform="translate(1128 501) rotate(1.2 184 84)">
-        <rect width="368" height="168" rx="12" fill="url(#card)" stroke="#dff5e6" stroke-opacity=".25"/>
-        <rect x="14" y="13" width="24" height="24" rx="5" fill="#7ed99b" fill-opacity=".09" stroke="#7ed99b"/><text x="26" y="30" text-anchor="middle" fill="#b7efc8" font-size="11" font-weight="800">6</text>
-        <text x="50" y="31" fill="#f3f7f4" font-size="13" font-weight="700" letter-spacing="1.2">VISUAL CHECK</text>
-        <rect x="15" y="50" width="220" height="85" rx="7" fill="#050806" stroke="#fff" stroke-opacity=".1"/><ellipse cx="125" cy="91" rx="89" ry="29" fill="none" stroke="#dff5e6" stroke-opacity=".12"/>
-        <rect x="96" y="78" width="58" height="28" rx="4" fill="#101512" stroke="#fff" stroke-opacity=".13"/><path d="M107 87H144M107 95H135" stroke="#dff5e6" stroke-opacity=".38" stroke-width="2" stroke-linecap="round"/>
-        <circle cx="290" cy="89" r="28" fill="#7ed99b" fill-opacity=".08" stroke="#7ed99b" stroke-width="2"/><path d="M278 89l8 8 17-18" fill="none" stroke="#b8efc8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-        <g transform="translate(15 146)" fill="#98a49c" font-size="8"><rect width="9" height="9" rx="2" fill="#7ed99b"/><path d="M2 4.5l2 2 3-4" fill="none" stroke="#071009" stroke-width="1.4"/><text x="15" y="8">STRUCTURE</text><rect x="92" width="9" height="9" rx="2" fill="#7ed99b"/><text x="107" y="8">SPACING</text><rect x="179" width="9" height="9" rx="2" fill="#7ed99b"/><text x="194" y="8">VISUALS</text><rect x="262" width="9" height="9" rx="2" fill="#7ed99b"/><text x="277" y="8">FLOWS</text></g>
-      </g>
-
-      <!-- Center -->
-      <g transform="translate(574 154)">
-        <g transform="translate(202)"><path d="M0 0h58v58H18V22" fill="none" stroke="#f4f7f4" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><rect x="-9" y="25" width="30" height="30" rx="3" fill="url(#mint)"/></g>
-        <text x="231" y="91" text-anchor="middle" fill="#9be3b1" font-size="14" font-weight="700" letter-spacing="7">IMAGE2 UI</text>
-        <text x="231" y="158" text-anchor="middle" fill="#f5f7f5" font-size="59" font-weight="760" letter-spacing="-2.7">Turn any reference</text>
-        <text x="231" y="218" text-anchor="middle" fill="#f5f7f5" font-size="59" font-weight="760" letter-spacing="-2.7">into real UI</text>
-        <text x="231" y="264" text-anchor="middle" fill="#aab4ad" font-size="14" font-weight="560" letter-spacing="4">REFERENCE  ·  DECOMPOSE  ·  BUILD  ·  VERIFY</text>
-        <text x="231" y="323" text-anchor="middle" fill="#7ed99b" font-size="11" font-weight="700" letter-spacing="2.2">RECREATE  /  REDESIGN  /  CREATE</text>
-      </g>
-
-      <g transform="translate(542 672)" fill="#7f8a83" font-size="9" font-weight="700" letter-spacing="1.2"><text>01 / INPUT</text><path d="M76-4H422" stroke="#dff5e6" stroke-opacity=".18"/><circle cx="93" cy="-4" r="4" fill="#7ed99b"/><circle cx="147" cy="-4" r="3" fill="#07100a" stroke="#dff5e6" stroke-opacity=".28"/><circle cx="201" cy="-4" r="3" fill="#07100a" stroke="#dff5e6" stroke-opacity=".28"/><circle cx="255" cy="-4" r="3" fill="#07100a" stroke="#dff5e6" stroke-opacity=".28"/><circle cx="309" cy="-4" r="3" fill="#07100a" stroke="#dff5e6" stroke-opacity=".28"/><circle cx="363" cy="-4" r="3" fill="#07100a" stroke="#dff5e6" stroke-opacity=".28"/><text x="438">06 / VERIFY</text></g>
+    <g transform="translate(82 348)">
+      <rect width="238" height="116" rx="24" fill="#ffffff" fill-opacity=".075" stroke="#ffffff" stroke-opacity=".16"/>
+      <text x="24" y="34" fill="#9af0d1" font-size="16" font-weight="750" letter-spacing="1">01  REFERENCE</text>
+      <rect x="24" y="53" width="54" height="42" rx="10" fill="#dfe7f1"/>
+      <rect x="88" y="55" width="118" height="8" rx="4" fill="#f7f9fc" opacity=".92"/>
+      <rect x="88" y="73" width="94" height="7" rx="3.5" fill="#8995a5"/>
+      <rect x="88" y="89" width="72" height="7" rx="3.5" fill="#8995a5" opacity=".72"/>
     </g>
+
+    <path d="M334 406 H385" stroke="#9af0d1" stroke-width="5" stroke-linecap="round"/>
+    <path d="M372 391 L389 406 L372 421" fill="none" stroke="#9af0d1" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <g transform="translate(410 348)">
+      <rect width="254" height="116" rx="24" fill="#ffffff" fill-opacity=".075" stroke="#ffffff" stroke-opacity=".16"/>
+      <text x="24" y="34" fill="#f39ac8" font-size="16" font-weight="750" letter-spacing="1">02  DECOMPOSE</text>
+      <rect x="24" y="54" width="72" height="42" rx="10" fill="#c866a0" fill-opacity=".45"/>
+      <path d="M39 68 H81 M39 78 H72 M39 88 H62" stroke="#ffd8ea" stroke-width="4" stroke-linecap="round"/>
+      <circle cx="128" cy="75" r="21" fill="url(#mint)"/>
+      <rect x="160" y="57" width="68" height="8" rx="4" fill="#f7f9fc" opacity=".9"/>
+      <rect x="160" y="75" width="53" height="7" rx="3.5" fill="#8995a5"/>
+      <rect x="160" y="91" width="42" height="7" rx="3.5" fill="#8995a5" opacity=".72"/>
+    </g>
+
+    <path d="M677 406 H728" stroke="#f39ac8" stroke-width="5" stroke-linecap="round"/>
+    <path d="M715 391 L732 406 L715 421" fill="none" stroke="#f39ac8" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <g transform="translate(753 348)">
+      <rect width="238" height="116" rx="24" fill="#ffffff" fill-opacity=".075" stroke="#ffffff" stroke-opacity=".16"/>
+      <text x="24" y="34" fill="#f9dc78" font-size="16" font-weight="750" letter-spacing="1">03  BUILD + VERIFY</text>
+      <rect x="24" y="55" width="52" height="40" rx="12" fill="#f9dc78" fill-opacity=".9"/>
+      <path d="M39 75 L49 85 L64 66" fill="none" stroke="#151b24" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+      <rect x="91" y="58" width="118" height="8" rx="4" fill="#f7f9fc" opacity=".92"/>
+      <rect x="91" y="76" width="91" height="7" rx="3.5" fill="#8995a5"/>
+      <rect x="91" y="92" width="106" height="7" rx="3.5" fill="#8995a5" opacity=".72"/>
+    </g>
+
+    <text x="84" y="518" fill="#8995a5" font-size="18" font-weight="650" letter-spacing=".8">RECREATE  ·  REDESIGN  ·  CREATE  ·  VALIDATE  ·  COMPARE</text>
   </g>
-  <rect x=".5" y=".5" width="1599" height="719" rx="28" fill="none" stroke="#dff5e6" stroke-opacity=".12"/>
+
+  <g transform="translate(1070 70)" filter="url(#shadow)">
+    <rect width="374" height="482" rx="58" fill="#f5f7fb"/>
+    <rect x="24" y="28" width="326" height="426" rx="40" fill="#12151d"/>
+    <rect x="119" y="44" width="136" height="27" rx="14" fill="#05070a"/>
+
+    <rect x="50" y="92" width="274" height="108" rx="24" fill="#202632"/>
+    <circle cx="103" cy="146" r="34" fill="url(#mint)"/>
+    <rect x="154" y="121" width="126" height="13" rx="6.5" fill="#f7f9fc"/>
+    <rect x="154" y="145" width="94" height="10" rx="5" fill="#788496"/>
+    <rect x="154" y="166" width="68" height="10" rx="5" fill="#788496" opacity=".72"/>
+
+    <rect x="50" y="220" width="127" height="132" rx="24" fill="#c866a0" fill-opacity=".34"/>
+    <rect x="197" y="220" width="127" height="132" rx="24" fill="#213b37"/>
+    <circle cx="113" cy="272" r="25" fill="url(#pink)"/>
+    <path d="M242 260 H280 M242 278 H294 M242 296 H271" stroke="#b7f4df" stroke-width="8" stroke-linecap="round"/>
+    <rect x="76" y="316" width="74" height="9" rx="4.5" fill="#ffd8ea"/>
+
+    <rect x="50" y="373" width="274" height="52" rx="20" fill="url(#mint)"/>
+    <circle cx="80" cy="399" r="8" fill="#10221d"/>
+    <rect x="101" y="393" width="128" height="12" rx="6" fill="#10221d" opacity=".84"/>
+    <path d="M274 390 L284 399 L274 408" fill="none" stroke="#10221d" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <g font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="16" font-weight="720">
+    <rect x="1363" y="150" width="153" height="52" rx="18" fill="#4b2b40" stroke="#f39ac8" stroke-opacity=".55"/>
+    <text x="1384" y="182" fill="#ffd8ea">EDITABLE UI</text>
+    <path d="M1340 175 H1363" stroke="#f39ac8" stroke-width="3"/>
+
+    <rect x="1363" y="248" width="153" height="52" rx="18" fill="#203d37" stroke="#9af0d1" stroke-opacity=".55"/>
+    <text x="1382" y="280" fill="#c9f8e8">REAL ASSETS</text>
+    <path d="M1340 274 H1363" stroke="#9af0d1" stroke-width="3"/>
+
+    <rect x="1363" y="346" width="153" height="52" rx="18" fill="#443d23" stroke="#f9dc78" stroke-opacity=".55"/>
+    <text x="1380" y="378" fill="#fff0b2">VERIFY + FIX</text>
+    <path d="M1340 372 H1363" stroke="#f9dc78" stroke-width="3"/>
+  </g>
 </svg>
