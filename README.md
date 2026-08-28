@@ -7,6 +7,10 @@
 </p>
 
 <p align="center">
+  <a href="https://www.ondesign.tech/learn.html?lang=zh"><img alt="ONDesign 学习路径 · Learning Path" src="https://img.shields.io/badge/%F0%9F%8E%93_ONDesign-%E5%AD%A6%E4%B9%A0%E8%B7%AF%E5%BE%84_%C2%B7_Learning_Path-4A6CF7?style=for-the-badge"></a>
+</p>
+
+<p align="center">
   <a href="./LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
   <img alt="Node.js 20+" src="https://img.shields.io/badge/Node.js-20%2B-339933?logo=node.js&logoColor=white">
   <img alt="Python 3.10+" src="https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white">
