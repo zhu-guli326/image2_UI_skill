@@ -7,10 +7,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/zhu-guli326/image2_UI_skill.git"
+    "url": "https://github.com/zhu-guli326/image2_UI.git"
   },
   "bugs": {
-    "url": "https://github.com/zhu-guli326/image2_UI_skill/issues"
+    "url": "https://github.com/zhu-guli326/image2_UI/issues"
   },
   "homepage": "https://www.ondesign.tech/learn.html?lang=zh",
   "bin": {
