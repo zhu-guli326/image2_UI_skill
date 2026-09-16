@@ -1,21 +1,29 @@
 # Image2 UI
 
 <p align="center">
-  <strong>Screenshot to code &amp; AI UI generation for OpenAI Codex.</strong><br>
+  <strong>Image2 UI by ONDesign · Turn visual ideas into working interfaces.</strong><br>
   Turn screenshots, design references, Figma exports, or a text prompt into editable, interactive frontend UI.<br>
   把截图、设计稿、参考图或一句产品描述，变成可运行、可点击、可继续修改的前端界面。
 </p>
 
 <p align="center">
-  <a href="https://www.ondesign.tech/learn.html?lang=zh"><img alt="ONDesign 学习路径 · Learning Path" src="https://img.shields.io/badge/%F0%9F%8E%93_ONDesign-%E5%AD%A6%E4%B9%A0%E8%B7%AF%E5%BE%84_%C2%B7_Learning_Path-4A6CF7?style=for-the-badge"></a>
+  <a href="https://www.ondesign.tech/learn.html?lang=zh"><strong>进入 ONDesign 产品官网 · Explore ONDesign →</strong></a>
 </p>
 
 <p align="center">
   <a href="./LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
   <img alt="Node.js 20+" src="https://img.shields.io/badge/Node.js-20%2B-339933?logo=node.js&logoColor=white">
   <img alt="Python 3.10+" src="https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white">
-  <img alt="OpenAI Codex Skill" src="https://img.shields.io/badge/OpenAI_Codex-Skill-111111">
+  <img alt="Runs in OpenAI Codex" src="https://img.shields.io/badge/OpenAI_Codex-Workflow-185942">
 </p>
+
+## Start with ONDesign
+
+[ONDesign](https://www.ondesign.tech/learn.html?lang=zh) is the product home for Image2 UI: explore references, define your design direction, and bring it into Codex to build an interactive frontend.
+
+[ONDesign](https://www.ondesign.tech/learn.html?lang=zh) 是 Image2 UI 的产品官网：看参考、确定设计方向，再交给 Codex 生成可交互的前端界面。
+
+For local setup and the recreate, redesign and create workflows, follow the [runtime guide](./PRODUCTION.md).
 
 ## Demos
 
@@ -66,11 +74,11 @@ Rendered, clickable UI demos—navigation, state changes, generated image assets
 
 ## Documentation
 
-- [Skill specification](./SKILL.md) — routing, workflow, asset, and verification rules
+- [Workflow specification](./SKILL.md) — routing, workflow, asset, and verification rules
 - [Production guide](./PRODUCTION.md) — installation, runtime lifecycle, and quality gates
 - [Contributing](./CONTRIBUTING.md) — local checks and pull request guidance · [Changelog](./CHANGELOG.md)
 - [Video case index](./references/video-case-previews.md) — selected case videos
-- [UI Case Gallery](https://www.ondesign.tech/library.html?lang=zh) · [Design Systems](https://www.ondesign.tech/brands.html?lang=zh) · [UI Vocabulary](https://www.ondesign.tech/vocabulary.html?lang=zh)
+- [UI Case Gallery](https://www.ondesign.tech/library.html?lang=zh) · [Design Systems](https://www.ondesign.tech/launcher.html?lang=zh) · [UI Vocabulary](https://www.ondesign.tech/vocabulary.html?lang=zh)
 
 ## License
 
