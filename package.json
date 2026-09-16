@@ -1,7 +1,7 @@
 {
   "name": "image2-ui-skill",
   "version": "0.1.0",
-  "description": "Open-source OpenAI Codex skill and CLI for screenshot-to-code, image-to-UI, design-to-code, and interactive AI frontend generation.",
+  "description": "Image2 UI by ONDesign: turn screenshots and ideas into editable, interactive frontend interfaces with Codex.",
   "type": "module",
   "private": false,
   "license": "MIT",
@@ -12,7 +12,7 @@
   "bugs": {
     "url": "https://github.com/zhu-guli326/image2_UI_skill/issues"
   },
-  "homepage": "https://github.com/zhu-guli326/image2_UI_skill#readme",
+  "homepage": "https://www.ondesign.tech/learn.html?lang=zh",
   "bin": {
     "image2-ui": "scripts/image2-ui"
   },
@@ -61,7 +61,6 @@
   "keywords": [
     "codex",
     "openai-codex",
-    "codex-skill",
     "image2",
     "image-to-ui",
     "screenshot-to-code",
