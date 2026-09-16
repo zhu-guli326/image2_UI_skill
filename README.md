@@ -71,7 +71,7 @@ You need Node.js 20+, Python 3.10+, an authenticated Codex CLI for actual agent 
 Clone the source and inspect the available commands:
 
 ```bash
-git clone https://github.com/zhu-guli326/image2_UI_skill.git image2-ui
+git clone https://github.com/zhu-guli326/image2_UI.git image2-ui
 cd image2-ui
 node scripts/image2-ui --help
 node scripts/image2-ui doctor
