@@ -14,7 +14,7 @@ git diff --check
 
 When changing validation behavior, run `image2-ui validate` against a representative local demo. Gallery pages and case demos are maintained and tested in the separate [`ui_case`](https://github.com/zhu-guli326/ui_case) repository.
 
-## Changes to the skill
+## Changes to Image2 UI
 
 Keep `SKILL.md`, `README.md`, `PRODUCTION.md`, and the relevant references aligned when changing an image channel, validation rule, or CLI command. Generated bitmap assets in user projects need a local provenance record. UI text and interaction glyphs stay code-rendered.
 
@@ -22,4 +22,4 @@ Do not commit `.image2-ui/` loop output, credentials, generated API responses, o
 
 ## Pull requests
 
-Describe the user-facing behavior and list the checks you ran. Keep gallery and demo changes in `ui_case`; keep this repository focused on the Skill and CLI.
+Describe the user-facing behavior and list the checks you ran. Keep gallery and demo changes in `ui_case`; keep this repository focused on the generation runtime, Codex integration, and CLI.
