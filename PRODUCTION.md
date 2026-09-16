@@ -1,6 +1,6 @@
 # Production Guide
 
-This repository is a UI Agent Skill plus a durable Harness Runtime and supporting CLI toolkit. Production readiness means the workflow can be installed, audited, tested, resumed, and reused without relying on hidden session state.
+Image2 UI is the ONDesign interface-generation workflow for Codex, with a durable Harness Runtime and supporting CLI toolkit. Production readiness means the workflow can be installed, audited, tested, resumed, and reused without relying on hidden session state.
 
 ## Requirements
 
@@ -27,7 +27,7 @@ npm link
 image2-ui doctor
 ```
 
-The npm package intentionally contains the Skill, Runtime, schemas, scripts,
+The npm package intentionally contains the workflow specification, Runtime, schemas, scripts,
 references, and README hero. The full demo media archive and case-study videos
 live in the separate [`ui_case`](https://github.com/zhu-guli326/ui_case)
 repository and the case gallery, brand references, launcher, and vocabulary are published at <https://www.ondesign.tech/library.html?lang=zh>.
@@ -42,7 +42,7 @@ npm run doctor
 npm run pack:check
 ```
 
-The Skill repository does not bundle the gallery demos. Use `image2-ui validate`
+The Image2 UI repository does not bundle the gallery demos. Use `image2-ui validate`
 against the demo directory produced by the current task. The maintained case
 gallery and its own site contract live in the separate `ui_case` repository.
 
