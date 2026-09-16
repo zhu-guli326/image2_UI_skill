@@ -1,33 +1,15 @@
-# Image2 UI
+<h1 align="center">Image2 UI</h1>
+<p align="center"><strong>The open-source UI generation toolkit for OpenAI Codex.</strong><br>From a screenshot or an idea to editable, interactive frontend code.<br>把截图或想法，变成可编辑、可交互的前端界面。</p>
+<p align="center"><strong>By ONDesign</strong> · <a href="https://www.ondesign.tech/learn.html?lang=zh">产品官网 / Website</a> · <a href="https://www.ondesign.tech/library.html?lang=zh">Live examples</a> · <a href="#quick-start">Quick start</a> · <a href="./PRODUCTION.md">Runtime guide</a></p>
+<p align="center"><a href="./LICENSE"><img alt="MIT license" src="https://img.shields.io/badge/license-MIT-185942"></a> <img alt="For OpenAI Codex" src="https://img.shields.io/badge/OpenAI_Codex-UI_generation-185942"> <img alt="Node.js 20+" src="https://img.shields.io/badge/Node.js-20%2B-339933"> <img alt="Python 3.10+" src="https://img.shields.io/badge/Python-3.10%2B-3776AB"></p>
 
-<p align="center">
-  <strong>Image2 UI by ONDesign · Turn visual ideas into working interfaces.</strong><br>
-  Turn screenshots, design references, Figma exports, or a text prompt into editable, interactive frontend UI.<br>
-  把截图、设计稿、参考图或一句产品描述，变成可运行、可点击、可继续修改的前端界面。
-</p>
+Image2 UI helps designers and developers turn visual references into working frontend prototypes with OpenAI Codex. It combines a command-line interface, a resumable execution runtime, image-asset tooling and visual quality checks in one open-source project.
 
-<p align="center">
-  <a href="https://www.ondesign.tech/learn.html?lang=zh"><strong>进入 ONDesign 产品官网 · Explore ONDesign →</strong></a>
-</p>
+[ONDesign](https://www.ondesign.tech/learn.html?lang=zh) is the product home, with design references, Design DNA and interactive examples. This repository contains the local generation and verification toolkit. Actual generation runs in a configured Codex environment.
 
-<p align="center">
-  <a href="./LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
-  <img alt="Node.js 20+" src="https://img.shields.io/badge/Node.js-20%2B-339933?logo=node.js&logoColor=white">
-  <img alt="Python 3.10+" src="https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white">
-  <img alt="Runs in OpenAI Codex" src="https://img.shields.io/badge/OpenAI_Codex-Workflow-185942">
-</p>
+## See what you can build
 
-## Start with ONDesign
-
-[ONDesign](https://www.ondesign.tech/learn.html?lang=zh) is the product home for Image2 UI: explore references, define your design direction, and bring it into Codex to build an interactive frontend.
-
-[ONDesign](https://www.ondesign.tech/learn.html?lang=zh) 是 Image2 UI 的产品官网：看参考、确定设计方向，再交给 Codex 生成可交互的前端界面。
-
-For local setup and the recreate, redesign and create workflows, follow the [runtime guide](./PRODUCTION.md).
-
-## Demos
-
-Rendered, clickable UI demos—navigation, state changes, generated image assets, and code-rendered controls working together.
+Four examples from the ONDesign case gallery: generated artwork combined with code-rendered controls, navigation and state changes.
 
 <div align="center">
   <table>
@@ -64,26 +46,88 @@ Rendered, clickable UI demos—navigation, state changes, generated image assets
   <img src="./assets/readme/hero.svg" width="100%" alt="Image2 UI workflow: screenshot reference to editable code, reusable assets, and an interactive frontend">
 </p>
 
-## Why Image2 UI
+## Three ways to create
 
-- **Real code, not a flattened mockup** — text, buttons, forms, navigation, and interactions stay editable.
-- **Separate visual assets** — photos, products, and illustrations are standalone generated images, never baked into the page.
-- **Three workflows** — `recreate` a reference faithfully, `redesign` it for a new brand, or `create` from a description.
-- **Fidelity loop** — browser render, reference comparison, visual audit, and a bounded fix queue.
-- **Device-accurate details** — Safe Area, Dynamic Island, Status Bar, Home Indicator, and bottom navigation.
+| Workflow | Start with | What happens |
+| --- | --- | --- |
+| **Recreate** | A screenshot or reference image | Rebuild its layout, typography and visual details; verify against the original reference. |
+| **Redesign** | A reference and a new product direction | Establish a new visual direction before implementing and checking the interface. |
+| **Create** | A written product brief | Develop a visual direction, then build an editable frontend. |
 
-## Documentation
+The output keeps text, buttons, forms and navigation in code. Photos, product images and illustrations remain separate assets.
 
-- [Workflow specification](./SKILL.md) — routing, workflow, asset, and verification rules
-- [Production guide](./PRODUCTION.md) — installation, runtime lifecycle, and quality gates
-- [Contributing](./CONTRIBUTING.md) — local checks and pull request guidance · [Changelog](./CHANGELOG.md)
-- [Video case index](./references/video-case-previews.md) — selected case videos
-- [UI Case Gallery](https://www.ondesign.tech/library.html?lang=zh) · [Design Systems](https://www.ondesign.tech/launcher.html?lang=zh) · [UI Vocabulary](https://www.ondesign.tech/vocabulary.html?lang=zh)
+## Built around OpenAI Codex
 
-## License
+- **Codex executes implementation work.** The runtime defaults to the `codex` CLI and invokes its execution interface through the [agent tool adapter](./runtime/tools/legacy-cli.mjs).
+- **Runs can be inspected and resumed.** The [runtime](./runtime/) stores state and an event history so interrupted work can be reconciled and continued.
+- **Verification is part of the workflow.** Audit, comparison and bounded fix loops check generated output against the active reference.
+- **Multi-agent execution is available.** The runtime's [scheduler](./runtime/scheduler/) coordinates specialist implementation, review and QA work within the same run lifecycle.
+- **Image generation is configurable.** The [asset wrapper](./scripts/image2_asset.py) supports the project's image-generation channels and writes asset provenance records. See the [channel configuration](./PRODUCTION.md#image2-channel-policy).
 
-[MIT](./LICENSE)
+## Quick start
 
-## Contact
+You need Node.js 20+, Python 3.10+, an authenticated Codex CLI for actual agent execution, and a configured image-generation channel when your workflow needs generated images. Browser render checks use Playwright. See the [runtime guide](./PRODUCTION.md) for environment setup.
 
-Email: [juguli326@gmail.com](mailto:juguli326@gmail.com) · WeChat: `13434361868`
+Clone the source and inspect the available commands:
+
+```bash
+git clone https://github.com/zhu-guli326/image2_UI_skill.git image2-ui
+cd image2-ui
+node scripts/image2-ui --help
+node scripts/image2-ui doctor
+```
+
+Check a workflow plan without generating a UI:
+
+```bash
+mkdir my-ui
+node scripts/image2-ui run ./my-ui --mode create --task "A mobile coffee ordering interface with a menu and cart" --dry-run --json
+```
+
+Once the required channels are configured, start a real run:
+
+```bash
+node scripts/image2-ui run ./my-ui --mode recreate --reference ./reference.png --task "Recreate this screen with working navigation"
+node scripts/image2-ui inspect ./my-ui --latest --json
+node scripts/image2-ui resume ./my-ui --latest
+```
+
+Replace `./reference.png` with your own image. An inspection reports the run's actual status; a paused or blocked run is not a finished interface. For using the workflow inside an existing Codex session, see the [workflow specification](./SKILL.md).
+
+## What is in this repository?
+
+| Component | Responsibility |
+| --- | --- |
+| [CLI](./scripts/image2-ui) | Start, resume, inspect, validate and compare UI work. |
+| [Runtime](./runtime/) | Mode-aware lifecycle, saved state, recovery and verification loops. |
+| [Scheduler](./runtime/scheduler/) | Dependency-aware specialist execution inside a runtime run. |
+| [Schemas](./schemas/) | Contracts for workflow state and output requirements. |
+| [Asset tools](./scripts/image2_asset.py) | Repeatable image generation and provenance. |
+| [Tests](./tests/) | Regression coverage for the CLI, runtime, policies and validation. |
+
+The website and case gallery are maintained in [ui_case](https://github.com/zhu-guli326/ui_case). This repository includes a Codex-compatible instruction entry alongside its executable runtime and tools.
+
+## Open-source development
+
+Image2 UI is MIT-licensed. Contributions can improve reference fidelity, accessibility checks, asset handling, workflow recovery and documentation. See [Contributing](./CONTRIBUTING.md) for the local gates and [Changelog](./CHANGELOG.md) for development history.
+
+```bash
+npm test
+npm run doctor
+npm run pack:check
+```
+
+Diagnostics depend on your local tools and image channels; resolve missing capabilities before attempting a real generation run.
+
+## Resources
+
+- [ONDesign product website](https://www.ondesign.tech/learn.html?lang=zh)
+- [Interactive case gallery](https://www.ondesign.tech/library.html?lang=zh)
+- [Design DNA](https://www.ondesign.tech/launcher.html?lang=zh) · [UI vocabulary](https://www.ondesign.tech/vocabulary.html?lang=zh)
+- [Runtime guide](./PRODUCTION.md) · [Workflow specification](./SKILL.md) · [Video examples](./references/video-case-previews.md)
+
+## Contact and license
+
+Maintained by [zhu-guli326](https://github.com/zhu-guli326). Email: [juguli326@gmail.com](mailto:juguli326@gmail.com).
+
+[MIT License](./LICENSE). Image2 UI is an independent open-source project by ONDesign, not an official OpenAI product.
